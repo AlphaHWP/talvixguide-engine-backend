@@ -5,3 +5,13 @@ Right, so I'll have a chat with an AI to get some idea about how to do this.
 Ok, I spent some time chatting with the AI about where to begin, tools to use, and how I could 
 structure the project. Great! Not bad. Uhm.... hmm.... alright, I think I'll upload this to github so 
 that the AI can more easily process and re-contextualize with respect to the overall project. 
+
+11:59 PM 
+I took a break for some time, and then came back to look at some of the security elements to consider 
+when using github. Yes, there are some interesting things to do and learn about! I do appreciate 
+cryptographic signing and authentication. 
+
+I also spent some time previously discussing how this project could be structured. After setting up the 
+github, and the general project structure, it may be time to lay out the path for how the program will 
+be designed. I can also clarify the main objectives of the program and how those objectives will be 
+achieved as part of the design process.  
