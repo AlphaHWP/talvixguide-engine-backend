@@ -25,3 +25,23 @@ naming conflicts, which is probably more important than some of the other consid
 Ok, so learning about keys and ssh and doing some other things has been interesting. I've been able 
 to get far enough, which is good. Uhm... I still need to see about signing my commits. Once I've done 
 that, then I can start pushing to the remote on github and that might be quite good! 
+
+3:08 PM 
+Ok, I spent another roughly 30 minutes working through some of the questions I had about setting up verified 
+commits for the repo. I think that's set up properly and it wasn't too challenging to do so. Sweet! 
+Alright, I'll put the updates to the devlog here and commit them and then take a break for some time. 
+
+When I come back, I'll take a look at updating the README.md a little bit so that it references the 
+devlogs as opposed to containing a devlog directly in the README. I think that might be a poor 
+decision choice. Afterwards, I can go ahead and start working on some other details, like setting 
+up the license and adding some file structure to the project. I don't think I'll get to it today, but 
+I would also like to spend some time on the architecture of the project, and maybe start working on 
+some of the minimum viable product aspects of the components. Quite frankly, some of these components 
+can be extremely straightforward and simple, for example I can use local data for the first 
+supported metadata source and I can use a basic uniformly randomized algorithm for the first supported 
+recommendation algorithm. I can also try to put together a basic UI as well. 
+
+I'll give each of these components their own appropriate spots in the project structure. I can also 
+modify the description of the project in Github as it currently reflects some of the older names. 
+I should make it clear that this is the correct name of the project, and I can explain the intention 
+of the project a little better now that I've spent more time planning it out. 
