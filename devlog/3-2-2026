@@ -1,0 +1,22 @@
+3/2/2026 Monday 1:06 PM 
+Sweet! Uhm... this project is getting some time and attention from me, which is great. 
+Right, so there are some more considerations about setting up an MVP (minimum viable product) for the 
+sake of demonstration for both potential employers, professional contacts, and people that might be 
+interested in this project. 
+
+I think I'll spend some time on those things today. Before getting into those more technical things, 
+let me set up the github account so that I can support signed commits as well as authentication using 
+cryptographic keys. 
+
+Ok, I'll see about that now. 
+
+1:49 PM 
+Right, so I spent maybe 50 minutes trying to avoid naming conflicts and ended up selecting a nearly 
+completely fictitious name for this project as the other more straightforward names basically were 
+either taken or conflicted with other ideas and concepts. Something of a bummer, but not the worst 
+thing that could happen. I ultimately have rested on talvixguide-engine and talvixguide-engine-backend, 
+talvixguide-engine-frontend, etc. 
+
+I think "engine" fits here as a reference to a suite of software components, although that may be 
+something that could be revised in the future. For now, I think it's fine. Adding engine helps reduce 
+naming conflicts, which is probably more important than some of the other considerations at the moment. 
