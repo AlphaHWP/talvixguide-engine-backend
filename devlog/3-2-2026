@@ -20,3 +20,8 @@ talvixguide-engine-frontend, etc.
 I think "engine" fits here as a reference to a suite of software components, although that may be 
 something that could be revised in the future. For now, I think it's fine. Adding engine helps reduce 
 naming conflicts, which is probably more important than some of the other considerations at the moment. 
+
+2:41 PM 
+Ok, so learning about keys and ssh and doing some other things has been interesting. I've been able 
+to get far enough, which is good. Uhm... I still need to see about signing my commits. Once I've done 
+that, then I can start pushing to the remote on github and that might be quite good! 
