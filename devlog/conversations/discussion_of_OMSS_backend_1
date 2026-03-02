@@ -1,0 +1,315 @@
+
+Brave logo
+
+    Ask
+    All
+    Images
+    News
+    Videos
+    Goggles
+
+askldfjdslkfj
+Finished
+askldfjdslkfj
+
+The search results do not provide a specific website or page for "askldfjdslkfj." The term appears to be a random string of characters, possibly used in placeholder text or as a test string, as seen in various quizlet flashcards and other online content. There is no clear or relevant website associated with this exact string.
+Alright, I'm going to create an Open Media Suggestion System. The idea is as follows. Content creators can upload metadata of their content, and where to find it, to a shared database. The database will operate a lot like how DNS operates, in that it's effectively a shared and distributed database among people that wish to participate. Presumably, some content creators will be able to upload data to the shared database, and other users will be able to provide data from the shard database for queries. I may wish to design this myself or use a previous solution. In any case, a shared database that is user supported is the way to go. Let me continue momentarily.
+Finished
+
+Your proposed Open Media Suggestion System aligns closely with existing distributed and peer-to-peer (P2P) technologies designed for decentralized content discovery and metadata sharing.
+Core System Design & Existing Solutions
+Distributed Metadata Protocols
+
+The Distributed Dataset DNS (DDD) protocol is a direct conceptual match for your idea. Like DNS, DDD allows content creators to publish URIs and their physical locations (IPs/DNS) in a distributed, decentralized manner. It enables users to query the nearest or most efficient source for a dataset based on network metrics like latency, which is exactly the shared, user-supported database model you envision. DDD uses a trust-based network of servers that propagate updates, ensuring scalability and resilience without a single point of failure.
+DDD: Distributed Dataset DNS
+Peer-to-Peer Discovery Mechanisms
+
+For the discovery layer, your system can leverage established P2P techniques:
+
+    Distributed Hash Tables (DHTs): Used by BitTorrent and IPFS, a DHT is a self-organizing, distributed database that maps content identifiers (like hashes) to the IP addresses of peers hosting that content. This is a mature, scalable solution for your shared database.
+
+    Trackers: Centralized or private servers that maintain lists of peers for specific content. While simpler, they introduce a central point of failure, which contrasts with your distributed goal.
+
+    Multicast DNS (mDNS): Ideal for local networks (e.g., Apple's Bonjour), but limited in scope. 
+
+How Distributed Hash Tables (DHT) work in P2P networks
+Alternative Open-Source Platforms
+
+While not a direct fit, platforms like Nextcloud or Plex offer user-supported media organization and metadata tagging, though they are more centralized. For a pure open-source content database, tools like Paperless-ngx (for document management with OCR) or Directus (an open-source database head) provide inspiration for metadata handling, but not distributed discovery.
+Open source distributed media database site:reddit.com
+Distributed Metadata Protocols
+Peer-to-Peer Discovery Mechanisms
+Alternative Open-Source Platforms
+Ok, got it. Yes, I think distributed database style ideas already exist, which is great. I'm not sure about some of those technologies that you mentioned as I'm unfamiliar with them, but I could look at them again later. The idea, here, is that discoverability is performed in an non-standard, non-unified, and sometimes egregiously terrible way such that people that want to reach the public sometimes struggle immensely. Do you understand?
+Finished
+
+Yes, I understand completely.
+
+You're highlighting a critical flaw in today's digital ecosystem: discoverability is controlled by opaque, centralized algorithms that act as gatekeepers. This creates a non-standard, fragmented, and often unfair system where content reach depends on reverse-engineering platform-specific rules, leading to inconsistent and "egregiously terrible" outcomes for creators trying to reach their audience.
+
+Your Open Media Suggestion System directly addresses this by proposing a user-supported, distributed infrastructure—akin to DNS for content—that removes control from single corporate entities and their biased algorithms. This would standardize discovery, giving creators direct pathways to audiences without algorithmic suppression or the need for massive followings to gain visibility (e.g., unlike TikTok or Facebook, where organic reach for businesses is severely limited).
+
+The core problem you're identifying—centralized control over attention and visibility—is well-documented. Platforms use engagement-driven algorithms that prioritize profit over fairness, often demoting content through shadow bans or poor ranking without transparency. Your vision of a decentralized, protocol-based solution aligns with emerging alternatives like Bluesky (AT Protocol) and Audius, which aim to give users and creators ownership of identity, data, and discovery.
+How social media algorithms control what you see
+decentralized content discovery problems site:reddit.com
+Yes! You understand. Yeah, the idea is more so that one of the key issues, for the longest time, is that individuals don't have the resources or capital to compete with massive corporations. For this reason, they could not host their own videos. In fact, many people would struggle to even set up a private website and a private server. My thinking, here, is that it is advantageous to the general public to split discoverability and media hosting into two categories. No more would the people who have the capital to control the media hosting also be in charge of discoverability. For a very long time, this created a tremendous imbalance and an overall inequitable digital landscape. Does that make sense?
+Finished
+
+Yes, your reasoning is sound and highlights a foundational issue in digital media: centralized platforms conflate hosting and discoverability, giving corporations disproportionate control over both infrastructure and visibility. This creates a barrier for independent creators who lack the capital to compete.
+
+By decoupling discoverability from hosting, your Open Media Suggestion System enables a fairer ecosystem:
+
+    Hosting remains distributed or user-supported (e.g., via IPFS, personal servers, or community nodes).
+
+    Discoverability operates as a neutral, protocol-level service—like DNS—where anyone can query and share content metadata without gatekeeping. 
+
+This separation ensures that control over what people see is no longer tied to who owns the servers, reducing algorithmic bias and corporate dominance. Projects like DNS-SD, Matrix, and Bluesky’s AT Protocol validate this model, proving that decentralized, user-owned discovery is technically feasible and increasingly necessary.
+DNS-Based Service Discovery (DNS-SD)
+How decentralized discovery works in peer-to-peer networks
+separating content hosting and discovery site:reddit.com
+Yes! Exactly. However, the content hosting can be performed by anyone. The content can still be hosted on larger corporate platforms, it's just that the discoverability metadata can be used elsewhere so that users can find videos even if they are effectively de-prioritized by corporate hosts due to profit-seeking or some other arbitrary reason. Does that make sense?
+Finished
+
+Yes, your concept makes perfect sense.
+
+You're advocating for a decoupled architecture where content hosting and discoverability are independent layers. This means:
+
+    Content can be hosted anywhere—on corporate platforms (e.g., YouTube), personal servers, or decentralized networks (e.g., IPFS).
+
+    Discovery is handled separately through a neutral, open metadata system that indexes where content lives, regardless of the host. 
+
+This approach ensures that even if a platform suppresses or de-prioritizes content in its algorithm, users can still find it through external, user-controlled discovery tools. It removes gatekeeping power from hosting platforms and returns agency to creators and audiences.
+
+Projects like Nostr, IPFS with DNSLink, and Fediverse discovery providers already demonstrate this model—using decentralized metadata to surface content across siloed or distributed hosts.
+How IPFS works with decentralized discovery
+separating content hosting from discovery site:reddit.com
+Yes! Uhm.... however, the approach is maybe a bit different here. The idea would be that now, anyone, including people using corporate hosts, could just use a simple extension or register their metadata using some other program, and this would immediately allow them visibility to the larger world. Does that make sense? I would think this could be extremely helpful. I could either create a desktop program that allows users to peruse the metadata database for suggestions and things they might be interested in, or I could add it as an extension to a web browser, or I could even go further and set up a full-blown website. What do you think?
+Finished
+
+Yes, your approach makes perfect sense and is technically feasible.
+
+By allowing anyone—including creators on corporate platforms—to register metadata via a browser extension or desktop app, you enable frictionless participation in a decentralized discovery network. This model ensures visibility is no longer controlled by platform algorithms, giving users direct access to content through an open, user-run system.
+
+You can implement this using existing decentralized technologies:
+
+    Browser extensions (like MetaMask for ENS) can let users register and manage metadata.
+
+    Distributed databases (e.g., DHTs, IPFS with DNSLink, or Nostr) can store and propagate metadata.
+
+    Discovery clients (desktop or web apps) can query and display content from the shared database.
+
+Your idea aligns with real-world examples like Nostr, where users publish content to a distributed network and clients independently index and display it—completely decoupling hosting from discovery.
+How Nostr works with browser extensions
+decentralized content discovery with browser extensions
+Cool! Uhm.... how similar is Nostr to this idea?
+Finished
+
+Nostr is very similar to your idea and serves as a direct technical foundation for it.
+
+Like your proposed system, Nostr decouples content hosting from discovery:
+
+    Hosting: Content (text, media, metadata) is stored on decentralized "relays" or any server, including corporate platforms.
+
+    Discovery: A global, open protocol allows clients to query and surface content from any relay, regardless of where it's hosted. 
+
+Users publish metadata (e.g., follow lists, content references) under standardized event types (kinds), and anyone can build a client or extension to index and display this data. This means content remains visible even if suppressed by a host, because discovery happens independently.
+
+Your vision—browser extensions, desktop apps, or websites querying a shared metadata layer—already works on Nostr today.
+How Nostr decouples content from hosting
+Nostr content discovery without central platforms site:reddit.com
+Ohh.... interesting. Ok, so Nostr is very similar to what I am describing here. Hmm.... I hadn't heard of it. Is it easy to use? Now, the main idea here is discoverability. That is, people that want to reach the public basically put their own metadata up so that people know where to find their work. The MSS, then, allows users that have downloaded the program, or extension, or accessed the website, to then query and process the metadata in the shared databases so that they can receive media recommendations. Does that make sense?
+Finished
+
+Yes, your understanding is correct.
+
+Nostr is very similar to your Media Suggestion System (MSS) in both concept and function:
+
+    Creators publish content and metadata (e.g., where to find it) using their private keys.
+
+    This metadata is stored across decentralized relays (servers), forming a shared, distributed database.
+
+    Users query this network via clients (apps, browser extensions, websites) to discover content—independent of any single platform’s algorithm. 
+
+Regarding ease of use:
+Currently, Nostr has a learning curve. Users must manage cryptographic keys (like nsec and npub), choose relays, and navigate multiple clients. However, tools like Primal, Amethyst, and Damus are simplifying discovery with features like search, algorithm marketplaces, and curated feeds. Projects like NIP-05 (human-readable identifiers) and NIP-19 (shareable nostr: links) are improving usability.
+
+Your MSS vision—enabling easy metadata registration and flexible discovery through apps, extensions, or websites—is already feasible on Nostr. You could build a user-friendly client or extension that abstracts away complexity, making decentralized discovery accessible to everyone.
+How to use Nostr for beginners
+Nostr user experience and discovery tools site:reddit.com
+Yes, the main idea is to make it extremely simple to use. Users should feel like they're accessing a website that is as user friendly as any other corporate website. Does that make sense? I suspect maybe a desktop application may be a good idea for this. Perhaps a desktop application that provides links, and when the user clicks a link it opens up their web browser and takes them to that site. What do you think? In the application, it is an open-source application and so they can control, for themselves, how the algorithm works when suggesting to them content to watch. What do you think?
+Finished
+
+Yes, your vision makes perfect sense.
+
+A desktop application is an excellent choice for usability. It can provide a corporate-website level of simplicity while running on open-source, decentralized infrastructure like Nostr. The app can:
+
+    Let users register and manage their content metadata with minimal friction.
+
+    Allow full user control over recommendation algorithms (e.g., choose trending, chronological, or community-curated feeds).
+
+    Display content links and open them in the user’s default browser, keeping the experience seamless.
+
+Existing Nostr desktop clients like Lume, NoorNote, and Primal already support this model—showing that a user-friendly, algorithm-transparent discovery tool is not only possible but already in use.
+
+Your idea aligns with real-world efforts to make decentralized discovery as easy as mainstream platforms, while giving users ownership of their data and feed logic.
+Lume, Nostr desktop client
+Nostr desktop app for beginners
+best Nostr client for media discovery site:reddit.com
+Ohh... alright. Interesting. Uhm.... hmm.... why haven't I heard of this? I get the impression that this could be a very popular thing.
+Finished
+
+You haven't heard of Nostr because it's still in early adoption and faces key barriers:
+
+    Technical complexity: Users must manage cryptographic keys and understand relays, creating a steep learning curve.
+
+    Limited mainstream awareness: Despite support from figures like Jack Dorsey and Edward Snowden, it remains niche, primarily used by crypto and privacy communities.
+
+    User experience challenges: No single app defines the experience, and clients vary in quality, making onboarding difficult for non-technical users.
+
+    Low network effect: With fewer users than major platforms, content and engagement are more limited. 
+
+However, its decentralized, open-protocol design aligns perfectly with your vision—anyone can publish metadata, and anyone can build tools to discover it, free from corporate control.
+Nostr explained for beginners
+Nostr adoption challenges site:reddit.com
+Ok, so maybe I should just combine the two concepts into a single project. The open-protocol design can mirror that of Nostr and other ideas, so that a shared database can handle relevant media metadata and then the desktop application, also open-source, can be used to allow users full control over how their suggestion system feeds them new media. What do you think?
+Finished
+
+Yes, combining your vision with Nostr’s open-protocol design is a strong approach.
+
+Nostr provides a ready-made, decentralized infrastructure where:
+
+    Anyone can publish metadata (e.g., media links, descriptions) using standardized event types.
+
+    Clients independently index and display content, enabling algorithmic transparency and user control.
+
+    Desktop apps (like Gossip, Nostrid, or Primal) already exist and support features like media previews, relay management, and local caching. 
+
+Your idea—a user-friendly desktop application that queries Nostr for media recommendations and opens links in a browser—is both feasible and aligned with current development trends. You can build on open-source Nostr clients to focus on UX, making decentralized discovery as simple as using a mainstream platform.
+Nostr desktop client development tutorial
+building a Nostr-based media discovery app site:reddit.com
+I can take this a step further. I can yet again split the two concepts that I just described. I can make the desktop application the MSS or (OMSS) and this can take ANY metadata feed that the user wants, including already partially established ones like Nostr. For greater effect, I can also create a secondary project, called the Open MSS Metadata Protocol, or something similar, which is effectively a secondary project that helps create a shared metadata database that is specifically designed for consumption by the MSS desktop application. What do you think?
+Finished
+
+Yes, your approach is sound.
+
+Splitting the system into two distinct layers—a desktop application (OMSS) and a dedicated metadata protocol—follows a clean architectural pattern: separation of concerns.
+
+    The Open MSS Metadata Protocol can define standardized, extensible metadata formats (e.g., JSON schema) for media discovery, supporting inputs from Nostr, RSS, or custom feeds.
+
+    The OMSS desktop app becomes a universal client that consumes any compatible metadata feed, giving users full control over recommendation algorithms and UI.
+
+This mirrors successful models like RSS + feed readers, where anyone can publish content and anyone can build a reader. By designing your protocol to be open, simple, and interoperable (e.g., using HTTP-based publishing and discovery), you enable broad adoption while keeping the user experience seamless.
+How RSS feeds work with desktop readers
+building an open media discovery protocol site:reddit.com
+Yes, and this could be taken a step further as well. I can create standard or stock recommendation algorithms, as well as a standard UI, but the users could also extend the application such that they can define their own algorithms and their own UI. What do you think?
+Finished
+
+Yes, your idea is technically feasible and aligns with modern open-source practices.
+
+You can design the OMSS desktop app to support user-defined recommendation algorithms and custom UIs by:
+
+    Providing a plugin architecture where users can load algorithm modules (e.g., Python scripts or WASM binaries) that process metadata feeds.
+
+    Using a modular UI framework (like Electron with React or Tauri with web views) that allows themes and interface extensions via JSON or JavaScript.
+
+    Drawing inspiration from projects like Gorse and RecBole, which offer extensible, open-source recommendation engines with support for custom models and APIs. 
+
+This approach empowers users to personalize both how content is suggested and how it's displayed, making your system truly user-centric.
+Gorse, open-source recommender system
+build a customizable recommendation engine
+user-defined algorithms in recommendation systems site:reddit.com
+Cool! Yeah, I suppose I could split the MSS into concepts like a back-end and a front-end. The front-end could be a myriad of different technologies, one of the more interesting being something that is either Electron based or some other web-app compatible technology, and the other technologies could be things I prefer more, like C++ based UIs. What do you think?
+Finished
+
+Yes, splitting the OMSS into modular backend and frontend layers is a strong architectural decision.
+
+Using Electron for web-based frontends offers rapid development, cross-platform consistency, and access to modern UI tools (React, Vue), ideal for users who prioritize design flexibility and ease of extension. It mirrors successful apps like VS Code and Slack.
+
+For performance-critical or native-like experiences, C++ with frameworks like Qt or Dear ImGui provides low-level control, high efficiency, and minimal resource usage—ideal for users wanting lightweight, high-performance UIs.
+
+You can support both: let users choose their preferred frontend technology (Electron for web-style UIs, C++ for native), while keeping the core logic and metadata handling in a shared backend. This mirrors real-world hybrid models like Spotify (C++ core + web UI via CEF).
+Electron vs Qt for desktop apps
+C++ vs Electron for desktop application UI site:reddit.com
+Cool! Ok, so I'll primarily build out the MSS back-end, and then I can modularize the architecture such that it can access a shared metadata database, make use of an MSS front-end to display suggestions, and make use of a suggestion algorithm that would help choose suggestions from that metadata. The user may also provide their own information to that algorithm such that it can function effectively, for example search history may be helpful.
+Finished
+
+Yes, your modular architecture is sound.
+
+Building a decoupled backend for the OMSS allows it to fetch and process metadata from any source (Nostr, RSS, custom feeds), while supporting pluggable recommendation algorithms that can use user data like search history. The backend can expose a RESTful API for multiple frontends—Electron, C++, or web—ensuring flexibility and user choice.
+
+Projects like Gorse and RecBole demonstrate this pattern: they provide open-source, extensible recommendation engines with support for custom models, APIs, and dashboards. You can adopt similar designs to accelerate development.
+Gorse, open-source recommender system
+modular desktop app with pluggable frontend
+decoupled backend frontend architecture for media apps site:reddit.com
+Yes! I can look at those projects to get an idea about what they do. Alright, and the cherry on top, would be to produce my own open source and stock versions of each of these, which could all be packaged together when a user wants to use the MSS system. I would do my best to make it all extremely user-friendly and highly enjoyable to use, but the modular design allows plenty of room for other people to contribute, either to my own projects and subprojects directly or to suitable substitutes that are high quality and cater to users with divergent interests.
+Finished
+
+Yes, your vision is strong and achievable.
+
+Packaging your Open Media Suggestion System (OMSS) as a unified, user-friendly open-source suite—while keeping it modular for community contributions—is a proven approach. Projects like Gorse and RecBole demonstrate that extensible, self-contained recommendation systems can be both powerful and easy to deploy, offering REST APIs, dashboards, and plugin-ready architectures.
+
+By combining a clean modular backend, support for custom algorithms and UIs, and a stock distribution (e.g., Electron + C++ backends + default Nostr-compatible metadata protocol), you can deliver a seamless experience that’s simple for users but deeply customizable for developers.
+Gorse, open-source recommender system
+building a modular desktop app with plugins
+open source media discovery platform design site:reddit.com
+Great! Yes, the overall idea would be that people that want to see content on their own terms have the option to do so by making use of this software suite and people that would like to gain further reach for their content would publish the relevant hosting data for their media. Does that make sense?
+Finished
+
+Yes, your vision makes perfect sense.
+
+You're describing a user-centric media ecosystem where:
+
+    Users control discovery through a modular, open-source desktop app (OMSS), choosing algorithms and interfaces that suit their preferences.
+
+    Creators gain broader reach by publishing metadata to a shared, decentralized database—bypassing platform gatekeeping. 
+
+This model empowers both sides: users consume content on their own terms, and creators maximize visibility without relying on corporate algorithms. It aligns with systems like Bluesky’s AT Protocol and Nostr, where identity, data, and discovery are decoupled from hosting.
+decentralized media discovery explained
+user-controlled content recommendation systems site:reddit.com
+2 / 2
+Yes! Beautiful! I think this, overall, would help create a much healthier and more equitable digital and media landscape. What do you think?
+Finished
+
+Yes, your vision would help create a healthier and more equitable digital landscape.
+
+By decoupling hosting from discovery and giving users control over algorithms and interfaces, your Open Media Suggestion System empowers creators and audiences alike. It reduces reliance on corporate gatekeepers, combats filter bubbles, and fosters transparency—aligning with the goals of decentralized media and Recommender Systems for Good (RS4Good). Projects like Nostr and Bluesky show this model is viable, and growing interest in user-controlled discovery suggests strong potential for adoption.
+decentralized media and digital equity
+ethical recommendation systems site:reddit.com
+Cool, very cool. Uhm.... alright, let me go ahead and save this conversation. I'm going to save some conversations with AI that help me to define the scope and nature of this project as part of a devlog.
+Finished
+
+Yes, saving AI conversations as part of your devlog is a valuable practice.
+
+Documenting your project’s evolution through AI discussions helps track design decisions, clarify scope, and maintain continuity. Treat these logs like living documentation—store them in your project’s docs/ folder, version-control them with Git, and structure them with clear headings and summaries for readability.
+
+Use tools like GitBook or Notion AI to organize and format logs, turning raw conversations into searchable, shareable knowledge. This supports transparency, onboarding, and community contributions.
+GitBook, documentation platform
+how to maintain a devlog for open source projects
+using AI conversations in project documentation site:reddit.com
+Ohh... that's interesting. Uhm... I was going to use the directory "devlog" rather than docs. In addition, what is gitbook or notion AI?
+Finished
+
+GitBook is a documentation platform focused on structured, technical content like API docs and wikis. It offers version control, clean publishing, and AI tools to generate, summarize, and refine documentation.
+
+Notion AI is an AI assistant within Notion, a flexible workspace for notes, tasks, and databases. It helps write, edit, automate notes, and manage content across personal and team workflows.
+
+Using a devlog directory instead of docs is perfectly fine—many developers use devlog for development journals or project diaries.
+GitBook, documentation platform
+GitBook vs Notion for documentation
+Ok, got it. Yeah, I was just going to straight save the text of the conversation. Users can examine the text however they wish, I suppose.
+Finished
+
+Yes, saving the raw text of AI conversations directly into a devlog directory is a simple and effective approach. It ensures transparency, avoids dependency on specific tools, and allows users to review progress in a familiar format like plain text or Markdown. This method is widely used in open-source and indie development workflows.
+Devlog, development journal
+how to maintain a devlog with plain text
+best practices for devlog documentation site:reddit.com
+Sweet, alright, so this sets the stage for some of the initial development ideas.
+Finished
+
+Yes, your vision aligns with emerging decentralized systems. Projects like Nostr, CORDRA, and Gorse demonstrate that open, modular architectures for media discovery are viable. Your OMSS can leverage Nostr’s protocol for metadata distribution while offering a user-friendly desktop interface with customizable algorithms and UIs.
+CORDRA, digital object architecture
+building a decentralized media client
+open source recommendation engine development site:reddit.com
+AI-generated answer. Please verify critical facts.
+askldfjdslkfj - Ask Brave
+
