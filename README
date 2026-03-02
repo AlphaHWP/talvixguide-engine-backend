@@ -17,3 +17,11 @@ this can both be made public itself, open source, and something that everyone ca
 speak to each other? 
 
 Right, so that's the basic premise. I'll explain more in other sections as I go.  
+
+3/1/2026 Sunday 7:32 PM 
+After spending some time chatting with an AI, I have a better sense of what this project could be. A better approach may be 
+to allow a few different components to emerge. The overall product could have several parts, but the suite will allow for a user 
+to query published metadata about content from one or more sources and then utilize and algorithm that would display those content 
+suggestions to the user. The suite would also present a UI, and each of these parts, the metadata sources, the algorithm for display, 
+and the UI could be separate projects. The idea is that the back-end can interface with each of these. 
+ 
