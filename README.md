@@ -1,7 +1,4 @@
-Welcome to the Open Media Suggestion System!
-
-I suppose that it could be called the OMSS, or MSS. I think the MSS project may be a better fit. 
-In any case, welcome! 
+Welcome to the Talvixguide, an open-source software suite dedicated to helping find media!
 
 The purpose of this project is to allow the public to be able to reach anyone else on the internet with their media.
 
@@ -18,10 +15,26 @@ speak to each other?
 
 Right, so that's the basic premise. I'll explain more in other sections as I go.  
 
-3/1/2026 Sunday 7:32 PM 
-After spending some time chatting with an AI, I have a better sense of what this project could be. A better approach may be 
-to allow a few different components to emerge. The overall product could have several parts, but the suite will allow for a user 
-to query published metadata about content from one or more sources and then utilize and algorithm that would display those content 
-suggestions to the user. The suite would also present a UI, and each of these parts, the metadata sources, the algorithm for display, 
-and the UI could be separate projects. The idea is that the back-end can interface with each of these. 
- 
+I've included devlogs that further document my thinking with regard to this project. 
+
+The overall structure, at present is intended to modularize certain key components. Firstly, the metadata sources themselves 
+are abstracted as their own sources. Some examples include local metadata files, distributed databases of metadata, or other 
+more established systems that provide this metadata. For context, metadata here refers to information like the name of a 
+piece of content and where it could be found on the internet. 
+
+Secondly, the talvixguide-engine is going to be split into at least three other components. The talvixguide-engine-backend will 
+be a system that coordinates the other components and potentially performs some processing itself. I'd like to write this in 
+C++, but ideally this could also be modularized and a different program written in a different language could be used as a 
+substitute.
+
+Thirdly, The talvixguide-engine-algorithm will represent one or more algorithms that will process the content metadata 
+and make decisions about what content should be recommended. An example algorithm is a simple uniformly random approach, which 
+would recommend all content with equal probability. 
+
+The fourth main component is the talvixguide-engine-frontend is a program that can be used to display to users some of the content 
+metadata as part of fulfilling the recommendation. For example, some information or pictures about the content could be displayed, 
+with a clickable hyperlink, which allows the user to then delve deeper into the recommended content. 
+
+For each of these 4 main components, I'll aim to create default programs that are all open-source and available to the public 
+so that a complete usable system exists. Over time, I would expect that either I personally add more to these projects to improve 
+them, or others participate and build high quality modules that could be used for each of the components laid out here. 
