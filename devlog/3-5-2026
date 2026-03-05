@@ -1,0 +1,49 @@
+3/5/2026 Thursday 1:04 PM 
+Ok, so I started working on this project at around 12:44 AM today. I spent maybe an hour or so yesterday night before bed making 
+a few changes. I didn't commit those changes until today, however, and I also did not log that work in a devlog for the day. 
+
+Ok, well, I intend to spend a small amount of time today and I'll add some detail to the devlog here. 
+
+I noticed that a lot of my process documentation and devlogging actually tends to happen in the chat between myself and the 
+AI chatbot. I go over quite a lot there and so this log might be a bit redundant. I suppose I'll see how it goes as I progress. 
+
+At some point, I should go back and add a little more detail and aesthetic flair to the README.md and maybe some other elements 
+of this project so that it is more presentable and appealing overall. I can do that maybe another time. 
+
+For now, however, I think I'm going to focus on some of the next steps for the project. I think that I have a reasonable 
+starting point with respect to the project file structure. I may want to start fleshing out how the metadata file formats will 
+be expected to be presented and how those will be ingested by the backend. 
+
+I suppose that I could start working on that. Once the backend can ingest metadata files and process them, then those files 
+can be presented to the algorithm(s) that the backend is working with. After the algorithm(s) have made their recommendations 
+as far as what to show the user, this can be transferred to the front-end UI and displayed. The user can then interact with 
+the recommendations, and either click hyperlinks, or something similar, and view the associated media or the user can 
+send messages back to ... the backend so as to do things like retrieve more recommendations or something along those lines. 
+
+I may need to define some kind of standardized interface between the backend and frontend such that other frontends would 
+be able to also communicate with the backend using a standardized API or protocol. 
+
+Ok, I suppose I'll come back to that later. As an aside, my internet connection is a bit poor and it had dropped a moment ago 
+when I added the "..." above. 
+
+1:12 PM 
+Ok, so I'll take a look at how I might want to handle ingestion of metadata by the backend. 
+
+2:41 PM 
+Ok, so I ended up spending more like 2 hours on this project rather than 1. I made a lot of design decisions and choices and put 
+them into a conversation with an AI chatbot. I will log that in the devlog. I also decided on using some project management tools, 
+in addition to my build tools, so that I can keep track of all of the various elements and tasks associated with this project. 
+
+Yes, I think using some modern tools is a great idea. Overall, this will help keep the project organized, structured, and highly 
+visible to the public in terms of progress. I think that's great. 
+
+2:58 PM 
+Ok, I outlined many design decisions. I have some work ahead of me that has been outlined. I'll be looking to do a handful of things, 
+and some of these include setting up build tools as well as project management tools. I'll also likely add another component to 
+this system, which will help users to extract large amounts of their own metadata if they wish to do so. I think that may be a 
+significant convenience feature. In order to remain compliant with most of the larger video hosting websites, I'll need to ensure that this 
+is done through their own APIs and that the users authorize the extraction. I think that's just fine. 
+
+Ok, so I spent more time than I probably should have, but I made a lot of progress in terms of planning out the project. I'm 
+starting to see a clearer picture in terms of where this can go and what sort of value this project could provide to both creators 
+and consumers. 
