@@ -1,0 +1,19 @@
+3/6/2026 Friday 10:38 AM 
+Right, so I think I'll try to get maybe 3 hours of work in today. I'm going to look to add a few 
+things. In particular, I want to keep track of the greater project context, as well as the roadmap, 
+but I'm concerned about the work units. I think I will want to utilize project management 
+software, like OpenProject locally and Github Projects remotely. 
+
+Previously I made the decision to mostly focus on using markdown to document the project 
+development as well maintain the context state. Unfortunately, LLMs have many flaws and 
+so it may be better to utilize the markdown and context mostly for efficiently reloading 
+the context for a given chatbot. However, while those files can also help document 
+the project development, the chatbot makes a lot of mistakes and often "forgets" 
+significant context. 
+
+For that reason, it may be better to use proper project management software so 
+that the context and project development is still appropriately documented despite 
+errors in the markdown context files. I hope that makes sense! 
+
+Alright, so I'll look to implement some of that. I think I also want to split 
+the context files at least into work units context and broader project context. 
