@@ -1,0 +1,114 @@
+Talvixguide Engine – Project Context Summary
+Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution (via NVIDIA stdexec, experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored (creator-facing), simple and safe
+
+        JSON: Machine-generated/bulk, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++ – Header-only, modern C++, supports TOML + JSON/YAML output
+
+        yyjson – Ultra-fast JSON parsing for backend ingestion
+
+    Cryptography:
+
+        Signing/Verification: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band verification); optional JWKS later
+
+        Signature Scope: Support both file-wide and per-entry signatures 
+
+Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake
+
+        Embed CPM.cmake in repo for reproducibility
+
+        Integrate:
+
+            toml++ (TOML)
+
+            yyjson (JSON)
+
+            stdexec (structured concurrency)
+
+            OpenSSL or libsodium (crypto)
+
+    Compiler Flags: -std=c++23 (current), -std=c++2c (C++26 features)
+
+    Future Automation: Add Renovate for automated dependency updates
+
+Tooling & Workflow
+
+    Monorepo Structure:
+
+    /backend        # Core engine
+    /tools
+      /signer       # CLI/GUI for metadata signing
+      /extractor    # (Future) Pull metadata from platforms (e.g., YouTube API)
+    /libs
+      /metadata     # Shared parsing logic
+      /crypto       # Shared signing/verification
+     
+
+    Signing Tool:
+
+        Standalone but in monorepo for shared deps
+
+        CLI: talvix-sign metadata.toml --key creator.key
+
+        Optional GUI using Dear ImGui or Qt
+
+    Metadata Extraction:
+
+        Use official APIs only (e.g., YouTube Data API v3)
+
+        OAuth 2.0 for user consent
+
+        Export to TOML for signing
+
+Project Management & DevOps
+
+    Tracking: GitHub Projects (public Kanban) + OpenProject (self-hosted, full control)
+
+    Docs: Public ROADMAP.md, PROJECT_CONTEXT.md
+
+    Backup: Mirror to self-hosted Git (Gitea/Forgejo)
+
+    CI/CD: GitHub Actions (planned)
+
+Next Work Units
+
+    ✅ Set up CMake + CPM.cmake (embed script)
+
+    ✅ Integrate toml++ and yyjson
+
+    ✅ Add stdexec for concurrency (experimental C++26)
+
+    ✅ Implement metadata parsing (TOML in, JSON out)
+
+    ✅ Design signing/verification flow with OpenSSL/Libsodium
+
+    🟡 Build CLI signer tool (talvix-sign)
+
+    🟡 Draft ROADMAP.md and PROJECT_CONTEXT.md
+
+    🔳 Set up GitHub Project board
+
+    🔳 Prototype YouTube API metadata fetcher
+
+    🔳 Add unit tests (GoogleTest) 
+
+This context file captures the full vision, stack, and roadmap. Copy and paste this into future sessions to restore continuity.

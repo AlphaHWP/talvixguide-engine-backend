@@ -1,0 +1,988 @@
+
+Brave logo
+
+    Ask
+    All
+    Images
+    News
+    Videos
+    Goggles
+
+# Talvixguide Engine – Project Context Summary  
+> **Last Updated**: March 05, 2026  
+> **Status**: Early Development  
+> **Next Step**: Finalize GUI framework decision and begin signer tool implementation  
+
+## ✅ Completed Work Units
+- **Switch to AI-native Markdown context files**  
+  Project continuity is now managed via human- and AI-readable `.md` files.
+- **Remove "Set up GitHub Project board"**  
+  Unnecessary — context files provide sufficient tracking.
+
+## 🟡 In Progress
+- **Git structure for metadata**  
+  Create `/metadata/raw_toml` and `/metadata/processed_json` with `.gitignore` rules and `.gitkeep`.
+- **Choose C++ GUI framework**  
+  Evaluating **Qt**, **Dear ImGui**, and **wxWidgets** for signer and extractor tools.
+- **Build UI signer and extractor tools**  
+  Shift from CLI to graphical interface for broader accessibility.
+- **Draft `ROADMAP.md` and `PROJECT_CONTEXT.md`**  
+  Capture evolving vision and priorities in versioned Markdown.
+
+## 🔳 Available Work Units
+- **Prototype YouTube API metadata fetcher**  
+  Extract video metadata → output TOML → feed to signer.
+- **Add unit tests (GoogleTest)**  
+  Validate parsing, signing, and ingestion logic.
+- **Implement backend ingestion pipeline**  
+  Use `yyjson` to parse and verify signed JSON metadata for indexing.
+
+## 🔮 Vision
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+
+## 🧱 Core Design Choices
+- **Language**: C++17/20 → C++23 → C++26 (planned)  
+- **Concurrency**: `std::execution` via NVIDIA `stdexec` (experimental `-std=c++2c`)  
+- **Metadata Formats**:  
+  - **TOML**: Human-authored, safe, creator-facing  
+  - **JSON**: Machine-generated, high-performance parsing  
+- **Parsing Libraries**:  
+  - **toml++**: Header-only, TOML + JSON/YAML output  
+  - **yyjson**: Ultra-fast JSON parsing  
+- **Cryptography**:  
+  - **Signing**: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)  
+  - **Trust Model**: Explicit key trust (out-of-band); optional JWKS later  
+  - **Signature Scope**: File-wide and per-entry signatures  
+
+## 🛠️ Build & Dependency Management
+- **Build System**: CMake  
+- **Dependencies**: Managed via **CPM.cmake** (embedded)  
+  - `toml++`, `yyjson`, `stdexec`, `OpenSSL`/`libsodium`  
+- **Compiler Flags**: `-std=c++23`, `-std=c++2c` (C++26)  
+- **Future**: Add Renovate for automated updates  
+
+## 📁 Current Folder Structure
+```
+.
+├── build/
+├── cmake/
+├── CMakeLists.txt
+├── CMakePresets.json
+├── data/
+├── devlog/
+│   ├── context-files/
+│   └── conversations/
+├── docs/
+├── extern/              # For submodules (e.g., vendored deps)
+├── include/             # Public headers (future use)
+├── LICENSE
+├── README.md
+├── scripts/
+├── src/
+│   └── talvixguide/     # Private headers & implementation
+├── tests/
+└── talvixguide/         # To be moved → include/talvixguide/
+```
+
+## 🖥️ GUI Framework Evaluation
+| Framework | Pros | Cons | Best For |
+|---------|------|------|--------|
+| **Qt** | Native look, mature, cross-platform, Qt Creator IDE | Larger binary, MOC step, license considerations | Non-technical users, production apps |
+| **Dear ImGui** | Lightweight, immediate-mode, fast iteration | Not for traditional UIs, less accessible | Dev tools, debug interfaces |
+| **wxWidgets** | Wraps native controls, lightweight | Limited ecosystem, maintenance concerns | Simple native apps |
+
+✅ **Recommendation**: Use **Qt** for signer and extractor tools — best balance of **native UX**, **cross-platform support**, and **developer tooling** for non-technical users.
+Finished
+GUI Framework Decision for Talvixguide
+
+Based on your project context and evaluation criteria, Qt is the optimal choice for building the signer and extractor tools.
+✅ Why Qt Fits Talvixguide
+
+    Native UX Across Platforms: Ensures accessibility and familiarity for non-technical users on Windows, macOS, and Linux.
+
+    Mature Ecosystem: Offers robust tools like Qt Creator, UI designer, debugging support, and comprehensive documentation—ideal for rapid development and long-term maintenance.
+
+    Cross-Platform Build Support: Integrates smoothly with CMake and supports all target platforms (including mobile and embedded via Qt for Device Creation).
+
+    Strong C++20/23 Alignment: Qt 6 is designed with modern C++ in mind, supporting concepts, ranges, and concurrency patterns that align with your use of stdexec.
+
+    Extensible Architecture: Supports integration with toml++, yyjson, and cryptographic libraries via clean, object-oriented APIs.
+
+Qt C++ GUI framework
+⚙️ Recommended Setup
+
+# CMakeLists.txt snippet
+include(CPM)
+CPMAddPackage(
+    NAME Qt6 REQUIRED_COMPONENTS Widgets Gui Core
+    # Use prebuilt binaries or system install
+    FIND_PACKAGE_ARGS Qt6 6.5 REQUIRED COMPONENTS Widgets
+)
+ 
+
+Use Qt Widgets for traditional desktop applications (signer/extrator tools), not QML, to minimize dependencies and startup overhead.
+Qt Widgets vs QML for desktop tools site:reddit.com
+🧰 Developer Experience
+
+    Qt Designer: Drag-and-drop UI creation speeds up prototyping.
+
+    Signal/Slot Mechanism: Simplifies event handling in cryptographic workflows (e.g., file selection → sign → save).
+
+    Threading Support: Seamlessly integrate std::execution pipelines with QFuture and QtConcurrent.
+
+🔐 Security & Integration
+
+    Wrap OpenSSL or Libsodium signing operations in QObjects for thread-safe access.
+
+    Use QFile and QJsonDocument for TOML/JSON handling (with toml++ for parsing).
+
+    Enforce secure coding practices via Clang-Tidy rules integrated into Qt Creator.
+
+Qt C++ GUI development tutorial
+📅 Next Steps
+
+    Finalize Qt dependency via CPM.cmake or system package.
+
+    Scaffold signer tool UI using Qt Designer.
+
+    Implement file I/O and signature logic with error handling.
+
+    Add accessibility features (high contrast, screen reader support).
+
+✅ Why Qt Fits Talvixguide
+⚙️ Recommended Setup
+🧰 Developer Experience
+🔐 Security & Integration
+📅 Next Steps
+Ok, would you mind adding a task, modularize context markdown, to the set of in progress tasks? I think this will help other AI chatbot sessions to more easily grasp the context if I break it into smaller modules. What do you think?
+Finished
+
+Yes, adding "Modularize context Markdown" to the In Progress tasks is a strong decision. Breaking the monolithic context into smaller, focused Markdown modules improves clarity, maintainability, and AI readability—especially across multiple chatbot sessions.
+✅ Benefits for Talvixguide
+
+    Improved AI Context Handling: Smaller, well-scoped files allow AI tools to load only what’s relevant, reducing token waste and improving accuracy.
+
+    Easier Collaboration: Modular files enable parallel editing and versioning of components like GUI_FRAMEWORK_EVALUATION.md or CRYPTOGRAPHY_DESIGN.md.
+
+    Reusability: Modules can be included in multiple contexts (e.g., ROADMAP.md, PROJECT_CONTEXT.md) without duplication.
+
+    Better Diff Tracking: Git changes are more meaningful when files are focused (e.g., build.md, gui.md, crypto.md).
+
+modular documentation best practices software development
+📁 Suggested Modular Structure
+
+docs/
+├── context/
+│   ├── project-vision.md
+│   ├── gui-framework.md
+│   ├── cryptography.md
+│   ├── build-system.md
+│   └── metadata-formats.md
+├── ROADMAP.md
+├── PROJECT_CONTEXT.md (aggregator or replaced)
+└── CONTRIBUTING.md
+ 
+
+Use Markdown includes (via preprocessor or build step) to assemble views when needed.
+modular documentation structure for AI projects site:reddit.com
+✅ Benefits for Talvixguide
+📁 Suggested Modular Structure
+Ok, uhm.... let's do a few things. Let's also add an in progress task to create a prompt to help focus the AI chatbot so that it knows it's about to ingest context for a project. Further, a work unit for creating a prompt to help the AI chatbot focus on creating a new context raw markdown source file such that this context file can be used to re-initialize the context for another chatbot. As mentioned, I've already requested to have an in progress work unit for modularizing the context markdown files. Ok, are you with me so far/
+Finished
+
+Yes, I’m with you.
+
+Add the following in-progress tasks to your project context:
+
+    Modularize context Markdown files
+    → Break monolithic context into focused modules (e.g., gui.md, crypto.md) for better AI and human readability.
+
+    Create AI focus prompt for context ingestion
+    → Develop a system prompt that prepares the AI to receive and structure project context during onboarding.
+
+    Create AI prompt for generating new context source files
+    → Build a template-driven prompt to guide AI in creating standardized, modular Markdown files for future reuse. 
+
+These steps align with context engineering best practices—treating context as structured infrastructure, not ad-hoc input.
+Context engineering
+system prompt for AI project onboarding
+Yes! Exactly. Yes, that's the goal. Uhm.... alright. I think you can actually put all of the in progress units into the "available work units" categories, as well. Uhm.... right so one of the thing to address here is which frontend UI library I will want to use to create the UI for the signer as well as the metadata extractor. Uhm.... I got a recommendation that Qt is a good idea, however I don't think that is totally free and open source. What are some of the licensing requirements if I use Qt for this?
+Finished
+
+Yes, Qt is free and open source, but with important licensing conditions.
+🔑 Key Licensing Facts
+
+    Dual-Licensed: Qt is available under open-source (LGPL-3.0, GPL-2.0, GPL-3.0) and commercial licenses.
+
+    Free for Open Source & Commercial Use: You can use Qt in commercial projects without paying, as long as you comply with the LGPL-3.0 terms. 
+
+✅ To Use Qt Open Source (LGPL-3.0):
+
+    Dynamically Link to Qt libraries (not static).
+
+    Allow users to modify and re-link Qt (e.g., provide installation instructions or object files).
+
+    Disclose use of Qt in your app and include the LGPL license text.
+
+    Provide Qt source code or a written offer to obtain it.
+
+    Avoid GPL-only modules (e.g., Qt Charts, Qt Quick 3D) unless you want to release your app under GPL. 
+
+⚠️ Modules Under GPL (Not LGPL)
+
+Some advanced modules are GPL-only, meaning:
+
+    You cannot use them in closed-source apps under LGPL.
+
+    You must buy a commercial license or release your app under GPL. 
+
+Examples:
+Qt Charts, Qt Data Visualization, Qt Quick 3D, Qt Virtual Keyboard, Qt MQTT, Qt CoAP.
+🛠️ Qt Creator IDE
+
+    Free to use under open-source licensing.
+
+    No separate license required.
+
+📌 Recommendation for Talvixguide
+
+Since your tools are developer-facing and you aim for open, decentralized infrastructure:
+
+    ✅ Use Qt under LGPL-3.0.
+
+    ✅ Dynamically link, avoid GPL-only modules.
+
+    ✅ Modularize UI code to stay compliant.
+
+    ✅ Document Qt usage and rights in your app.
+
+Only consider a commercial license if you later need static linking, closed devices, or GPL modules.
+Qt LGPL licensing requirements
+🔑 Key Licensing Facts
+✅ To Use Qt Open Source (LGPL-3.0)
+⚠️ Modules Under GPL (Not LGPL)
+🛠️ Qt Creator IDE
+📌 Recommendation for Talvixguide
+Ok, so would I need to modify my LICENSE for my project at all if I want to use Qt? Under the LGPL-3.0, it seems that I would be able to still keep my own software as MIT licensed, but the parts that utilize Qt code would need to mention the LGPL-3.0. How does this work?
+Finished
+
+No, you do not need to change your project’s license to LGPL-3.0. You can keep your own code under the MIT License.
+✅ How It Works
+
+    Your application code (signer, extractor logic) remains MIT-licensed.
+
+    The Qt library is used as a separate, dynamically linked dependency under LGPL-3.0.
+
+    This creates a “Combined Work” — allowed under LGPL-3.0 as long as you comply with its requirements. 
+
+✅ What You Must Do
+
+    Dynamically link to Qt (do not statically link).
+
+    Include the LGPL-3.0 license text in your distribution.
+
+    State that your app uses Qt and that it is licensed under LGPL-3.0.
+
+    Allow users to modify Qt and re-link with your app (e.g., provide instructions or object files).
+
+    Do not use GPL-only Qt modules (like Qt Charts, Qt Quick 3D). 
+
+📄 Example Attribution
+
+This application uses Qt (https://www.qt.io), licensed under the GNU LGPL-3.0.
+Source code for Qt is available at: https://code.qt.io/cgit/
+ 
+
+Qt LGPL-3.0 MIT license compatibility
+✅ How It Works
+✅ What You Must Do
+📄 Example Attribution
+Ok, so should I create an ATTRIBUTIONS.md file and include Qt there? Further, how do I include the license text for the LGPL-3.0? Should I just have a folder for included_licenses? Uhm... further, should I include the dynamically linked library somewhere? How might I handle this part?
+Finished
+
+Yes, you should create an ATTRIBUTIONS.md (or THIRD_PARTY.md) file to list Qt and other dependencies.
+✅ Recommended Structure
+
+## Third-Party Licenses
+
+### Qt (LGPL-3.0)
+- **Used for**: UI signer and metadata extractor
+- **License**: [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html)
+- **Source**: https://code.qt.io/cgit/qt/qt5.git
+- **Compliance**: Dynamically linked; source available via Qt official repositories
+
+> This application uses Qt under the LGPL-3.0 license. You can find the complete source code for Qt at the link above.
+ 
+
+ATTRIBUTIONS.md best practices open source
+📁 License File Placement
+
+    Include the LGPL-3.0 text in your project under:
+
+    /licenses/LICENSE.LGPL-3.0
+     
+
+    Or bundle it as LICENSES/lgpl-3.0.txt (SPDX-style). 
+
+🧩 Dynamic Libraries Handling
+
+    Do not bundle Qt binaries with your app.
+
+    Require users to install Qt separately (e.g., via system package manager).
+
+    Or, document how to obtain Qt (e.g., apt install libqt6widgets6).
+
+This satisfies LGPL-3.0’s requirement to allow users to replace the Qt library.
+✅ Recommended Structure
+📁 License File Placement
+🧩 Dynamic Libraries Handling
+Ok, so I should tell users to install Qt as they will need the library in order to run the frontend. Uhm..... hmmm.... alright. Maybe that's a bit awkward, but I suppose it's alright.
+Finished
+
+Yes, you can require users to install Qt separately — and it’s a valid, common approach under LGPL-3.0.
+✅ How to Comply
+
+    Dynamically link your app to Qt.
+
+    Do not bundle Qt libraries.
+
+    Document installation (e.g., apt install libqt6widgets6 on Debian/Ubuntu).
+
+    Include LGPL-3.0 license in your project (/licenses/LICENSE.LGPL-3.0).
+
+    Add attribution in ATTRIBUTIONS.md.
+
+📦 Distribution Example
+
+YourApp/
+├── YourApp (executable)
+├── README.md → "Requires Qt 6.5+ (install via system package manager)"
+└── licenses/
+    └── LICENSE.LGPL-3.0
+ 
+
+💡 Alternative: AppImage (Recommended)
+
+Use linuxdeployqt or AppImage to bundle Qt libraries without static linking:
+
+    Fully self-contained.
+
+    Still compliant with LGPL-3.0 (dynamic linking preserved).
+
+    No system install needed. 
+
+Qt LGPL-3.0 AppImage distribution
+✅ How to Comply
+📦 Distribution Example
+💡 Alternative: AppImage (Recommended)
+Ok, so I should also have an INSTALLATION.md to help guide users with regard to installing the software, especially Qt.
+Finished
+
+Yes, create an INSTALLATION.md to guide users on installing your software and Qt.
+✅ What to Include
+
+    System requirements (OS, compiler, Qt version).
+
+    Qt installation options:
+
+        Use system package manager (e.g., apt install libqt6widgets6 on Debian/Ubuntu).
+
+        Use aqtinstall (recommended for cross-platform consistency).
+
+    Build instructions:
+
+    mkdir build && cd build
+    cmake .. -DCMAKE_BUILD_TYPE=Release
+    cmake --build .
+     
+
+    Licensing note: Confirm dynamic linking and LGPL-3.0 compliance. 
+
+Qt installation guide for open source projects
+Ok, so let's add work units for these various things. Let's add an additional work unit for "Decide how to include Qt in the project." Uhm.... are there other C++ UI frameworks available that I could make use of? Maybe GTK++?
+Finished
+
+Yes, add these in-progress work units:
+
+    Decide how to include Qt in the project
+    → Evaluate dynamic linking vs. AppImage; ensure LGPL-3.0 compliance.
+
+    Create INSTALLATION.md
+    → Guide users on installing Qt via package manager or aqtinstall.
+
+    Create ATTRIBUTIONS.md
+    → List Qt and dependencies with licenses and compliance notes.
+
+    Modularize context Markdown files
+    → Split into gui.md, crypto.md, build.md, etc.
+
+    Create AI focus prompt for context ingestion
+    → Help AI understand it’s onboarding to Talvixguide.
+
+    Create AI prompt for generating new context source files
+    → Enable AI to produce reusable, standardized modules.
+
+C++ GUI frameworks Qt vs GTKmm vs wxWidgets
+Alternative C++ UI Frameworks
+
+    GTKmm (C++ bindings for GTK)
+
+        ✅ LGPL-3.0, native look on Linux
+
+        ❌ Weaker Windows/macOS support, less tooling
+
+        ❌ Glade UI builder lacks modern workflow 
+
+    wxWidgets
+
+        ✅ Native controls, lightweight, permissive license
+
+        ❌ Outdated API, limited modern C++ integration
+
+        ❌ Inconsistent behavior across platforms 
+
+    Dear ImGui
+
+        ✅ Immediate-mode, great for dev tools
+
+        ❌ Not suitable for end-user applications 
+
+    FLTK
+
+        ✅ Lightweight, header-only, MIT-licensed
+
+        ❌ Dated appearance, limited widgets 
+
+Qt remains the best choice for cross-platform native UX, tooling, and long-term maintainability under LGPL-3.0.
+Ok, got it. Yeah, I might be interested in creating an MIT licensed frontend C++ library in the future, and make it extremely desirable and cross-platform, but for now making use of Qt will fill that gap.
+Finished
+
+Yes, you can keep your project MIT-licensed while using Qt under LGPL-3.0.
+✅ Compliance Summary
+
+    Your code: MIT license, no changes required.
+
+    Qt: Dynamically linked → LGPL-3.0 applies only to Qt, not your code.
+
+    Distribution:
+
+        Do not statically link Qt.
+
+        Users must be able to replace Qt libraries (e.g., via system install or AppImage with dynamic linking). 
+
+    Attribution:
+
+        Include LGPL-3.0 license text in /licenses/LICENSE.LGPL-3.0.
+
+        Add ATTRIBUTIONS.md stating Qt is used under LGPL-3.0.
+
+        No need to show Qt copyright in-app if your app shows no copyrights. 
+
+📦 Distribution Options
+
+    System Qt (e.g., apt install libqt6widgets6) — simplest, fully compliant.
+
+    AppImage with dynamic Qt — self-contained, still compliant.
+
+    Installer with Qt DLLs — ensure users can replace them. 
+
+Qt’s claim that you must host Qt source yourself is stricter than LGPL-3.0; linking to Qt’s official source is generally accepted.
+✅ Compliance Summary
+📦 Distribution Options
+Oh, let's also add a work unit for adding a licenses folder with the various licenses that I will need to add in there.
+Finished
+
+Yes, add this work unit:
+
+    Create licenses/ folder and populate with required license texts
+    → Include LICENSE.LGPL-3.0 for Qt and LICENSE.MIT for your project. 
+
+✅ Best Practices
+
+    Place full license texts in /licenses/ using SPDX identifiers:
+    licenses/LGPL-3.0.txt and licenses/MIT.txt.
+
+    Reference them in source files via SPDX headers:
+    SPDX-License-Identifier: MIT or LGPL-3.0-only.
+
+    Use a THIRD_PARTY.md or ATTRIBUTIONS.md to list dependencies and their licenses. 
+
+Ok, let's also add another work unit to "Link to Qt's official source and double-check compliance with the LGPL-3.0".
+Finished
+
+Yes, add this work unit:
+
+    Link to Qt's official source and double-check compliance with LGPL-3.0
+    → Ensure your distribution links to Qt’s source (https://code.qt.io) and confirms dynamic linking, attribution, and user relinking capability. 
+
+✅ Compliance Checklist
+
+    ✅ Dynamically link Qt (use .dll, .so, or .dylib).
+
+    ✅ Include LICENSE.LGPL-3.0 in /licenses.
+
+    ✅ Add ATTRIBUTIONS.md with link to Qt’s source.
+
+    ✅ Document how users can replace Qt libraries (e.g., via system install or AppImage). 
+
+Ok, so it is decided that Qt will be the front-end framework that I'll use, and I'll look to support cross platform UIs. Uhm.... alright, so I will still have some work units regarding getting Qt to be a useful resource for the project. Uhm... ok. Once I have Qt running, I can work on things like creating the UI for the extractor as well as the signer. Uhm.... let's create another few optional work units. I will want to create my own high-performance UI library, using things like setexec, for C++ and this is an optional work unit. The library is intended to be cross-platform. The next two optional work items are going to be to upgrade the extractor and signer to use my UI library as oppose to Qt. Does that make sense?
+Finished
+
+Yes, your plan makes sense.
+✅ Optional Work Units (Add to Project)
+
+    Create high-performance cross-platform C++ UI library using stdexec → Leverage modern C++23/26 concurrency for async, GPU-accelerated UI workflows.
+
+    Upgrade signer to use custom UI library (replace Qt) → Migrate after library reaches MVP stability.
+
+    Upgrade extractor to use custom UI library (replace Qt) → Ensure feature parity with Qt version. 
+
+🔍 Feasibility & Alternatives
+
+While Qt remains the best current choice, emerging frameworks like Slint, Brisk, and AUI show promise for high-performance, modern C++ UIs. Using stdexec aligns with future C++ standards and enables composable, zero-cost async pipelines ideal for media metadata tools.
+Slint, UI framework
+Slint vs Qt for C++
+✅ Optional Work Units (Add to Project)
+🔍 Feasibility & Alternatives
+Sweet! Ok, so I've covered a lot of ground today in terms of how the project is going to progress going forward. Let's look to take a break soon. Before doing so, would you kindly generate a raw Markdown source file that I can use to imbue a different chatbot with all of the project context so far for this context? Would you kindly include the previous context, as well as the various work items and decisions added in this session? Would you kindly make this context relatively terse?
+Finished
+Talvixguide – Project Context (Raw Markdown)
+Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata. Users discover content via scalable, pluggable recommendation algorithms.
+Status
+
+    Phase: Early Development
+
+    Next Step: Finalize GUI framework → begin signer tool implementation
+
+Core Design
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution via NVIDIA stdexec (-std=c++2c)
+
+    Metadata:
+
+        TOML: Human-authored, creator-facing
+
+        JSON: Machine-parsed, high-performance
+
+    Libraries:
+
+        toml++ (TOML/JSON), yyjson (ultra-fast JSON), OpenSSL/libsodium (Ed25519)
+
+    Trust Model: Explicit key trust (out-of-band); optional JWKS later
+
+    Signing Scope: File-wide and per-entry
+
+Build & Dependencies
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake (toml++, yyjson, stdexec, OpenSSL/libsodium)
+
+    Compiler: -std=c++23, -std=c++2c
+
+    Future: Add Renovate for auto-updates
+
+Folder Structure
+
+.
+├── build/            # Build artifacts
+├── cmake/            # CMake modules
+├── data/             # Metadata input/output
+├── devlog/           # Context & conversation logs
+├── docs/             # Project docs
+├── extern/           # Vendored deps
+├── include/          # Public headers (future)
+├── scripts/          # Dev scripts
+├── src/              # Source code
+├── tests/            # Unit tests
+├── talvixguide/      # To move → include/
+└── LICENSE, README.md
+ 
+
+GUI Framework
+
+    Chosen: Qt (LGPL-3.0)
+
+    Why: Native UX, cross-platform, strong tooling (Qt Creator), C++23 alignment
+
+    Licensing:
+
+        Dynamically linked → MIT code remains MIT
+
+        LGPL-3.0 applies only to Qt
+
+        Include LICENSE.LGPL-3.0, ATTRIBUTIONS.md, link to Qt source 
+
+In Progress Tasks
+
+    [ ] Modularize context Markdown files (gui.md, crypto.md, etc.)
+
+    [ ] Create AI focus prompt for context ingestion
+
+    [ ] Create AI prompt for generating new context source files
+
+    [ ] Decide how to include Qt (system vs. AppImage)
+
+    [ ] Create INSTALLATION.md
+
+    [ ] Create ATTRIBUTIONS.md
+
+    [ ] Create licenses/ folder with LICENSE.LGPL-3.0, LICENSE.MIT
+
+    [ ] Link to Qt’s official source and verify LGPL-3.0 compliance
+
+Available Work Units
+
+    [ ] Prototype YouTube API metadata fetcher (→ TOML → signer)
+
+    [ ] Add unit tests (GoogleTest)
+
+    [ ] Implement backend ingestion pipeline (yyjson + signed JSON)
+
+Optional Future Work
+
+    [ ] Build high-performance C++ UI library using stdexec
+
+    [ ] Migrate signer/extrator to custom UI library (replace Qt) 
+
+Talvixguide
+Vision
+Status
+Core Design
+Build & Dependencies
+Folder Structure
+GUI Framework
+In Progress Tasks
+Available Work Units
+Optional Future Work
+Ok, is there any other context that you might want to add to the context that you've generated? Further, would you kindly present this as raw Markdown source that I can preview later?
+Finished
+
+Yes, consider adding AGENTS.md or .cursorrules to guide AI behavior consistently across sessions.
+✅ Recommended Additions to Context
+
+    AI Usage Rules:
+
+        Always read PROJECT_CONTEXT.md first.
+
+        Prefer modular files (gui.md, crypto.md) for focused context.
+
+        Never assume outdated project state — ask for updates.
+
+    Command References:
+
+        Build: cmake --build . --config Release
+
+        Test: ctest --output-on-failure
+
+    File-Level Conventions:
+
+        Use // SPDX-License-Identifier: MIT in source files.
+
+        Keep Qt UI code in src/ui/qt/. 
+
+🧩 Final Raw Markdown (Updated)
+
+# Talvixguide – Project Context (Raw Markdown)
+
+## Vision
+Decentralized media discovery with cryptographically signed metadata. Pluggable recommendation engines.
+
+## Status
+- **Phase**: Early Development  
+- **Next Step**: Begin signer tool implementation with Qt
+
+## Core Design
+- **Language**: C++17/20 → C++23 → C++26  
+- **Concurrency**: `std::execution` via `stdexec` (`-std=c++2c`)  
+- **Metadata**:  
+  - **TOML**: Human-authored (creator-facing)  
+  - **JSON**: Machine-parsed (high-performance)  
+- **Libraries**:  
+  - `toml++`, `yyjson`, `OpenSSL`/`libsodium` (Ed25519)  
+- **Signing Scope**: File-wide + per-entry
+
+## Build & Dependencies
+- **CMake** + **CPM.cmake**  
+- `-std=c++23`, `-std=c++2c`  
+- Future: Renovate for auto-updates
+
+## Folder Structure
+ 
+
+. ├── build/ # Artifacts ├── data/ # Metadata I/O ├── devlog/ # Context & convo logs ├── docs/ # Docs ├── extern/ # Vendored deps ├── licenses/ # MIT, LGPL-3.0 ├── src/ # Source ├── tests/ # GoogleTest └── INSTALLATION.md, ATTRIBUTIONS.md
+
+
+## GUI Framework
+- **Chosen**: **Qt (LGPL-3.0)**  
+- **Why**: Native UX, cross-platform, Qt Creator  
+- **Licensing**:  
+  - Dynamically linked → MIT code stays MIT  
+  - Include `LICENSE.LGPL-3.0`, `ATTRIBUTIONS.md`, link to Qt source
+
+## In Progress Tasks
+- [ ] Modularize context (→ `gui.md`, `crypto.md`, etc.)  
+- [ ] Create AI focus prompt for context ingestion  
+- [ ] Create AI prompt for generating new context files  
+- [ ] Decide Qt inclusion method (system vs. AppImage)  
+- [ ] Create `INSTALLATION.md`  
+- [ ] Create `ATTRIBUTIONS.md`  
+- [ ] Create `licenses/` folder (MIT + LGPL-3.0)  
+- [ ] Verify LGPL-3.0 compliance (link to Qt source)
+
+## Available Work Units
+- [ ] YouTube API metadata fetcher (→ TOML → signer)  
+- [ ] Add unit tests (GoogleTest)  
+- [ ] Implement ingestion pipeline (`yyjson` + signed JSON)
+
+## Optional Future Work
+- [ ] Build high-performance C++ UI lib (`stdexec`)  
+- [ ] Migrate signer/extrator to custom UI lib
+
+## AI Agent Guidance (AGENTS.md)
+- Always read this file first.  
+- Prefer modular context files.  
+- Commands:  
+  - Build: `cmake --build . --config Release`  
+  - Test: `ctest --output-on-failure`  
+- File Rules:  
+  - `// SPDX-License-Identifier: MIT` in all `.cpp`, `.h`  
+  - Qt UI code → `src/ui/qt/`
+ 
+
+AGENTS.md
+✅ Recommended Additions to Context
+🧩 Final Raw Markdown (Updated)
+# Talvixguide Engine – Project Context Summary  
+> **Last Updated**: March 05, 2026  
+> **Status**: Early Development  
+> **Next Step**: Finalize GUI framework decision and begin signer tool implementation  
+
+## ✅ Completed Work Units
+- **Switch to AI-native Markdown context files**  
+  Project continuity is now managed via human- and AI-readable `.md` files.
+- **Remove "Set up GitHub Project board"**  
+  Unnecessary — context files provide sufficient tracking.
+
+## 🟡 In Progress
+- **Git structure for metadata**  
+  Create `/metadata/raw_toml` and `/metadata/processed_json` with `.gitignore` rules and `.gitkeep`.
+- **Choose C++ GUI framework**  
+  Evaluating **Qt**, **Dear ImGui**, and **wxWidgets** for signer and extractor tools.
+- **Build UI signer and extractor tools**  
+  Shift from CLI to graphical interface for broader accessibility.
+- **Draft `ROADMAP.md` and `PROJECT_CONTEXT.md`**  
+  Capture evolving vision and priorities in versioned Markdown.
+
+## 🔳 Available Work Units
+- **Prototype YouTube API metadata fetcher**  
+  Extract video metadata → output TOML → feed to signer.
+- **Add unit tests (GoogleTest)**  
+  Validate parsing, signing, and ingestion logic.
+- **Implement backend ingestion pipeline**  
+  Use `yyjson` to parse and verify signed JSON metadata for indexing.
+
+## 🔮 Vision
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+
+## 🧱 Core Design Choices
+- **Language**: C++17/20 → C++23 → C++26 (planned)  
+- **Concurrency**: `std::execution` via NVIDIA `stdexec` (experimental `-std=c++2c`)  
+- **Metadata Formats**:  
+  - **TOML**: Human-authored, safe, creator-facing  
+  - **JSON**: Machine-generated, high-performance parsing  
+- **Parsing Libraries**:  
+  - **toml++**: Header-only, TOML + JSON/YAML output  
+  - **yyjson**: Ultra-fast JSON parsing  
+- **Cryptography**:  
+  - **Signing**: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)  
+  - **Trust Model**: Explicit key trust (out-of-band); optional JWKS later  
+  - **Signature Scope**: File-wide and per-entry signatures  
+
+## 🛠️ Build & Dependency Management
+- **Build System**: CMake  
+- **Dependencies**: Managed via **CPM.cmake** (embedded)  
+  - `toml++`, `yyjson`, `stdexec`, `OpenSSL`/`libsodium`  
+- **Compiler Flags**: `-std=c++23`, `-std=c++2c` (C++26)  
+- **Future**: Add Renovate for automated updates  
+
+## 📁 Current Folder Structure
+```
+.
+├── build/
+├── cmake/
+├── CMakeLists.txt
+├── CMakePresets.json
+├── data/
+├── devlog/
+│   ├── context-files/
+│   └── conversations/
+├── docs/
+├── extern/              # For submodules (e.g., vendored deps)
+├── include/             # Public headers (future use)
+├── LICENSE
+├── README.md
+├── scripts/
+├── src/
+│   └── talvixguide/     # Private headers & implementation
+├── tests/
+└── talvixguide/         # To be moved → include/talvixguide/
+```
+
+## 🖥️ GUI Framework Evaluation
+| Framework | Pros | Cons | Best For |
+|---------|------|------|--------|
+| **Qt** | Native look, mature, cross-platform, Qt Creator IDE | Larger binary, MOC step, license considerations | Non-technical users, production apps |
+| **Dear ImGui** | Lightweight, immediate-mode, fast iteration | Not for traditional UIs, less accessible | Dev tools, debug interfaces |
+| **wxWidgets** | Wraps native controls, lightweight | Limited ecosystem, maintenance concerns | Simple native apps |
+
+✅ **Recommendation**: Use **Qt** for signer and extractor tools — best balance of **native UX**, **cross-platform support**, and **developer tooling** for non-technical users.
+Finished
+
+Yes, Qt remains the best choice for Talvixguide.
+✅ Licensing Confirmed
+
+    Qt under LGPL-3.0 allows dynamic linking with MIT-licensed code.
+
+    You do not need to change your license.
+
+    Must:
+
+        Dynamically link Qt.
+
+        Include LICENSE.LGPL-3.0.
+
+        Add attribution in ATTRIBUTIONS.md.
+
+        Allow users to replace Qt (via system install or AppImage). 
+
+🆚 Alternatives Reaffirmed
+
+    wxWidgets: Native look, but aging, limited ecosystem.
+
+    Dear ImGui: Fast for dev tools, not for end-user apps.
+
+    FLTK: Lightweight, but outdated appearance.
+
+    Slint / Webview: Emerging, not yet mature.
+
+📌 Next Steps
+
+    Finalize Qt integration via CPM or system package.
+
+    Begin signer UI in Qt Widgets.
+
+    Keep modular context files for AI reuse.
+
+Qt LGPL-3.0 AppImage distribution guide
+✅ Licensing Confirmed
+🆚 Alternatives Reaffirmed
+📌 Next Steps
+Ok, would you kindly generate the raw Markdown source files that can be previewed? In addition, I won't be using agents for this project, and so extra details about agents can be excluded.
+Finished
+
+# Talvixguide – Project Context (Raw Markdown)
+
+## Vision
+High-performance, decentralized media discovery backend with cryptographically signed metadata. Pluggable recommendation algorithms for user-driven content discovery.
+
+## Status
+- **Phase**: Early Development  
+- **Next Step**: Begin signer tool implementation with Qt
+
+## Core Design
+- **Language**: C++17/20 → C++23 → C++26 (planned)  
+- **Concurrency**: `std::execution` via NVIDIA `stdexec` (`-std=c++2c`)  
+- **Metadata Formats**:  
+  - **TOML**: Human-authored, creator-facing  
+  - **JSON**: Machine-parsed, high-performance  
+- **Libraries**:  
+  - `toml++` (TOML/JSON), `yyjson` (ultra-fast JSON), `OpenSSL`/`libsodium` (Ed25519)  
+- **Signing Scope**: File-wide and per-entry
+
+## Build & Dependencies
+- **Build System**: CMake  
+- **Dependencies**: Managed via **CPM.cmake** (`toml++`, `yyjson`, `stdexec`, `OpenSSL`/`libsodium`)  
+- **Compiler Flags**: `-std=c++23`, `-std=c++2c`  
+- **Future**: Add Renovate for automated updates
+
+## Folder Structure
+ 
+
+. ├── build/ # Build artifacts ├── cmake/ # CMake modules ├── data/ # Metadata I/O ├── devlog/ # Context & conversation logs ├── docs/ # Project docs ├── extern/ # Vendored deps ├── include/ # Public headers (future) ├── licenses/ # MIT, LGPL-3.0 ├── scripts/ # Dev scripts ├── src/ # Source code ├── tests/ # Unit tests ├── INSTALLATION.md # Qt setup guide ├── ATTRIBUTIONS.md # Third-party notices └── LICENSE, README.md
+
+
+## GUI Framework
+- **Chosen**: **Qt (LGPL-3.0)**  
+- **Why**: Native UX, cross-platform, strong tooling  
+- **Licensing**:  
+  - Dynamically linked → MIT code remains MIT  
+  - Include `LICENSE.LGPL-3.0` and `ATTRIBUTIONS.md`  
+  - Link to Qt source: https://code.qt.io  
+  - Users may replace Qt (via system install or AppImage)
+
+## In Progress Tasks
+- [ ] Modularize context Markdown files (`gui.md`, `crypto.md`, etc.)  
+- [ ] Create AI focus prompt for context ingestion  
+- [ ] Create AI prompt for generating new context source files  
+- [ ] Decide Qt inclusion method (system vs. AppImage)  
+- [ ] Create `INSTALLATION.md`  
+- [ ] Create `ATTRIBUTIONS.md`  
+- [ ] Create `licenses/` folder with `LICENSE.LGPL-3.0`, `LICENSE.MIT`  
+- [ ] Verify LGPL-3.0 compliance (link to Qt source)
+
+## Available Work Units
+- [ ] Prototype YouTube API metadata fetcher (→ TOML → signer)  
+- [ ] Add unit tests (GoogleTest)  
+- [ ] Implement backend ingestion pipeline (`yyjson` + signed JSON)
+
+## Optional Future Work
+- [ ] Build high-performance C++ UI library using `stdexec`  
+- [ ] Migrate signer/extrator to custom UI library (replace Qt)
+ 
+
+Ok, that context file seemed to work reasonably well! Neat. Wow, that is amazing. As mentioned, one of the work units is going to be to refine that approach, but in its basic form it is already highly useful.
+Finished
+
+Yes, the context file is a strong foundation.
+✅ Key Improvements Confirmed
+
+    Modular structure supports reuse, AI onboarding, and versioning.
+
+    Qt integration plan complies with LGPL-3.0 via dynamic linking.
+
+    Work units are actionable and prioritized.
+
+📦 Next Steps
+
+    Finalize ATTRIBUTIONS.md and licenses/ folder.
+
+    Begin splitting context into gui.md, crypto.md, build.md.
+
+    Use semantic versioning (X.Y.Z) for modules and releases.
+
+✅ Key Improvements Confirmed
+📦 Next Steps
+Ohh... yeah, semantic versioning would be good. I can do that later when the time comes. Uhm.... right, so yeah, thanks again for your assistance!
+Finished
+
+Semantic versioning (SemVer) uses the format MAJOR.MINOR.PATCH:
+
+    MAJOR: Increment for breaking, backward-incompatible changes (e.g., 1.0.0 → 2.0.0).
+
+    MINOR: Increment for new backward-compatible features (e.g., 1.0.0 → 1.1.0).
+
+    PATCH: Increment for backward-compatible bug fixes (e.g., 1.0.0 → 1.0.1). 
+
+Start with 1.0.0 when the public API is stable. Use 0.y.z for initial development.
+Sweet. Ok, thanks again!
+Finished
+
+You're welcome! Let me know when you're ready to refine the context modules or begin implementation. Have a great day! 🚀
+AI-generated answer. Please verify critical facts.
+# Talvixguide Engine – Project Context Summary > **Last Updated**: March 05, 2026 > **Status**: Early Development > **Next Step**: Finalize GUI framework decision and begin signer tool implementation ## ✅ Completed Work Units - **Switch to AI-native Markdown context files** Project continuity is now managed via human- and AI-readable `.md` files. - **Remove "Set up GitHub Project board"** Unnecessary — context files provide sufficient tracking. ## 🟡 In Progress - **Git structure for metadata** Create `/metadata/raw_toml` and `/metadata/processed_json` with `.gitignore` rules and `.gitkeep`. - **Choose C++ GUI framework** Evaluating **Qt**, **Dear ImGui**, and **wxWidgets** for signer and extractor tools. - **Build UI signer and extractor tools** Shift from CLI to graphical interface for broader accessibility. - **Draft `ROADMAP.md` and `PROJECT_CONTEXT.md`** Capture evolving vision and priorities in versioned Markdown. ## 🔳 Available Work Units - **Prototype YouTube API metadata fetcher** Extract video metadata → output TOML → feed to signer. - **Add unit tests (GoogleTest)** Validate parsing, signing, and ingestion logic. - **Implement backend ingestion pipeline** Use `yyjson` to parse and verify signed JSON metadata for indexing. ## 🔮 Vision High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms. ## 🧱 Core Design Choices - **Language**: C++17/20 → C++23 → C++26 (planned) - **Concurrency**: `std::execution` via NVIDIA `stdexec` (experimental `-std=c++2c`) - **Metadata Formats**: - **TOML**: Human-authored, safe, creator-facing - **JSON**: Machine-generated, high-performance parsing - **Parsing Libraries**: - **toml++**: Header-only, TOML + JSON/YAML output - **yyjson**: Ultra-fast JSON parsing - **Cryptography**: - **Signing**: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519) - **Trust Model**: Explicit key trust (out-of-band); optional JWKS later - **Signature Scope**: File-wide and per-entry signatures ## 🛠️ Build & Dependency Management - **Build System**: CMake - **Dependencies**: Managed via **CPM.cmake** (embedded) - `toml++`, `yyjson`, `stdexec`, `OpenSSL`/`libsodium` - **Compiler Flags**: `-std=c++23`, `-std=c++2c` (C++26) - **Future**: Add Renovate for automated updates ## 📁 Current Folder Structure ``` . ├── build/ ├── cmake/ ├── CMakeLists.txt ├── CMakePresets.json ├── data/ ├── devlog/ │ ├── context-files/ │ └── conversations/ ├── docs/ ├── extern/ # For submodules (e.g., vendored deps) ├── include/ # Public headers (future use) ├── LICENSE ├── README.md ├── scripts/ ├── src/ │ └── talvixguide/ # Private headers & implementation ├── tests/ └── talvixguide/ # To be moved → include/talvixguide/ ``` ## 🖥️ GUI Framework Evaluation | Framework | Pros | Cons | Best For | |---------|------|------|--------| | **Qt** | Native look, mature, cross-platform, Qt Creator IDE | Larger binary, MOC step, license considerations | Non-technical users, production apps | | **Dear ImGui** | Lightweight, immediate-mode, fast iteration | Not for traditional UIs, less accessible | Dev tools, debug interfaces | | **wxWidgets** | Wraps native controls, lightweight | Limited ecosystem, maintenance concerns | Simple native apps | ✅ **Recommendation**: Use **Qt** for signer and extractor tools — best balance of **native UX**, **cross-platform support**, and **developer tooling** for non-technical users. - Ask Brave
+

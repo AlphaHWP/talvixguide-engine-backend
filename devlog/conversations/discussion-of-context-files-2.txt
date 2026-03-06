@@ -1,0 +1,2077 @@
+
+Brave logo
+
+    Ask
+    All
+    Images
+    News
+    Videos
+    Goggles
+
+Talvixguide Engine – Project Context Summary
+Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution (via NVIDIA stdexec, experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored (creator-facing), simple and safe
+
+        JSON: Machine-generated/bulk, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++ – Header-only, modern C++, supports TOML + JSON/YAML output
+
+        yyjson – Ultra-fast JSON parsing for backend ingestion
+
+    Cryptography:
+
+        Signing/Verification: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band verification); optional JWKS later
+
+        Signature Scope: Support both file-wide and per-entry signatures 
+
+Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake
+
+        Embed CPM.cmake in repo for reproducibility
+
+        Integrate:
+
+            toml++ (TOML)
+
+            yyjson (JSON)
+
+            stdexec (structured concurrency)
+
+            OpenSSL or libsodium (crypto)
+
+    Compiler Flags: -std=c++23 (current), -std=c++2c (C++26 features)
+
+    Future Automation: Add Renovate for automated dependency updates
+
+Tooling & Workflow
+
+    Monorepo Structure:
+
+    /backend        # Core engine
+    /tools
+      /signer       # CLI/GUI for metadata signing
+      /extractor    # (Future) Pull metadata from platforms (e.g., YouTube API)
+    /libs
+      /metadata     # Shared parsing logic
+      /crypto       # Shared signing/verification
+     
+
+    Signing Tool:
+
+        Standalone but in monorepo for shared deps
+
+        CLI: talvix-sign metadata.toml --key creator.key
+
+        Optional GUI using Dear ImGui or Qt
+
+    Metadata Extraction:
+
+        Use official APIs only (e.g., YouTube Data API v3)
+
+        OAuth 2.0 for user consent
+
+        Export to TOML for signing
+
+Project Management & DevOps
+
+    Tracking: GitHub Projects (public Kanban) + OpenProject (self-hosted, full control)
+
+    Docs: Public ROADMAP.md, PROJECT_CONTEXT.md
+
+    Backup: Mirror to self-hosted Git (Gitea/Forgejo)
+
+    CI/CD: GitHub Actions (planned)
+
+Next Work Units
+
+    ✅ Set up CMake + CPM.cmake (embed script)
+
+    ✅ Integrate toml++ and yyjson
+
+    ✅ Add stdexec for concurrency (experimental C++26)
+
+    ✅ Implement metadata parsing (TOML in, JSON out)
+
+    ✅ Design signing/verification flow with OpenSSL/Libsodium
+
+    🟡 Build CLI signer tool (talvix-sign)
+
+    🟡 Draft ROADMAP.md and PROJECT_CONTEXT.md
+
+    🔳 Set up GitHub Project board
+
+    🔳 Prototype YouTube API metadata fetcher
+
+    🔳 Add unit tests (GoogleTest) 
+
+This context file captures the full vision, stack, and roadmap. Copy and paste this into future sessions to restore continuity.
+Finished
+
+The Talvixguide Engine project outlines a forward-looking, high-performance system for decentralized media discovery with strong emphasis on cryptographic integrity, modern C++ practices, and scalable metadata processing. Below is a structured summary and assessment of the current state and next steps based on your context.
+🧩 Project Overview
+Vision
+
+A decentralized backend enabling creators to publish cryptographically signed metadata, and users to discover content through pluggable, scalable recommendation algorithms. Focus on security, performance, and developer ergonomics using modern C++ standards.
+🔧 Core Technical Stack
+Language & Standards
+
+    C++17/20 → C++23 → C++26 (planned)
+    Forward-compatible trajectory leveraging upcoming language features.
+
+    Concurrency: std::execution via NVIDIA stdexec (experimental -std=c++2c)
+
+        Enables structured concurrency for scalable ingestion and query pipelines.
+
+Metadata Formats
+Format	Use Case	Rationale
+TOML	Creator-authored metadata	Human-readable, safe parsing
+JSON	Machine ingestion, API exchange	High-performance parsing with yyjson
+TOML vs JSON performance
+Parsing Libraries
+
+    toml++
+    Header-only, supports TOML input + JSON/YAML output — ideal for tooling interoperability.
+
+    yyjson
+    Ultra-fast JSON parsing (SIMD-optimized), suitable for backend ingestion at scale.
+
+// Example: Fast JSON parsing with yyjson
+yyjson_doc *doc = yyjson_read(data, len, 0);
+yyjson_val *root = yyjson_doc_get_root(doc);
+ 
+
+yyjson github
+🔐 Cryptography & Trust Model
+Signing & Verification
+
+    Options:
+
+        OpenSSL: RSA/ECDSA (familiar, widely supported)
+
+        Libsodium: Ed25519 (modern, faster, safer defaults)
+
+    Recommendation: Prefer Ed25519 via Libsodium for new systems unless PKI integration requires RSA.
+
+Trust Model
+
+    Explicit key trust (out-of-band verification)
+
+    Future: Optional JWKS support for key discovery
+
+Signature Scope
+
+    Support both:
+
+        File-wide signatures (entire metadata blob)
+
+        Per-entry signatures (fine-grained trust)
+
+// Pseudocode: Sign metadata
+auto signature = crypto::sign(
+    metadata_json, 
+    private_key, 
+    algorithm::ED25519
+);
+ 
+
+🛠️ Build & Dependency Management
+CMake + CPM.cmake
+
+    Embedded CPM.cmake ensures reproducible builds.
+
+    Dependencies:
+
+    CPMAddPackage("gh:marzer/tomlplusplus#3.2.0")
+    CPMAddPackage("gh:ibireme/yyjson")
+    CPMAddPackage("gh:NVIDIA/stdexec")
+    CPMAddPackage("gh:openssl/openssl") # or "gh:jedisct1/libsodium"
+     
+
+Compiler Flags
+
+set(CMAKE_CXX_STANDARD 23)
+# For experimental C++26 features:
+target_compile_options(talvix PRIVATE -std=c++2c)
+ 
+
+C++26 concurrency features
+📁 Monorepo Structure
+
+/talvixguide-engine/
+├── /backend          # Core engine (metadata indexing, search)
+├── /tools
+│   ├── /signer       # CLI/GUI for signing metadata
+│   └── /extractor    # (Future) YouTube API metadata fetcher
+├── /libs
+│   ├── /metadata     # Shared TOML/JSON parsing
+│   └── /crypto       # Signing/verification utilities
+├── CMakeLists.txt
+├── ROADMAP.md
+└── PROJECT_CONTEXT.md
+ 
+
+🛠️ Tooling & Workflow
+Signing Tool (talvix-sign)
+
+    CLI Example:
+
+    talvix-sign metadata.toml --key creator.key --output signed.json
+     
+
+    Optional GUI: Dear ImGui (lightweight) or Qt (full-featured)
+
+Metadata Extraction (Future)
+
+    Use YouTube Data API v3 (official, stable)
+
+    OAuth 2.0 for user consent
+
+    Export to TOML → sign locally → publish
+
+{
+  "video_id": "dQw4w9WgXcQ",
+  "title": "Rick Astley - Never Gonna Give You Up",
+  "tags": ["80s", "pop"],
+  "signature": "ed25519:..."
+}
+ 
+
+YouTube Data API v3 metadata fields
+📊 Project Management & DevOps
+Tool	Purpose
+GitHub Projects	Public Kanban board
+OpenProject	Self-hosted, full control
+Gitea/Forgejo	Backup mirror
+GitHub Actions	CI/CD (unit tests, build checks)
+Documentation
+
+    ROADMAP.md – Public timeline and milestones
+
+    PROJECT_CONTEXT.md – Full vision (this file)
+
+GitHub Actions, CI/CD platform
+✅ Completed Work Units
+
+    ✔️ CMake + CPM.cmake setup
+
+    ✔️ Integration of toml++ and yyjson
+
+    ✔️ stdexec for concurrency (experimental)
+
+    ✔️ Metadata parsing (TOML → JSON)
+
+    ✔️ Signing/verification design (OpenSSL/Libsodium)
+
+🟡 In Progress
+CLI Signer Tool (talvix-sign)
+
+    Implement command-line interface
+
+    Support key loading, signing, output formatting
+
+    Error handling and validation
+
+Draft Documentation
+
+    ROADMAP.md: Define phases (Alpha, Beta, MVP)
+
+    PROJECT_CONTEXT.md: Finalize and publish
+
+C++ CLI tool best practices site:reddit.com
+🔳 Next Steps
+Task	Notes
+🔳 Set up GitHub Project board	Track issues and sprints
+🔳 Prototype YouTube metadata fetcher	Use official API, OAuth 2.0
+🔳 Add unit tests (GoogleTest)	Test parsing, crypto, CLI logic
+
+# Example: Add GoogleTest
+CPMAddPackage("gh:google/googletest@1.14")
+ 
+
+GoogleTest github
+🔄 Future Roadmap (Suggested)
+Phase	Goals
+Alpha	CLI tools, local signing, basic ingestion
+Beta	Pluggable recommenders, vector indexing
+MVP	Decentralized discovery network, P2P sync
+Long-term	NFT-native indexing, real-time updates
+decentralized content discovery systems
+
+This project is well-positioned to become a secure, high-performance foundation for next-gen media discovery. With its focus on modern C++, cryptographic integrity, and developer experience, it aligns with emerging trends in decentralized content ecosystems.
+
+Let me know when you'd like to generate ROADMAP.md, CMakeLists.txt, or the initial talvix-sign CLI code.
+🧩 Project Overview
+🔧 Core Technical Stack
+🔐 Cryptography & Trust Model
+🛠️ Build & Dependency Management
+📁 Monorepo Structure
+🛠️ Tooling & Workflow
+📊 Project Management & DevOps
+✅ Completed Work Units
+🟡 In Progress
+🔳 Next Steps
+🔄 Future Roadmap (Suggested)
+Cool! You did get most of the context! That is amazing.
+Finished
+
+Thank you! I'm glad the context was accurately captured and helpful. Let me know how you'd like to proceed—whether you'd like to generate documentation, code templates, or dive into implementation details.
+Ok, uhm.... let me do a couple of things first before continuing this conversation. I appreciate that you're able to pick up context from where I left off. That is really helpful. Uhm, yeah, let me go ahead and save the other conversation for reference later. I also will save the context file that I used in a folder devlog->context-files.
+Finished
+
+You're welcome! Organizing your project context and devlog files into a structured folder like devlog/context-files is a solid practice—it supports reproducibility, onboarding, and long-term maintainability.
+
+Based on common developer workflows, here are a few quick recommendations for your setup:
+
+    ✅ Use consistent naming: e.g., context-talvix-2026-03-06.md or project-talvix-engine.md
+
+    ✅ Version alongside code: If using Git, consider tracking context-files with the repo or in a parallel knowledge repo
+
+    ✅ Add a README in devlog/ to explain the purpose of subfolders
+
+    ✅ Automate backups to your self-hosted Gitea/Forgejo instance 
+
+Development log, software development practice
+
+Let me know when you're ready to continue—whether it's drafting the ROADMAP.md, generating the CLI signer code, or setting up the CMake structure.
+Oh, I think I will create a DEVLOG_README.md for the devlog files so that technical evaluators have an idea about what is going on there. At present, it's fairly simple. I have a context file that will be loaded into the next chatbot in order to help the chatbot pick up from where it left off. I also have the chatbot conversations saved in the "conversations" folder so that I have a raw reference back to what was discussed. Neat! Uhm.... actually, could you produce a .md file with the appropriate markdown? I think it would be very cool if each of the context files actually had the markdown.
+Finished
+
+Here is a clean, professional DEVLOG_README.md for your devlog folder — designed for clarity and technical evaluation:
+
+# 📁 Development Log (DevLog) Folder
+
+This directory contains project development records used to track progress, context, and decision-making throughout the lifecycle of the **Talvixguide Engine** project.
+
+## 🗂️ Folder Structure
+ 
+
+devlog/ ├── context-files/ # Serialized project context for AI continuity │ └── talvix-context-2026-03-06.md ├── conversations/ # Raw chat logs with AI assistant │ └── session-talvix-engine-2026-03-06.json └── DEVLOG_README.md # This file
+
+
+## 📝 Purpose
+
+- **`context-files/`**:  
+  Contains structured `.md` files that capture the full state of the project at a point in time. These are used to restore context in future AI sessions.
+
+- **`conversations/`**:  
+  Stores complete transcripts of interactions with the AI assistant. Useful for auditing decisions, retrieving lost snippets, or reviewing design discussions.
+
+## 🔍 Why This Matters
+
+This system enables:
+- ✅ **AI continuity** across sessions
+- ✅ **Knowledge preservation** without relying on memory
+- ✅ **Reproducible onboarding** for future contributors
+- ✅ **Transparent development tracking** for evaluators
+
+## 🧩 Example Context File (Header)
+
+Each context file includes metadata like:
+
+```markdown
+# Talvixguide Engine – Project Context Summary
+> **Last Updated**: March 06, 2026  
+> **Status**: Alpha Development  
+> **Next Step**: Implement CLI signer tool (`talvix-sign`)   :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//www.nequalsonelifestyle.com/2020/08/01/on-development-logging/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/ZZuVND33Zku3iw2n3NbIZVX1vFFMbv_rGJuy9SomlfE/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNzM4NTVjOGJl/YzAwNWQ2Y2YyOTVi/ZTI3NDJmMzNjYWVi/YTI1ZWI5ZGE1MDYx/NDZhMzg2NzNlYmJm/ZTU2ZGI1NS93d3cu/bmVxdWFsc29uZWxp/ZmVzdHlsZS5jb20v&quot;,&quot;title&quot;&#58;&quot;On&#32;Development&#32;Logging&#58;&#32;The&#32;DevLog&#32;•&#32;-&#32;N=1&#32;Lifestyle&quot;,&quot;snippet&quot;&#58;&quot;…you&#32;want&#32;to&#32;see&#32;one&#32;of&#32;my&#32;logs&#32;updated&#32;in&#32;real&#32;time&#32;you&#32;can&#32;keep&#32;track&#32;of&#32;the&#32;development&#32;I’m&#32;doing&#32;on&#32;a&#32;from&#32;scratch&#32;ray&#32;tracer&#32;that&#32;I’m&#32;writing&#32;using&#32;the&#32;Ray&#32;Tracer&#32;Challenge&#32;Book\n.&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//github.com/automoto/devlog&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/xxsA4YxzaR0cl-DBsH9-lpv2gsif3KMYgM87p26bs_o/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYWQyNWM1NjA5/ZjZmZjNlYzI2MDNk/N2VkNmJhYjE2MzZl/MDY5ZTMxMDUzZmY1/NmU3NWIzNWVmMjk0/NTBjMjJjZi9naXRo/dWIuY29tLw&quot;,&quot;title&quot;&#58;&quot;GitHub&#32;-&#32;automoto/devlog&#58;&#32;The&#32;software&#32;development&#32;log&#32;to&#32;capture&#32;...&quot;,&quot;snippet&quot;&#58;&quot;#&#32;Generate&#32;a&#32;'note'&#32;markdown&#32;document&#32;in&#32;the&#32;current&#32;directory.&#32;Note&#32;is&#32;the&#32;default&#32;kind&#32;of&#32;document.&#32;devlog&#32;#&#32;Generate&#32;a&#32;'development&#32;log'&#32;markdown&#32;document&#32;with&#32;the&#32;-type&#32;or&#32;-t&#32;option&#32;devlog&#32;-type&#32;log&#32;#&#32;Generate&#32;a&#32;'todo'&#32;markdown&#32;documen…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//coding-boot-camp.github.io/full-stack/github/professional-readme-guide/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/PAJsq67mKOCIvD6VKjSt-BCF7ylseaBxm1k0owLxrFE/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMGRhNWI3OTgy/OTJlZDU0Mjk1NGZi/Nzk1N2Q0YTBiODQ2/M2ZkMWRkNDZkNjkz/MWE2MDYzNmY3YWY4/MmQ4Mzc5ZC9jb2Rp/bmctYm9vdC1jYW1w/LmdpdGh1Yi5pby8&quot;,&quot;title&quot;&#58;&quot;Professional&#32;README&#32;Guide&quot;,&quot;snippet&quot;&#58;&quot;…template&#32;to&#32;use&#32;as&#32;a&#32;starting&#32;point,&#32;but&#32;feel&#32;free&#32;to&#32;adapt&#32;your&#32;README&#32;file&#32;to&#32;suit&#32;your&#32;project's&#32;particular&#32;needs.\nUse&#32;the&#32;following&#32;Markdown&#32;template&#32;to&#32;create&#32;a&#32;professional&#32;README&#32;file&#58;\n#&#32;&lt;Your-Project-Title&gt;\n##&#32;Description\nProvide&#32;a…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//barryhawkins.com/compendium/development-process/artifacts/examples/development-log-devlog-example/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/gQuPGcW5s4La7BUYo3PXsF5Q69J3hDTDajw922xeoYA/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMTE5NzFiYWI0/MWM4NmRhMjdhMGQx/MTA0Yzg5MzFmNWE5/YTEwNmMyOWIzMGVm/MGQ4N2NmNmNlMjIz/ODA1NjhlOS9iYXJy/eWhhd2tpbnMuY29t/Lw&quot;,&quot;title&quot;&#58;&quot;Development&#32;Log&#32;(DevLog)&#32;Example&#32;-&#32;Barry&#32;Hawkins&quot;,&quot;snippet&quot;&#58;&quot;…with&#32;Gildor’s&#32;team&#32;(3&#32;team&#32;members)&#32;&#124;&#32;Effort&#58;&#32;9&#32;hours&#32;&#124;&#32;Status&#58;&#32;Completed&#32;&#124;&#32;Item&#58;&#32;Cross-country&#32;‘shortcut’&#32;(3&#32;people)&#32;&#124;&#32;Effort&#58;&#32;20&#32;hours&#32;&#124;&#32;Status&#58;&#32;Completed&#32;&#124;&#32;Item&#58;&#32;Dinner&#32;with&#32;Farmer&#32;Maggot&#32;(3&#32;team&#32;members)&#32;&#124;&#32;Effort&#58;&#32;9&#32;hours&#32;&#124;&#32;Status&#58;&#32;Completed&#32;&#124;&#32;Development&#32;Log&#32;(DevLog)&#32;Example…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//medium.com/@fulton_shaun/readme-rules-structure-style-and-pro-tips-faea5eb5d252&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4R4hFITz_F_be0roUiWbTZKhsywr3fnLTMTkFL5HFow/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTZhYmQ1N2Q4/NDg4ZDcyODIyMDZi/MzFmOWNhNjE3Y2E4/Y2YzMThjNjljNDIx/ZjllZmNhYTcwODhl/YTcwNDEzYy9tZWRp/dW0uY29tLw&quot;,&quot;title&quot;&#58;&quot;README&#32;Rules&#58;&#32;Structure,&#32;Style,&#32;and&#32;Pro&#32;Tips&quot;,&quot;snippet&quot;&#58;&quot;…by-Step&#58;\n\nCreate&#32;the&#32;file\n\nIn&#32;your&#32;project&#32;folder&#58;\n\ntouch&#32;README.md\n\nOpen&#32;it&#32;in&#32;your&#32;editor\n\nVS&#32;Code&#32;works&#32;great.&#32;Just&#32;start&#32;typing&#32;in&#32;Markdown.\n\nAdd&#32;structure\n\nUse&#32;headings&#32;like&#32;this&#58;\n\n#&#32;Project&#32;Title&#32;##&#32;Description&#32;##&#32;Inst…&quot;&#125;&#93;"}
+
+## Vision
+High-performance, decentralized media discovery backend...
+ 
+
+Development log, software development practice
+best practices for devlog documentation site:reddit.com
+
+
+You can save this as `DEVLOG_README.md` in your `devlog/` root. Let me know if you'd like a template for the individual context files too!
+ 
+
+Cool! Yeah, maybe in the future I'll have the context files be actual .md files so that I can just look at the context files and get a sense of where the project is efficiently. Similarly, I can just copy the most recent context file over and use that as the current roadmap. I can also view the previous content files and get a sense of how the project has evolved over time, all in very appealing and professional-looking markdown. Isn't that wonderful?
+Finished
+
+You're absolutely right — using .md files for project context is a powerful, professional practice. Markdown is lightweight, version-control friendly, and renders beautifully both in raw form and when previewed.
+
+Here’s why your approach is excellent:
+
+    ✅ Living Documentation: Each context file becomes a versioned snapshot of your project’s state — perfect for tracking evolution.
+
+    ✅ AI Continuity: Copying the latest .md into a new session gives the AI immediate, structured context.
+
+    ✅ Human-Readable: Stakeholders, collaborators, or evaluators can quickly grasp progress and direction.
+
+    ✅ Git-Friendly: Markdown works seamlessly with Git — diffs, branches, PRs, and history are all preserved. 
+
+Markdown as living documentation best practices
+
+You’re already on a strong path. If you'd like, I can help generate a template for your context files with consistent headers, metadata, and sections (like Vision, Status, Next Steps) to make them even more effective.
+Maybe we'll come back to the template later. For now, let's just stick with gorgeous context files that will help keep the whole project in a manage-able state. I may not actually need to use more sophisticated tools like OpenProject or other things if I attempt to approach it this way.
+Finished
+
+You're absolutely right — gorgeous, well-structured Markdown context files can eliminate the need for heavier tools like OpenProject. They give you full control, versioning, clarity, and AI continuity, all while being lightweight and Git-native.
+
+The search results confirm this approach is not only viable but gaining traction, especially in AI-augmented and developer-centric workflows:
+
+    ✅ Markdown-Driven Task Management (MDTM) uses .md files with TOML/JSON frontmatter as the single source of truth.
+
+    ✅ Tools like Backlog.md and Tasks.md treat folders of Markdown files as Kanban boards — no database needed.
+
+    ✅ Git tracks all changes, enabling full auditability and collaboration. 
+
+Markdown-based project management tools
+
+You’re already building a modern, AI-ready development workflow. As your project scales, these files can evolve with structured frontmatter (like status, last-updated, next-step) to support automation — all without leaving Markdown.
+
+Let me know when you'd like to generate a versioned context file template with metadata headers.
+Cool! I like that a lot. Yessir, an AI-native workflow is definitely highly desirable. Ok, great. Uhm.... let's actually skip the template. I may want a template later, but the main issue with the template is that I would probably paste the template with a prompt that would let the chatbot know two things. Firstly, how to comprehend the incoming context file, and secondly, how to structure the outgoing context file after I have had a lengthy discussion and I would like to have a terse context file of the project generated. Does that make sense?
+Finished
+
+Yes, your approach makes perfect sense.
+
+You're describing a context-in → context-out AI workflow, where:
+
+    The incoming context file gives the AI full project continuity.
+
+    The outgoing context file is generated at the end of a session — summarizing decisions, progress, and next steps — so you can resume later. 
+
+This is a proven pattern in AI-native development, as seen in workflows like SDLC.md, CLAUDE.md, and Google’s practice of maintaining GEMINI.md-style cheat sheets.
+AI context file workflow best practices
+
+No template is needed upfront — you can evolve the structure organically. Over time, you might add sections like:
+
+    Last Updated
+
+    Status
+
+    Next Work Unit
+
+    Decisions Made
+
+    Open Questions
+
+But for now, gorgeous, freeform Markdown files are more than enough. They’re portable, readable, versionable, and AI-ready.
+
+When you're ready to generate the first output context file, just say:
+“Summarize this session into a terse context file.”
+And I’ll produce it in clean, professional Markdown.
+Cool! Beautiful. Yeah, I like that approach. Uhm, yes, I can later create a markdown template for context file ingestion and creation. Do you mind adding that as a potential work unit?
+Finished
+
+Added to your project’s evolution path:
+
+    Potential Work Unit: Design a context file template to standardize AI session continuity — enabling consistent ingestion of prior context and structured generation of updated summaries.
+
+This will support your AI-native workflow by ensuring:
+
+    Clear, repeatable context handoff
+
+    Human- and AI-readable project snapshots
+
+    Easy diffing and versioning in Git
+
+You can tackle this later as needed. No action required now.
+By the way, all of the tasks that you had added to this context are actually not complete, despite how the icons may have made it seem. Those items are still work units that will need to be processed later.
+Finished
+
+Understood — none of the tasks in the context file are actually complete. They remain active work units to be processed in future development sessions.
+
+This clarification ensures accurate project tracking and prevents misinterpretation of progress. Your approach of using Markdown context files for continuity remains valid and effective.
+
+Let me know when you'd like to:
+
+    Re-prioritize work units
+
+    Generate a new context snapshot
+
+    Begin implementation on a specific task
+
+We’ll keep everything aligned with your AI-native workflow.
+Ok, uhm.... which work units do you think I should approach next? I think I've come up with an effective way to handle the project management, and so I think I can reframe the OpenProject and other project tool related work units as "switch to using gorgeous AI-native markdown context files" and mark that as complete.
+Finished
+
+Based on your progress and refined AI-native workflow, here are the next recommended work units to advance the Talvixguide Engine:
+1. Build the CLI Signer Tool (talvix-sign)
+
+    Why: Enables creators to cryptographically sign metadata — core to trust and decentralization.
+
+    Scope:
+
+        Parse TOML input (toml++)
+
+        Serialize to canonical JSON
+
+        Sign with Ed25519 (Libsodium) or RSA (OpenSSL)
+
+        Output signed JSON with embedded signature
+
+    Outcome: First working tool in the tools/ suite.
+
+C++ CLI tool with Libsodium signing
+2. Draft ROADMAP.md and PROJECT_CONTEXT.md
+
+    Why: Formalize vision and priorities using your AI-native Markdown system.
+
+    Action: Convert your current context into a clean, versioned PROJECT_CONTEXT.md; define phases in ROADMAP.md.
+
+    Bonus: Mark “Switch to AI-native Markdown context files” as complete — you’ve already validated the approach.
+
+ROADMAP.md, project planning document
+3. Implement Unit Tests (GoogleTest)
+
+    Why: Ensure parsing, signing, and concurrency logic are reliable.
+
+    Start With:
+
+        TOML → JSON roundtrip
+
+        Signature verification
+
+        Error handling for malformed input
+
+# Add to CMakeLists.txt
+CPMAddPackage("gh:google/googletest@1.14")
+enable_testing()
+ 
+
+GoogleTest github
+4. Prototype YouTube Metadata Extractor (Future-Proofing)
+
+    Why: Validate real-world metadata ingestion.
+
+    Scope: Use YouTube Data API v3 + OAuth 2.0 → output TOML.
+
+    Deferrable, but good to spike early.
+
+Recommended Order:
+1 → 2 → 3 — build the signer, document the state, then test it.
+
+You’re in a strong position — no need for heavy tools. Keep shipping.
+1. Build the CLI Signer Tool (talvix-sign)
+2. Draft ROADMAP.md and PROJECT_CONTEXT.md
+3. Implement Unit Tests (GoogleTest)
+4. Prototype YouTube Metadata Extractor (Future-Proofing)
+Ok, very interesting. From your perspective, you're suggesting that I create the tools directory, and start working on the signer as well as the extractor. I can then use the extractor to extract some YouTube metadata, and then I can use the signer to sign that metadata. I can also start working on some of the tests to see that all of this works as intended. Is that what you're suggesting?
+Finished
+
+Yes — that’s exactly what I’m suggesting.
+
+    Create the tools/ directory
+    → Add signer/ and extractor/ subdirectories.
+
+    Build the extractor first
+    → Use the YouTube Data API v3 to fetch video metadata (title, tags, duration, etc.)
+    → Output to TOML for human review
+
+    Pass that TOML to the signer
+    → Sign with Ed25519 (Libsodium) or RSA (OpenSSL)
+    → Output signed JSON for ingestion
+
+    Write unit tests
+    → Validate parsing (toml++), signing, and roundtrip integrity
+    → Use GoogleTest for assertions
+
+This flow gives you a complete metadata pipeline: extract → review → sign → verify → store.
+C++ YouTube API metadata extractor example
+Cool! Yeah, that could be very good. I may want to create some folders that are .gitignored for the extractor to put the metadata in. Uhm.... I also might want to write some initial code for the backend to ingest the metadata.
+Finished
+
+Yes — your plan is solid and aligned with best practices.
+✅ Create .gitignored Folders for Extractor Output
+
+Add a directory like metadata_raw/ or extracted_metadata/ and exclude it via .gitignore:
+
+# Metadata output from extractors
+/extracted_metadata/
+/metadata_raw/
+ 
+
+Place a .gitkeep (empty file) inside if you want to preserve the directory structure in Git.
+gitignore keep directory structure
+✅ Start Backend Ingestion Code
+
+Begin with a simple ingestion pipeline:
+
+    Read signed JSON metadata
+
+    Parse with yyjson (high-performance)
+
+    Validate signature (Ed25519/OpenSSL)
+
+    Store in internal structure or forward to indexer 
+
+Example sketch:
+
+auto json = yyjson_read(file_data, len, 0);
+if (json && verify_signature(json, pubkey)) {
+    index_metadata(json);
+}
+ 
+
+C++ JSON ingestion pipeline with yyjson
+
+You're building a clean, secure, and scalable flow:
+YouTube → TOML → Sign → JSON → Ingest → Index.
+Keep it modular, test each step, and use Markdown context files to track progress.
+✅ Create .gitignored Folders for Extractor Output
+✅ Start Backend Ingestion Code
+Cool! I like this alot. Uhm.... yes, I could have a metadata folder, with subfolders for raw TOML metadata and processed JSON metadata so that the processed JSON can be extremely efficiently ingested by the backend. The extractor can automatically convert the TOML metadata to the JSON metadata, so it can actually produce both files simultaneously when being used with an API to extract metadata from a website that supports this operation.
+Finished
+
+Yes — your plan is excellent and aligns with modern, scalable backend design.
+✅ Folder Structure for Metadata
+
+Create:
+
+/metadata
+  /raw_toml      # .gitignored, human-readable input
+  /processed_json  # .gitignored, optimized for ingestion
+ 
+
+✅ Extractor: TOML + JSON Output
+
+Use toml++ to parse YouTube metadata (via API or yt-dlp), then:
+
+    Save TOML to /raw_toml → for creator review
+
+    Convert to JSON using toml::json_formatter → save to /processed_json 
+
+// Example: TOML → JSON with toml++
+auto config = toml::parse_file("video.metadata.toml");
+std::ofstream json_out("video.metadata.json");
+json_out << toml::json_formatter{ config };
+ 
+
+✅ Backend Ingestion
+
+Use yyjson to efficiently parse and validate signed JSON:
+
+    Verify signature before ingestion
+
+    Index metadata into internal structures or search engine 
+
+C++ yyjson parse signed JSON metadata
+
+You now have a secure, efficient pipeline:
+YouTube → TOML (raw) → JSON (processed) → Signed → Ingested → Indexed.
+✅ Folder Structure for Metadata
+✅ Extractor: TOML + JSON Output
+✅ Backend Ingestion
+As an aside, I think I should .gitignore the toml files themselves, as well as the processed-json files themselves, but I will keep the metadata->raw-toml and metadata->processed-json folder structure as part of the project, so that it's consistent across installations.
+Finished
+
+Yes — .gitignore the TOML and JSON metadata files, but keep the directory structure in version control.
+✅ Recommended Setup
+
+    Add to .gitignore:
+
+    # Ignore all metadata files
+    /metadata/raw_toml/*
+    /metadata/processed_json/*
+     
+
+    Keep folder structure:
+
+        Add empty .gitkeep files inside:
+
+        metadata/raw_toml/.gitkeep
+        metadata/processed_json/.gitkeep
+         
+
+        Commit these to preserve the structure across clones. 
+
+    Why This Works:
+
+        Prevents transient metadata from polluting the repo.
+
+        Ensures consistent paths across environments.
+
+        Aligns with Git best practices for generated data. 
+
+Cool, very cool. Uhm.... would the .gitkeep file be ignored by the .gitignore line? Maybe I could explicitly allow those files to NOT be ignored?
+Finished
+
+No, the .gitkeep file will not be ignored by Git if you properly exclude it in your .gitignore.
+
+To ensure .gitkeep files are tracked:
+
+    Add this to your .gitignore:
+
+    /metadata/raw_toml/*
+    /metadata/processed_json/*
+    !/metadata/raw_toml/.gitkeep
+    !/metadata/processed_json/.gitkeep
+     
+
+    Or use a more general pattern:
+
+    /metadata/raw_toml/*
+    /metadata/processed_json/*
+    !**/.gitkeep
+     
+
+The ! negation rule un-ignores the .gitkeep files, so Git will track them and preserve the directory structure.
+git ignore all except .gitkeep
+Ah, cool! Alright, that works reasonably well. Ok, so.... I think that gives me some idea about what to work on next and that also gives us a lot of context to work with. Ok, let's go ahead and generate a new context file for this chat session. Would you kindly mark the things that I've stated are complete as complete and all other work units as something that is available to work on?
+Finished
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 06, 2026
+    Status: Early Development
+    Next Step: Implement CLI signer and metadata extractor tools
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files. No need for OpenProject or complex tooling.
+
+    Git structure for metadata
+    /metadata/raw_toml and /metadata/processed_json directories established, both .gitignore-d with .gitkeep for structure preservation. 
+
+🟡 In Progress
+
+    Build CLI signer tool (talvix-sign)
+    Tool to sign TOML metadata with Ed25519 (Libsodium) or RSA (OpenSSL). Output signed JSON for backend ingestion.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Initial versions in progress. This file serves as the primary context snapshot. 
+
+🔳 Available Work Units
+
+    Set up GitHub Project board
+    Optional; current Markdown system may suffice.
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+C++ project context file markdown template example
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+Ok, that's not too bad, but there are a few things here. Firstly, it's March 5. Next, I'd like to use UI, not CLI, signer and extractor tools, as I imagine users will want to utilize the significant user comfort that those provide, especially to non-technical people. I did not actually complete the git structure for the metadata, so that should be marked in progress. In addition, could you include all of the other context that was discussed previously? If you could condense these things and make them terse, that would also be ideal.
+Finished
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 05, 2026
+    Status: Early Development
+    Next Step: Implement UI-based signer and extractor tools
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files. This replaces the need for OpenProject or complex tooling.
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules excluding files but preserving structure via .gitkeep.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical tools using Qt (recommended) or Dear ImGui for broader user accessibility, especially non-technical creators.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Capture evolving vision and priorities in versioned Markdown.
+
+🔳 Available Work Units
+
+    Set up GitHub Project board
+    Optional — current Markdown system may suffice.
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+Qt, C++ GUI framework
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+Ok, those are some great improvements! However, there is a significant amount of context that was discussed earlier in this conversation. Do you recall?
+Finished
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 06, 2026
+    Status: Early Development
+    Next Step: Implement UI-based signer and extractor tools
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files. This replaces the need for OpenProject or complex tooling.
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules excluding files but preserving structure via .gitkeep.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical tools using Qt (recommended) for broad accessibility, especially for non-technical users.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Capture evolving vision and priorities in versioned Markdown.
+
+🔳 Available Work Units
+
+    Set up GitHub Project board
+    Optional — current Markdown system may suffice.
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+AI-native development workflow, software engineering practice
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+Talvixguide Engine – Project Context Summary
+Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution (via NVIDIA stdexec, experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored (creator-facing), simple and safe
+
+        JSON: Machine-generated/bulk, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++ – Header-only, modern C++, supports TOML + JSON/YAML output
+
+        yyjson – Ultra-fast JSON parsing for backend ingestion
+
+    Cryptography:
+
+        Signing/Verification: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band verification); optional JWKS later
+
+        Signature Scope: Support both file-wide and per-entry signatures 
+
+Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake
+
+        Embed CPM.cmake in repo for reproducibility
+
+        Integrate:
+
+            toml++ (TOML)
+
+            yyjson (JSON)
+
+            stdexec (structured concurrency)
+
+            OpenSSL or libsodium (crypto)
+
+    Compiler Flags: -std=c++23 (current), -std=c++2c (C++26 features)
+
+    Future Automation: Add Renovate for automated dependency updates
+
+Tooling & Workflow
+
+    Monorepo Structure:
+
+    /backend        # Core engine
+    /tools
+      /signer       # CLI/GUI for metadata signing
+      /extractor    # (Future) Pull metadata from platforms (e.g., YouTube API)
+    /libs
+      /metadata     # Shared parsing logic
+      /crypto       # Shared signing/verification
+     
+
+    Signing Tool:
+
+        Standalone but in monorepo for shared deps
+
+        CLI: talvix-sign metadata.toml --key creator.key
+
+        Optional GUI using Dear ImGui or Qt
+
+    Metadata Extraction:
+
+        Use official APIs only (e.g., YouTube Data API v3)
+
+        OAuth 2.0 for user consent
+
+        Export to TOML for signing
+
+Project Management & DevOps
+
+    Tracking: GitHub Projects (public Kanban) + OpenProject (self-hosted, full control)
+
+    Docs: Public ROADMAP.md, PROJECT_CONTEXT.md
+
+    Backup: Mirror to self-hosted Git (Gitea/Forgejo)
+
+    CI/CD: GitHub Actions (planned)
+
+Next Work Units
+
+    ✅ Set up CMake + CPM.cmake (embed script)
+
+    ✅ Integrate toml++ and yyjson
+
+    ✅ Add stdexec for concurrency (experimental C++26)
+
+    ✅ Implement metadata parsing (TOML in, JSON out)
+
+    ✅ Design signing/verification flow with OpenSSL/Libsodium
+
+    🟡 Build CLI signer tool (talvix-sign)
+
+    🟡 Draft ROADMAP.md and PROJECT_CONTEXT.md
+
+    🔳 Set up GitHub Project board
+
+    🔳 Prototype YouTube API metadata fetcher
+
+    🔳 Add unit tests (GoogleTest) 
+
+This context file captures the full vision, stack, and roadmap. Copy and paste this into future sessions to restore continuity.
+Finished
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 06, 2026
+    Status: Early Development
+    Next Step: Implement UI-based signer and extractor tools
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files. This replaces the need for OpenProject or complex tooling.
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules excluding files but preserving structure via .gitkeep.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical tools using Qt (recommended) for broad accessibility, especially for non-technical users.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Capture evolving vision and priorities in versioned Markdown. 
+
+🔳 Available Work Units
+
+    Set up GitHub Project board
+    Optional — current Markdown system may suffice.
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+🧱 Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution via NVIDIA stdexec (experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored, safe, creator-facing
+
+        JSON: Machine-generated, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++: Header-only, TOML + JSON/YAML output
+
+        yyjson: Ultra-fast JSON parsing
+
+    Cryptography:
+
+        Signing: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band); optional JWKS later
+
+        Signature Scope: File-wide and per-entry signatures
+
+🛠️ Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake (embedded)
+
+        toml++, yyjson, stdexec, OpenSSL/libsodium
+
+    Compiler Flags: -std=c++23, -std=c++2c (C++26)
+
+    Future: Add Renovate for automated updates 
+
+📁 Monorepo Structure
+
+/backend            # Core engine
+/tools
+  /signer           # GUI for metadata signing (Qt)
+  /extractor        # GUI for metadata extraction (YouTube API)
+/libs
+  /metadata         # Shared TOML/JSON parsing
+  /crypto           # Shared signing/verification
+ 
+
+🌐 Metadata Extraction
+
+    Use YouTube Data API v3 (official)
+
+    OAuth 2.0 for user consent
+
+    Export to TOML → sign → convert to JSON 
+
+Talvixguide Engine, decentralized media discovery project
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+🧱 Core Design Choices
+🛠️ Build & Dependency Management
+📁 Monorepo Structure
+🌐 Metadata Extraction
+Ok, thank you! Yes, that adds quite a bit more context. Today is still March 5th.
+Finished
+
+You're correct — today is March 5, 2026, not March 6. The previous context file has been updated with the correct date.
+
+Here is the final, accurate version of your project context:
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 05, 2026
+    Status: Early Development
+    Next Step: Implement UI-based signer and extractor tools
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files. This replaces the need for OpenProject or complex tooling.
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules excluding files but preserving structure via .gitkeep.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical tools using Qt (recommended) for broad accessibility, especially for non-technical users.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Capture evolving vision and priorities in versioned Markdown.
+
+🔳 Available Work Units
+
+    Set up GitHub Project board
+    Optional — current Markdown system may suffice.
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+🧱 Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution via NVIDIA stdexec (experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored, safe, creator-facing
+
+        JSON: Machine-generated, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++: Header-only, TOML + JSON/YAML output
+
+        yyjson: Ultra-fast JSON parsing
+
+    Cryptography:
+
+        Signing: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band); optional JWKS later
+
+        Signature Scope: File-wide and per-entry signatures
+
+🛠️ Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake (embedded)
+
+        toml++, yyjson, stdexec, OpenSSL/libsodium
+
+    Compiler Flags: -std=c++23, -std=c++2c (C++26)
+
+    Future: Add Renovate for automated updates
+
+📁 Monorepo Structure
+
+/backend            # Core engine
+/tools
+  /signer           # GUI for metadata signing (Qt)
+  /extractor        # GUI for metadata extraction (YouTube API)
+/libs
+  /metadata         # Shared TOML/JSON parsing
+  /crypto           # Shared signing/verification
+ 
+
+🌐 Metadata Extraction
+
+    Use YouTube Data API v3 (official)
+
+    OAuth 2.0 for user consent
+
+    Export to TOML → sign → convert to JSON
+
+Talvixguide Engine, decentralized media discovery project
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+🧱 Core Design Choices
+🛠️ Build & Dependency Management
+📁 Monorepo Structure
+🌐 Metadata Extraction
+Let me give you the current file structure at the moment, too, so you have that.... build  cmake  CMakeLists.txt  CMakePresets.json  data  devlog  docs  extern  include  LICENSE  README.md  scripts  src  tests, at the top level... and then .... src->talvixguide test->CMakeLists.txt devlog->context-files devlog->conversations. The talvixguide is intended to help keep the includes a bit more manageable, and that probably should also be in the include folder. I would need to double-check what extern is intended for. The scripts are potential build scripts that might be meaningful or helpful. As an aside, the folder structure can be revised later as more things are processed.
+Finished
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 05, 2026
+    Status: Early Development
+    Next Step: Align folder structure with modern C++/CMake conventions 
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files. This replaces the need for OpenProject or complex tooling.
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules excluding files but preserving structure via .gitkeep.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical tools using Qt (recommended) for broad accessibility, especially for non-technical users.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Capture evolving vision and priorities in versioned Markdown. 
+
+🔳 Available Work Units
+
+    Set up GitHub Project board
+    Optional — current Markdown system may suffice.
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+🧱 Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution via NVIDIA stdexec (experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored, safe, creator-facing
+
+        JSON: Machine-generated, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++: Header-only, TOML + JSON/YAML output
+
+        yyjson: Ultra-fast JSON parsing
+
+    Cryptography:
+
+        Signing: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band); optional JWKS later
+
+        Signature Scope: File-wide and per-entry signatures
+
+🛠️ Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake (embedded)
+
+        toml++, yyjson, stdexec, OpenSSL/libsodium
+
+    Compiler Flags: -std=c++23, -std=c++2c (C++26)
+
+    Future: Add Renovate for automated updates 
+
+📁 Current Folder Structure
+
+.
+├── build/               # Out-of-source build (ignored in .gitignore)
+├── cmake/               # CMake helper modules (Find*.cmake)
+├── CMakeLists.txt       # Root CMake config
+├── CMakePresets.json    # CMake build presets
+├── data/                # Runtime assets (e.g., icons, configs)
+├── devlog/              # AI context files and conversation logs
+│   ├── context-files/
+│   └── conversations/
+├── docs/                # Project documentation
+├── extern/              # Git submodules or vendored 3rd-party deps
+├── include/             # Public headers (mirrored to install path)
+├── LICENSE
+├── README.md
+├── scripts/             # Build, format, or utility scripts
+├── src/
+│   └── talvixguide/     # Implementation source files
+├── tests/               # Unit/integration tests
+└── talvixguide/         # Proposed: move to include/talvixguide/
+ 
+
+🔄 Structure Recommendations
+
+    Move talvixguide/ from root → include/talvixguide/ to expose public headers cleanly.
+
+    Keep private headers in src/talvixguide/.
+
+    Use #include "talvixguide/module.hpp" pattern for clarity.
+
+    Place all CMakeLists.txt files in source directories (not include).
+
+    Use extern/ for git submodules (e.g., extern/toml++ if not via CPM). 
+
+C++ project structure, software engineering practice
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+🧱 Core Design Choices
+🛠️ Build & Dependency Management
+📁 Current Folder Structure
+🔄 Structure Recommendations
+i'm actually not sure what the extern directory is supposed to be used for. I think submodules is a reasonable idea. I will likely need to figure out something to handle dependency checking, when the time comes. Uhm.... is it standard practice to keep the project headers in the src->talvixguide directory? I hadn't considered that. What is the include directory normally for?
+Finished
+
+The extern directory is typically used for third-party dependencies — especially when embedding submodules or vendored libraries (e.g., extern/toml++). It’s optional if using CPM.cmake, but useful for offline builds or auditing.
+
+Regarding headers:
+
+    include/ is for public headers — exposed to users of your library (e.g., #include <talvixguide/parser.hpp>).
+
+    src/talvixguide/ should contain private headers — internal implementation details not exposed in the public API. 
+
+✅ Best Practice:
+Use include/talvixguide/*.hpp for public headers, src/talvixguide/*.hpp for private ones. This separates interface from implementation and supports clean installation and packaging.
+C++ include directory vs src headers project structure
+Ok, got it. I'm not sure if this project is going to have any public headers, although it might in the future. Hmm..... interesting. I think there was some other ideas about using the extern keyword in order to help manage compile-time issues if I were to use something like the CRTP pattern in order to optimize for compile-time polymorphism. One of the issues that came up is that I could end up with a longer compile time if I use a lot of compile-time optimizations and metaprogramming. What do you think?
+Finished
+
+Yes — CRTP and heavy template metaprogramming can significantly increase compile times, especially with deep or repeated instantiations. However, the performance benefits at runtime (zero-overhead polymorphism) often justify the cost.
+
+The extern template keyword (C++11) helps reduce compile time and binary size by preventing redundant template instantiations across translation units. You declare extern template class MyTemplate<int>; in headers and provide the instantiation (template class MyTemplate<int>;) in one .cpp file.
+
+✅ Best Practice:
+Use CRTP for performance-critical paths, but limit template bloat with:
+
+    extern template for commonly used types
+
+    Precompiled headers
+
+    Separate compilation of template-heavy components 
+
+C++ CRTP compile time optimization extern template
+Ok, cool! Uhm.... hmm.... alright, what does the updated context file look like?
+Finished
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 05, 2026
+    Status: Early Development
+    Next Step: Finalize folder structure and header organization
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files. This replaces the need for OpenProject or complex tooling.
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules excluding files but preserving structure via .gitkeep.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical tools using Qt (recommended) for broad accessibility, especially for non-technical users.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Capture evolving vision and priorities in versioned Markdown.
+
+🔳 Available Work Units
+
+    Set up GitHub Project board
+    Optional — current Markdown system may suffice.
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+🧱 Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution via NVIDIA stdexec (experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored, safe, creator-facing
+
+        JSON: Machine-generated, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++: Header-only, TOML + JSON/YAML output
+
+        yyjson: Ultra-fast JSON parsing
+
+    Cryptography:
+
+        Signing: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band); optional JWKS later
+
+        Signature Scope: File-wide and per-entry signatures
+
+🛠️ Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake (embedded)
+
+        toml++, yyjson, stdexec, OpenSSL/libsodium
+
+    Compiler Flags: -std=c++23, -std=c++2c (C++26)
+
+    Future: Add Renovate for automated updates
+
+📁 Current Folder Structure
+
+.
+├── build/               # Out-of-source build
+├── cmake/               # CMake modules
+├── CMakeLists.txt
+├── CMakePresets.json
+├── data/
+├── devlog/
+│   ├── context-files/
+│   └── conversations/
+├── docs/
+├── extern/              # For git submodules or vendored deps
+├── include/             # Public headers (future: talvixguide/)
+├── LICENSE
+├── README.md
+├── scripts/
+├── src/
+│   └── talvixguide/     # Private headers & implementation
+├── tests/
+└── talvixguide/         # To be moved → include/talvixguide/
+ 
+
+🔄 Structure & Compilation Notes
+
+    include/: For public headers (future use if library exposed).
+
+    src/talvixguide/: For private headers (internal use only).
+
+    extern/: Valid for submodules (e.g., extern/toml++), but CPM.cmake reduces need.
+
+    CRTP & Compile Times: Use extern template to reduce bloat from heavy metaprogramming. Explicitly instantiate templates in one .cpp file and declare extern template in headers. 
+
+C++ extern template, compile-time optimization
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+🧱 Core Design Choices
+🛠️ Build & Dependency Management
+📁 Current Folder Structure
+🔄 Structure & Compilation Notes
+Cool! Uhm.... I think the "Set up GitHub Project board" may be unnecessary at this point, since the context files will fairly well track the project state, so that work unit can be remove altogether. Oh! I have not decided on the C++ front-end tools I'd like to use to create the GUI. Let's discuss that momentarily. The rest of your context summary looks quite good!
+Finished
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 06, 2026
+    Status: Early Development
+    Next Step: Choose GUI framework for signer and extractor tools
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files.
+
+    Remove "Set up GitHub Project board"
+    Unnecessary — context files provide sufficient tracking.
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules and .gitkeep.
+
+    Choose C++ GUI framework
+    Evaluating Qt, Dear ImGui, and wxWidgets for UI tools targeting non-technical users.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical interface for broader accessibility.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Capture evolving vision and priorities in versioned Markdown.
+
+🔳 Available Work Units
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+🧱 Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution via NVIDIA stdexec (experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored, safe, creator-facing
+
+        JSON: Machine-generated, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++: Header-only, TOML + JSON/YAML output
+
+        yyjson: Ultra-fast JSON parsing
+
+    Cryptography:
+
+        Signing: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band); optional JWKS later
+
+        Signature Scope: File-wide and per-entry signatures
+
+🛠️ Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake (embedded)
+
+        toml++, yyjson, stdexec, OpenSSL/libsodium
+
+    Compiler Flags: -std=c++23, -std=c++2c (C++26)
+
+    Future: Add Renovate for automated updates 
+
+📁 Current Folder Structure
+
+.
+├── build/
+├── cmake/
+├── CMakeLists.txt
+├── CMakePresets.json
+├── data/
+├── devlog/
+│   ├── context-files/
+│   └── conversations/
+├── docs/
+├── extern/              # For submodules (e.g., vendored deps)
+├── include/             # Public headers (future use)
+├── LICENSE
+├── README.md
+├── scripts/
+├── src/
+│   └── talvixguide/     # Private headers & implementation
+├── tests/
+└── talvixguide/         # To be moved → include/talvixguide/
+ 
+
+🖥️ GUI Framework Evaluation
+Framework	Pros	Cons	Best For
+Qt	Native look, mature, cross-platform, Qt Creator IDE	Larger binary, MOC step, license considerations	Non-technical users, production apps
+Dear ImGui	Lightweight, immediate-mode, fast iteration	Not for traditional UIs, less accessible	Dev tools, debug interfaces
+wxWidgets	Wraps native controls, lightweight	Limited ecosystem, maintenance concerns	Simple native apps
+
+✅ Recommendation: Use Qt for signer and extractor tools — best balance of native UX, cross-platform support, and developer tooling for non-technical users.
+Qt, C++ GUI framework
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+🧱 Core Design Choices
+🛠️ Build & Dependency Management
+📁 Current Folder Structure
+🖥️ GUI Framework Evaluation
+Cool! I like that context. Ok, uhm.... let's create the markdown context file for that summary. Let's create it in such a way that another chatbot could pick up the context from that prompt. Are you ready?
+Finished
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 06, 2026
+    Status: Early Development
+    Next Step: Finalize GUI framework decision and begin signer tool implementation
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files.
+
+    Remove "Set up GitHub Project board"
+    Unnecessary — context files provide sufficient tracking. 
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules and .gitkeep.
+
+    Choose C++ GUI framework
+    Evaluating Qt, Dear ImGui, and wxWidgets for signer and extractor tools.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical interface for broader accessibility.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Capture evolving vision and priorities in versioned Markdown. 
+
+🔳 Available Work Units
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+🧱 Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution via NVIDIA stdexec (experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored, safe, creator-facing
+
+        JSON: Machine-generated, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++: Header-only, TOML + JSON/YAML output
+
+        yyjson: Ultra-fast JSON parsing
+
+    Cryptography:
+
+        Signing: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band); optional JWKS later
+
+        Signature Scope: File-wide and per-entry signatures
+
+🛠️ Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake (embedded)
+
+        toml++, yyjson, stdexec, OpenSSL/libsodium
+
+    Compiler Flags: -std=c++23, -std=c++2c (C++26)
+
+    Future: Add Renovate for automated updates
+
+📁 Current Folder Structure
+
+.
+├── build/
+├── cmake/
+├── CMakeLists.txt
+├── CMakePresets.json
+├── data/
+├── devlog/
+│   ├── context-files/
+│   └── conversations/
+├── docs/
+├── extern/              # For submodules (e.g., vendored deps)
+├── include/             # Public headers (future use)
+├── LICENSE
+├── README.md
+├── scripts/
+├── src/
+│   └── talvixguide/     # Private headers & implementation
+├── tests/
+└── talvixguide/         # To be moved → include/talvixguide/
+ 
+
+🖥️ GUI Framework Evaluation
+Framework	Pros	Cons	Best For
+Qt	Native look, mature, cross-platform, Qt Creator IDE	Larger binary, MOC step, license considerations	Non-technical users, production apps
+Dear ImGui	Lightweight, immediate-mode, fast iteration	Not for traditional UIs, less accessible	Dev tools, debug interfaces
+wxWidgets	Wraps native controls, lightweight	Limited ecosystem, maintenance concerns	Simple native apps
+
+✅ Recommendation: Use Qt for signer and extractor tools — best balance of native UX, cross-platform support, and developer tooling for non-technical users.
+Talvixguide Engine, decentralized media discovery project
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+🧱 Core Design Choices
+🛠️ Build & Dependency Management
+📁 Current Folder Structure
+🖥️ GUI Framework Evaluation
+Ah, forgive me. I meant to create that same context summary, but convert it to markdown. As an aside, today is still March 5th where I am.
+Finished
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 05, 2026
+    Status: Early Development
+    Next Step: Finalize GUI framework decision and begin signer tool implementation
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files.
+
+    Remove "Set up GitHub Project board"
+    Unnecessary — context files provide sufficient tracking.
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules and .gitkeep.
+
+    Choose C++ GUI framework
+    Evaluating Qt, Dear ImGui, and wxWidgets for signer and extractor tools.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical interface for broader accessibility.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Capture evolving vision and priorities in versioned Markdown.
+
+🔳 Available Work Units
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+🧱 Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution via NVIDIA stdexec (experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored, safe, creator-facing
+
+        JSON: Machine-generated, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++: Header-only, TOML + JSON/YAML output
+
+        yyjson: Ultra-fast JSON parsing
+
+    Cryptography:
+
+        Signing: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band); optional JWKS later
+
+        Signature Scope: File-wide and per-entry signatures
+
+🛠️ Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake (embedded)
+
+        toml++, yyjson, stdexec, OpenSSL/libsodium
+
+    Compiler Flags: -std=c++23, -std=c++2c (C++26)
+
+    Future: Add Renovate for automated updates
+
+📁 Current Folder Structure
+
+.
+├── build/
+├── cmake/
+├── CMakeLists.txt
+├── CMakePresets.json
+├── data/
+├── devlog/
+│   ├── context-files/
+│   └── conversations/
+├── docs/
+├── extern/              # For submodules (e.g., vendored deps)
+├── include/             # Public headers (future use)
+├── LICENSE
+├── README.md
+├── scripts/
+├── src/
+│   └── talvixguide/     # Private headers & implementation
+├── tests/
+└── talvixguide/         # To be moved → include/talvixguide/
+ 
+
+🖥️ GUI Framework Evaluation
+Framework	Pros	Cons	Best For
+Qt	Native look, mature, cross-platform, Qt Creator IDE	Larger binary, MOC step, license considerations	Non-technical users, production apps
+Dear ImGui	Lightweight, immediate-mode, fast iteration	Not for traditional UIs, less accessible	Dev tools, debug interfaces
+wxWidgets	Wraps native controls, lightweight	Limited ecosystem, maintenance concerns	Simple native apps
+
+✅ Recommendation: Use Qt for signer and extractor tools — best balance of native UX, cross-platform support, and developer tooling for non-technical users.
+Talvixguide Engine, decentralized media discovery project
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+🧱 Core Design Choices
+🛠️ Build & Dependency Management
+📁 Current Folder Structure
+🖥️ GUI Framework Evaluation
+No, no, I mean produce that summary, but the explicit markdown so that I could preview it from github. Do you know what I mean?
+Stopped
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 05, 2026
+    Status: Early Development
+    Next Step: Finalize GUI framework decision and begin signer tool implementation
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files.
+
+    Remove "Set up GitHub Project board"
+    Unnecessary — context files provide sufficient tracking.
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules and .gitkeep.
+
+    Choose C++ GUI framework
+    Evaluating Qt, Dear ImGui, and wxWidgets for signer and extractor tools.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical interface for broader accessibility.
+
+    **Draft ROADMAP.md
+
+✅ Completed Work Units
+🟡 In Progress
+No, no, I mean, I would like you to give me the markdown so that I could copy and paste the output into a markdown file. Does that make sense?
+Stopped
+Talvixguide Engine – Project Context Summary
+
+    Last Updated: March 05, 2026
+    Status: Early Development
+    Next Step: Finalize GUI framework decision and begin signer tool implementation
+
+✅ Completed Work Units
+
+    Switch to AI-native Markdown context files
+    Project continuity is now managed via human- and AI-readable .md files.
+
+    Remove "Set up GitHub Project board"
+    Unnecessary — context files provide sufficient tracking.
+
+🟡 In Progress
+
+    Git structure for metadata
+    Create /metadata/raw_toml and /metadata/processed_json with .gitignore rules and .gitkeep.
+
+    Choose C++ GUI framework
+    Evaluating Qt, Dear ImGui, and wxWidgets for signer and extractor tools.
+
+    Build UI signer and extractor tools
+    Shift from CLI to graphical interface for broader accessibility.
+
+    Draft ROADMAP.md and PROJECT_CONTEXT.md
+    Capture evolving vision and priorities in versioned Markdown.
+
+🔳 Available Work Units
+
+    Prototype YouTube API metadata fetcher
+    Extract video metadata → output TOML → feed to signer.
+
+    Add unit tests (GoogleTest)
+    Validate parsing, signing, and ingestion logic.
+
+    Implement backend ingestion pipeline
+    Use yyjson to parse and verify signed JSON metadata for indexing.
+
+🔮 Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+🧱 Core Design Choices
+
+✅ Completed Work Units
+🟡 In Progress
+🔳 Available Work Units
+🔮 Vision
+🧱 Core Design Choices
+Hmm... it seems that you're still giving me the output of the preview of the markdown, but not the markdown syntax itself. Are you able to follow me?
+Finished
+
+To provide you with the raw Markdown source of the context file — so you can copy, paste, and preview it directly in any Markdown viewer (like GitHub) — here is the full .md syntax, properly escaped and formatted:
+
+# Talvixguide Engine – Project Context Summary  
+> **Last Updated**: March 05, 2026  
+> **Status**: Early Development  
+> **Next Step**: Finalize GUI framework decision and begin signer tool implementation  
+
+## ✅ Completed Work Units
+- **Switch to AI-native Markdown context files**  
+  Project continuity is now managed via human- and AI-readable `.md` files.
+- **Remove "Set up GitHub Project board"**  
+  Unnecessary — context files provide sufficient tracking.
+
+## 🟡 In Progress
+- **Git structure for metadata**  
+  Create `/metadata/raw_toml` and `/metadata/processed_json` with `.gitignore` rules and `.gitkeep`.
+- **Choose C++ GUI framework**  
+  Evaluating **Qt**, **Dear ImGui**, and **wxWidgets** for signer and extractor tools.
+- **Build UI signer and extractor tools**  
+  Shift from CLI to graphical interface for broader accessibility.
+- **Draft `ROADMAP.md` and `PROJECT_CONTEXT.md`**  
+  Capture evolving vision and priorities in versioned Markdown.
+
+## 🔳 Available Work Units
+- **Prototype YouTube API metadata fetcher**  
+  Extract video metadata → output TOML → feed to signer.
+- **Add unit tests (GoogleTest)**  
+  Validate parsing, signing, and ingestion logic.
+- **Implement backend ingestion pipeline**  
+  Use `yyjson` to parse and verify signed JSON metadata for indexing.
+
+## 🔮 Vision
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+
+## 🧱 Core Design Choices
+- **Language**: C++17/20 → C++23 → C++26 (planned)  
+- **Concurrency**: `std::execution` via NVIDIA `stdexec` (experimental `-std=c++2c`)  
+- **Metadata Formats**:  
+  - **TOML**: Human-authored, safe, creator-facing  
+  - **JSON**: Machine-generated, high-performance parsing  
+- **Parsing Libraries**:  
+  - **toml++**: Header-only, TOML + JSON/YAML output  
+  - **yyjson**: Ultra-fast JSON parsing  
+- **Cryptography**:  
+  - **Signing**: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)  
+  - **Trust Model**: Explicit key trust (out-of-band); optional JWKS later  
+  - **Signature Scope**: File-wide and per-entry signatures  
+
+## 🛠️ Build & Dependency Management
+- **Build System**: CMake  
+- **Dependencies**: Managed via **CPM.cmake** (embedded)  
+  - `toml++`, `yyjson`, `stdexec`, `OpenSSL`/`libsodium`  
+- **Compiler Flags**: `-std=c++23`, `-std=c++2c` (C++26)  
+- **Future**: Add Renovate for automated updates  
+
+## 📁 Current Folder Structure
+```
+.
+├── build/
+├── cmake/
+├── CMakeLists.txt
+├── CMakePresets.json
+├── data/
+├── devlog/
+│   ├── context-files/
+│   └── conversations/
+├── docs/
+├── extern/              # For submodules (e.g., vendored deps)
+├── include/             # Public headers (future use)
+├── LICENSE
+├── README.md
+├── scripts/
+├── src/
+│   └── talvixguide/     # Private headers & implementation
+├── tests/
+└── talvixguide/         # To be moved → include/talvixguide/
+```
+
+## 🖥️ GUI Framework Evaluation
+| Framework | Pros | Cons | Best For |
+|---------|------|------|--------|
+| **Qt** | Native look, mature, cross-platform, Qt Creator IDE | Larger binary, MOC step, license considerations | Non-technical users, production apps |
+| **Dear ImGui** | Lightweight, immediate-mode, fast iteration | Not for traditional UIs, less accessible | Dev tools, debug interfaces |
+| **wxWidgets** | Wraps native controls, lightweight | Limited ecosystem, maintenance concerns | Simple native apps |
+
+✅ **Recommendation**: Use **Qt** for signer and extractor tools — best balance of **native UX**, **cross-platform support**, and **developer tooling** for non-technical users.
+ 
+
+Talvixguide Engine, decentralized media discovery project
+
+
+You can now:
+- Copy the entire block above
+- Paste it into a file named `PROJECT_CONTEXT.md`
+- Save it in your project root or `devlog/context-files/`
+- Preview it on GitHub or any Markdown viewer :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//www.reddit.com/r/OpenAI/comments/103xt7u/how_can_i_ask_chatgbt_to_output_answers_in_raw/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8&quot;,&quot;title&quot;&#58;&quot;r/OpenAI&#32;on&#32;Reddit&#58;&#32;How&#32;can&#32;I&#32;ask&#32;ChatGBT&#32;to&#32;output&#32;answers&#32;in&#32;...&quot;,&quot;snippet&quot;&#58;&quot;Ask&#32;it&#32;to&#32;just&#32;directly&#32;output&#32;markdown&#32;format&#32;nothing&#32;else&#32;and&#32;you'll&#32;copy&#32;the&#32;text&#32;raw&#32;exactly&#32;as-is.&#32;In-browser&#32;it&#32;might&#32;look&#32;messed&#32;up&#32;but&#32;after&#32;pasting&#32;it's&#32;flawless&quot;&#125;&#93;"}
+
+Let me know when you'd like to generate the next version. :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//dev.to/aimarkdown/command-chatgpt-to-render-markdown-with-12-magic-words-including-images-10ok&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/UUpF8I85K--vkQzrhameM7iRPRU5VCTXyWbS4sk6G2g/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNTg5MTcxNDBh/N2U4ODc4MDg0NWQ4/MzU0YWJkNDY3ZWRm/MjUxY2U1YjY5MzJm/YWRlOTI4YjAyZDI1/ZjU0MmJjNi9kZXYu/dG8v&quot;,&quot;title&quot;&#58;&quot;Command&#32;ChatGPT&#32;To&#32;Render&#32;Markdown&#32;with&#32;12&#32;Magic&#32;Words&#32;(including&#32;...&quot;,&quot;snippet&quot;&#58;&quot;Check&#32;out&#32;to&#32;see...\nChatGPT&#32;4&#32;is&#32;required&#32;-&#32;April&#32;12,&#32;2024&#32;version.\nIn&#32;a&#32;hurry...\nCheck&#32;out&#32;to&#32;see&#32;Markdown&#32;display&#32;in&#32;action&#58;\nhttps&#58;//chat.openai.com/share/473879c4-8d1f-4608-968e-fbdb115b3cb9\nTL;DR\nWe&#32;have&#32;all&#32;spoken&#32;ma…&quot;&#125;&#93;"}
+ 
+
+Yes! Beautiful. Yes, I was looking for the raw Markdown source for the context file. Thank you for clarifying what I was looking for. I wasn't sure what to call it. Ok, that helps a lot!
+Finished
+
+You're welcome! The raw Markdown source gives you full control — perfect for versioning, previewing, and AI continuity. Let me know when you'd like to generate the next context update or dive into implementing the Qt-based signer tool.
+Ok, I will try that context file in another session and give you some feedback on how it went.
+Finished
+
+You're absolutely right — structured, versioned Markdown context files are a powerful way to maintain AI continuity. The search results confirm this is a growing best practice in AI-assisted development.
+
+Key insights:
+
+    Treat context as infrastructure, not overhead — like version control or CI/CD.
+
+    Use modular, linked Markdown files (e.g., STATUS.md, SPECS.md) for scalability.
+
+    Git-native workflows ensure portability, auditability, and team alignment.
+
+    Avoid monolithic prompts — instead, use reference chains (e.g., Continuity Prompt → Handoff Doc → Core Docs).
+
+    Include quantifiable progress metrics and exact commands to reduce friction. 
+
+Your approach aligns perfectly: lightweight, tool-agnostic, and designed for long-term project evolution.
+
+Let me know when you'd like to generate the next context update or refine the system further.
+Ohhh.... modularizing the context prompts is also a great idea! I will implement that in the future as the project grows in size and the context becomes larger.
+Finished
+
+Modularizing your context files is a best practice for AI-native workflows. Use a hierarchical structure with a root PROJECT_CONTEXT.md that links to focused sub-files like VISION.md, ARCHITECTURE.md, ROADMAP.md, and GUIDELINES.md. This enables:
+
+    Progressive disclosure: AI loads only what’s needed per task.
+
+    Easier maintenance: Update one file without bloating a monolith.
+
+    Scalability: Add domain-specific context (e.g., GUI_FRAMEWORK.md) as the project grows.
+
+Tools like Context-Evaluator can audit for drift, contradictions, or gaps in modular setups.
+modular Markdown context files AI development best practices
+I'll come back to the modular structure for context later.
+Finished
+
+Modularizing context files is a best practice for AI-native workflows. Use a hierarchical structure with a root PROJECT_CONTEXT.md that links to focused sub-files like VISION.md, ARCHITECTURE.md, ROADMAP.md, and GUIDELINES.md. This enables:
+
+    Progressive disclosure: AI loads only what’s needed per task.
+
+    Easier maintenance: Update one file without bloating a monolith.
+
+    Scalability: Add domain-specific context (e.g., GUI_FRAMEWORK.md) as the project grows.
+
+Tools like Context-Evaluator can audit for drift, contradictions, or gaps in modular setups.
+modular context files AI project management best practices
+Great! Thanks for the feedback.
+Finished
+
+You're welcome! Let me know when you'd like to continue — whether it's refining the context system, starting the Qt UI, or generating code.
+AI-generated answer. Please verify critical facts.
+Talvixguide Engine – Project Context Summary Vision High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms. Core Design Choices Language: C++17/20 → C++23 → C++26 (planned) Concurrency: std::execution (via NVIDIA stdexec, experimental -std=c++2c) Metadata Formats: TOML: Human-authored (creator-facing), simple and safe JSON: Machine-generated/bulk, high-performance parsing Parsing Libraries: toml++ – Header-only, modern C++, supports TOML + JSON/YAML output yyjson – Ultra-fast JSON parsing for backend ingestion Cryptography: Signing/Verification: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519) Trust Model: Explicit key trust (out-of-band verification); optional JWKS later Signature Scope: Support both file-wide and per-entry signatures Build & Dependency Management Build System: CMake Dependencies: Managed via CPM.cmake Embed CPM.cmake in repo for reproducibility Integrate: toml++ (TOML) yyjson (JSON) stdexec (structured concurrency) OpenSSL or libsodium (crypto) Compiler Flags: -std=c++23 (current), -std=c++2c (C++26 features) Future Automation: Add Renovate for automated dependency updates Tooling & Workflow Monorepo Structure: /backend # Core engine /tools /signer # CLI/GUI for metadata signing /extractor # (Future) Pull metadata from platforms (e.g., YouTube API) /libs /metadata # Shared parsing logic /crypto # Shared signing/verification Signing Tool: Standalone but in monorepo for shared deps CLI: talvix-sign metadata.toml --key creator.key Optional GUI using Dear ImGui or Qt Metadata Extraction: Use official APIs only (e.g., YouTube Data API v3) OAuth 2.0 for user consent Export to TOML for signing Project Management & DevOps Tracking: GitHub Projects (public Kanban) + OpenProject (self-hosted, full control) Docs: Public ROADMAP.md, PROJECT_CONTEXT.md Backup: Mirror to self-hosted Git (Gitea/Forgejo) CI/CD: GitHub Actions (planned) Next Work Units ✅ Set up CMake + CPM.cmake (embed script) ✅ Integrate toml++ and yyjson ✅ Add stdexec for concurrency (experimental C++26) ✅ Implement metadata parsing (TOML in, JSON out) ✅ Design signing/verification flow with OpenSSL/Libsodium 🟡 Build CLI signer tool (talvix-sign) 🟡 Draft ROADMAP.md and PROJECT_CONTEXT.md 🔳 Set up GitHub Project board 🔳 Prototype YouTube API metadata fetcher 🔳 Add unit tests (GoogleTest) This context file captures the full vision, stack, and roadmap. Copy and paste this into future sessions to restore continuity. - Ask Brave
+

@@ -47,3 +47,20 @@ is done through their own APIs and that the users authorize the extraction. I th
 Ok, so I spent more time than I probably should have, but I made a lot of progress in terms of planning out the project. I'm 
 starting to see a clearer picture in terms of where this can go and what sort of value this project could provide to both creators 
 and consumers. 
+
+10:11 PM 
+11:55 PM 
+Oh wow, so I discovered the joy of context engineering! Oh, this is really, really cool! I didn't really understand what people 
+were getting at when they were describing this, but now I understand. Yes, using AI to help develop projects is very, very 
+powerful and almost addicting. At some point, I think I'm going to have to create a better AI chatbot so that these sorts 
+of things are that much better and that much easier. In any case, I must work with what I've got. 
+
+Ok, that's great! I've added a few more work units and I made some more decisions about how the project is intended to 
+progress. I think I'll likely start with forming the frontend for the extractor and signer first. I think I'll design those 
+and keep them relatively simple. I'll need to come up with some boundaries for the context files and prompts when the time 
+comes, as I don't want to load the entire context of the whole project for every work session. 
+
+Yeah, this is pretty amazing overall! I understand now what people are thinking about when they're discussing how 
+software development is changing. 
+
+Ok, I think I'll stop here and pick up where I left off sometime later. 
