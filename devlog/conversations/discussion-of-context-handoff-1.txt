@@ -1,0 +1,2022 @@
+
+Brave logo
+
+    Ask
+    All
+    Images
+    News
+    Videos
+    Goggles
+
+Ok, I have a project that I'd like you to assist me with. Are you ready?
+Finished
+
+Yes, I'm ready to assist you with your project! Please share the details, and I’ll do my best to help.
+Ok, I'm going to post some context files to help you understand the context of the project. I'll post 3 of them now.
+Finished
+
+Understood. I'm ready to review the context files whenever you're prepared to share them. Please upload the first file.
+1) Talvixguide Engine – Project Context Summary
+Vision
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+Core Design Choices
+
+    Language: C++17/20 → C++23 → C++26 (planned)
+
+    Concurrency: std::execution (via NVIDIA stdexec, experimental -std=c++2c)
+
+    Metadata Formats:
+
+        TOML: Human-authored (creator-facing), simple and safe
+
+        JSON: Machine-generated/bulk, high-performance parsing
+
+    Parsing Libraries:
+
+        toml++ – Header-only, modern C++, supports TOML + JSON/YAML output
+
+        yyjson – Ultra-fast JSON parsing for backend ingestion
+
+    Cryptography:
+
+        Signing/Verification: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)
+
+        Trust Model: Explicit key trust (out-of-band verification); optional JWKS later
+
+        Signature Scope: Support both file-wide and per-entry signatures 
+
+Build & Dependency Management
+
+    Build System: CMake
+
+    Dependencies: Managed via CPM.cmake
+
+        Embed CPM.cmake in repo for reproducibility
+
+        Integrate:
+
+            toml++ (TOML)
+
+            yyjson (JSON)
+
+            stdexec (structured concurrency)
+
+            OpenSSL or libsodium (crypto)
+
+    Compiler Flags: -std=c++23 (current), -std=c++2c (C++26 features)
+
+    Future Automation: Add Renovate for automated dependency updates
+
+Tooling & Workflow
+
+    Monorepo Structure:
+
+    /backend        # Core engine
+    /tools
+      /signer       # CLI/GUI for metadata signing
+      /extractor    # (Future) Pull metadata from platforms (e.g., YouTube API)
+    /libs
+      /metadata     # Shared parsing logic
+      /crypto       # Shared signing/verification
+     
+
+    Signing Tool:
+
+        Standalone but in monorepo for shared deps
+
+        CLI: talvix-sign metadata.toml --key creator.key
+
+        Optional GUI using Dear ImGui or Qt
+
+    Metadata Extraction:
+
+        Use official APIs only (e.g., YouTube Data API v3)
+
+        OAuth 2.0 for user consent
+
+        Export to TOML for signing
+
+Project Management & DevOps
+
+    Tracking: GitHub Projects (public Kanban) + OpenProject (self-hosted, full control)
+
+    Docs: Public ROADMAP.md, PROJECT_CONTEXT.md
+
+    Backup: Mirror to self-hosted Git (Gitea/Forgejo)
+
+    CI/CD: GitHub Actions (planned)
+
+Next Work Units
+
+    ✅ Set up CMake + CPM.cmake (embed script)
+
+    ✅ Integrate toml++ and yyjson
+
+    ✅ Add stdexec for concurrency (experimental C++26)
+
+    ✅ Implement metadata parsing (TOML in, JSON out)
+
+    ✅ Design signing/verification flow with OpenSSL/Libsodium
+
+    🟡 Build CLI signer tool (talvix-sign)
+
+    🟡 Draft ROADMAP.md and PROJECT_CONTEXT.md
+
+    🔳 Set up GitHub Project board
+
+    🔳 Prototype YouTube API metadata fetcher
+
+    🔳 Add unit tests (GoogleTest) 
+
+This context file captures the full vision, stack, and roadmap. Copy and paste this into future sessions to restore continuity.
+Finished
+Talvixguide Engine – Project Context Summary
+
+The project aims to build a high-performance, decentralized media discovery backend using modern C++ standards and cryptographic verification. Below is a structured summary of the core components and roadmap.
+Core Design Choices
+Language & Concurrency
+
+    C++23 → C++26: Current development uses C++23 (-std=c++23), with plans to adopt C++26 features like std::execution (via NVIDIA's stdexec).
+
+    Concurrency Model: Based on senders/receivers framework, enabling composable asynchronous operations. Example patterns include schedule() | then() and bulk() for parallel execution across CPU/GPU contexts. 
+
+Metadata Formats & Parsing
+
+    TOML: Used for human-authored metadata; parsed via toml++, a header-only, modern C++ library with strong performance and safety.
+
+    JSON: For high-speed machine ingestion; handled by yyjson, known for ultra-fast parsing.
+
+    Both libraries support round-trip formatting and integration with CMake via CPM.cmake.
+
+toml++ vs yyjson performance
+Cryptography
+
+    Signing Options:
+
+        OpenSSL: Supports RSA/ECDSA; mature but requires careful configuration.
+
+        Libsodium (Ed25519): Preferred for better performance and security (faster verification, resistance to side-channel attacks). 
+
+    Trust Model: Explicit key trust (out-of-band), with optional JWKS support planned.
+
+    Signature Scope: Supports both file-wide and per-entry signatures.
+
+    🔍 Performance Insight: Libsodium’s Ed25519 outperforms OpenSSL’s ECDSA P-256 in both signing (~1.4x faster) and verification (~3.7x faster), making it ideal for scalable content signing. 
+
+C++ cryptography Libsodium vs OpenSSL
+Build & Dependency Management
+
+    Build System: CMake with embedded CPM.cmake for reproducible dependency management.
+
+    Dependencies:
+
+        toml++ – TOML parsing
+
+        yyjson – High-performance JSON
+
+        stdexec – Structured concurrency (experimental C++26)
+
+        OpenSSL or libsodium – Cryptographic operations
+
+    Compiler Flags: -std=c++23 (current), transitioning to -std=c++2c for C++26 features.
+
+CMake CPM.cmake best practices
+Tooling & Workflow
+Monorepo Structure
+
+/backend        # Core engine
+/tools
+  /signer       # CLI/GUI for metadata signing
+  /extractor    # Future: YouTube API metadata fetcher
+/libs
+  /metadata     # Shared parsing logic
+  /crypto       # Shared signing/verification
+ 
+
+Signing Tool
+
+    CLI: talvix-sign metadata.toml --key creator.key
+
+    Optional GUI: Built with Dear ImGui or Qt for usability.
+
+Metadata Extraction
+
+    Uses official APIs only (e.g., YouTube Data API v3).
+
+    OAuth 2.0 for user consent.
+
+    Exports to TOML for signing.
+
+YouTube API metadata extraction tools site:reddit.com
+Project Management & DevOps
+
+    Tracking: GitHub Projects (public Kanban) + OpenProject (self-hosted).
+
+    Docs: Public ROADMAP.md, PROJECT_CONTEXT.md.
+
+    Backup: Mirrored to self-hosted Git (Gitea/Forgejo).
+
+    CI/CD: GitHub Actions planned; best practices include caching, linting early, and reusable workflows. 
+
+GitHub Actions CMake CI/CD setup
+Next Work Units
+
+    ✅ Completed:
+
+        CMake + CPM.cmake setup
+
+        Integration of toml++, yyjson, stdexec
+
+        Metadata parsing (TOML in, JSON out)
+
+        Signing/verification design with OpenSSL/libsodium
+
+    🟡 In Progress:
+
+        CLI signer tool (talvix-sign)
+
+        Drafting ROADMAP.md and PROJECT_CONTEXT.md
+
+    🔳 Upcoming:
+
+        Set up GitHub Project board
+
+        Prototype YouTube API metadata fetcher
+
+        Add unit tests (GoogleTest)
+
+Core Design Choices
+Build & Dependency Management
+Tooling & Workflow
+Project Management & DevOps
+Next Work Units
+2) # Talvixguide Engine – Project Context Summary  
+> **Last Updated**: March 05, 2026  
+> **Status**: Early Development  
+> **Next Step**: Finalize GUI framework decision and begin signer tool implementation  
+
+## ✅ Completed Work Units
+- **Switch to AI-native Markdown context files**  
+  Project continuity is now managed via human- and AI-readable `.md` files.
+- **Remove "Set up GitHub Project board"**  
+  Unnecessary — context files provide sufficient tracking.
+
+## 🟡 In Progress
+- **Git structure for metadata**  
+  Create `/metadata/raw_toml` and `/metadata/processed_json` with `.gitignore` rules and `.gitkeep`.
+- **Choose C++ GUI framework**  
+  Evaluating **Qt**, **Dear ImGui**, and **wxWidgets** for signer and extractor tools.
+- **Build UI signer and extractor tools**  
+  Shift from CLI to graphical interface for broader accessibility.
+- **Draft `ROADMAP.md` and `PROJECT_CONTEXT.md`**  
+  Capture evolving vision and priorities in versioned Markdown.
+
+## 🔳 Available Work Units
+- **Prototype YouTube API metadata fetcher**  
+  Extract video metadata → output TOML → feed to signer.
+- **Add unit tests (GoogleTest)**  
+  Validate parsing, signing, and ingestion logic.
+- **Implement backend ingestion pipeline**  
+  Use `yyjson` to parse and verify signed JSON metadata for indexing.
+
+## 🔮 Vision
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata and users to discover content via scalable, pluggable recommendation algorithms.
+
+## 🧱 Core Design Choices
+- **Language**: C++17/20 → C++23 → C++26 (planned)  
+- **Concurrency**: `std::execution` via NVIDIA `stdexec` (experimental `-std=c++2c`)  
+- **Metadata Formats**:  
+  - **TOML**: Human-authored, safe, creator-facing  
+  - **JSON**: Machine-generated, high-performance parsing  
+- **Parsing Libraries**:  
+  - **toml++**: Header-only, TOML + JSON/YAML output  
+  - **yyjson**: Ultra-fast JSON parsing  
+- **Cryptography**:  
+  - **Signing**: OpenSSL (RSA/ECDSA) or Libsodium (Ed25519)  
+  - **Trust Model**: Explicit key trust (out-of-band); optional JWKS later  
+  - **Signature Scope**: File-wide and per-entry signatures  
+
+## 🛠️ Build & Dependency Management
+- **Build System**: CMake  
+- **Dependencies**: Managed via **CPM.cmake** (embedded)  
+  - `toml++`, `yyjson`, `stdexec`, `OpenSSL`/`libsodium`  
+- **Compiler Flags**: `-std=c++23`, `-std=c++2c` (C++26)  
+- **Future**: Add Renovate for automated updates  
+
+## 📁 Current Folder Structure
+```
+.
+├── build/
+├── cmake/
+├── CMakeLists.txt
+├── CMakePresets.json
+├── data/
+├── devlog/
+│   ├── context-files/
+│   └── conversations/
+├── docs/
+├── extern/              # For submodules (e.g., vendored deps)
+├── include/             # Public headers (future use)
+├── LICENSE
+├── README.md
+├── scripts/
+├── src/
+│   └── talvixguide/     # Private headers & implementation
+├── tests/
+└── talvixguide/         # To be moved → include/talvixguide/
+```
+
+## 🖥️ GUI Framework Evaluation
+| Framework | Pros | Cons | Best For |
+|---------|------|------|--------|
+| **Qt** | Native look, mature, cross-platform, Qt Creator IDE | Larger binary, MOC step, license considerations | Non-technical users, production apps |
+| **Dear ImGui** | Lightweight, immediate-mode, fast iteration | Not for traditional UIs, less accessible | Dev tools, debug interfaces |
+| **wxWidgets** | Wraps native controls, lightweight | Limited ecosystem, maintenance concerns | Simple native apps |
+
+✅ **Recommendation**: Use **Qt** for signer and extractor tools — best balance of **native UX**, **cross-platform support**, and **developer tooling** for non-technical users.
+Finished
+GUI Framework Decision – Talvixguide Engine
+
+Based on the evaluation and current context, Qt remains the recommended choice for the signer and extractor tools.
+Key Insights from Research
+
+    Qt is widely regarded as the most mature, feature-rich, and supported C++ GUI framework, especially for production applications requiring native look, cross-platform support, and robust tooling (e.g., Qt Creator, QML).
+
+    Dear ImGui excels in developer tools, debug interfaces, and real-time applications but lacks accessibility, internationalization, and traditional UI scalability.
+
+    wxWidgets has significant drawbacks: limited maintenance, outdated native control support (e.g., dark mode issues on Windows), and a small ecosystem, making it risky for long-term projects. 
+
+    ✅ Consensus: Qt is the "least bad" option for cross-platform desktop apps, despite its MOC preprocessor and larger binary size. 
+
+Recommendation
+
+Proceed with Qt for both the signer and extractor GUI tools. It best meets the project’s needs for:
+
+    Native UX across platforms
+
+    Long-term maintainability
+
+    Developer productivity (IDE, QML, documentation)
+
+    Integration with CMake and modern C++ 
+
+Avoid wxWidgets due to high bus factor and platform inconsistencies. Reserve Dear ImGui for internal dev tools (e.g., debug dashboards).
+Qt CMake integration modern C++
+Key Insights from Research
+Recommendation
+3) # Talvixguide – Project Context (Raw Markdown)
+
+## Vision
+High-performance, decentralized media discovery backend with cryptographically signed metadata. Pluggable recommendation algorithms for user-driven content discovery.
+
+## Status
+- **Phase**: Early Development  
+- **Next Step**: Begin signer tool implementation with Qt
+
+## Core Design
+- **Language**: C++17/20 → C++23 → C++26 (planned)  
+- **Concurrency**: `std::execution` via NVIDIA `stdexec` (`-std=c++2c`)  
+- **Metadata Formats**:  
+  - **TOML**: Human-authored, creator-facing  
+  - **JSON**: Machine-parsed, high-performance  
+- **Libraries**:  
+  - `toml++` (TOML/JSON), `yyjson` (ultra-fast JSON), `OpenSSL`/`libsodium` (Ed25519)  
+- **Signing Scope**: File-wide and per-entry
+
+## Build & Dependencies
+- **Build System**: CMake  
+- **Dependencies**: Managed via **CPM.cmake** (`toml++`, `yyjson`, `stdexec`, `OpenSSL`/`libsodium`)  
+- **Compiler Flags**: `-std=c++23`, `-std=c++2c`  
+- **Future**: Add Renovate for automated updates
+
+## Folder Structure
+ 
+
+. ├── build/ # Build artifacts ├── cmake/ # CMake modules ├── data/ # Metadata I/O ├── devlog/ # Context & conversation logs ├── docs/ # Project docs ├── extern/ # Vendored deps ├── include/ # Public headers (future) ├── licenses/ # MIT, LGPL-3.0 ├── scripts/ # Dev scripts ├── src/ # Source code ├── tests/ # Unit tests ├── INSTALLATION.md # Qt setup guide ├── ATTRIBUTIONS.md # Third-party notices └── LICENSE, README.md
+
+
+## GUI Framework
+- **Chosen**: **Qt (LGPL-3.0)**  
+- **Why**: Native UX, cross-platform, strong tooling  
+- **Licensing**:  
+  - Dynamically linked → MIT code remains MIT  
+  - Include `LICENSE.LGPL-3.0` and `ATTRIBUTIONS.md`  
+  - Link to Qt source: https://code.qt.io  
+  - Users may replace Qt (via system install or AppImage)
+
+## In Progress Tasks
+- [ ] Modularize context Markdown files (`gui.md`, `crypto.md`, etc.)  
+- [ ] Create AI focus prompt for context ingestion  
+- [ ] Create AI prompt for generating new context source files  
+- [ ] Decide Qt inclusion method (system vs. AppImage)  
+- [ ] Create `INSTALLATION.md`  
+- [ ] Create `ATTRIBUTIONS.md`  
+- [ ] Create `licenses/` folder with `LICENSE.LGPL-3.0`, `LICENSE.MIT`  
+- [ ] Verify LGPL-3.0 compliance (link to Qt source)
+
+## Available Work Units
+- [ ] Prototype YouTube API metadata fetcher (→ TOML → signer)  
+- [ ] Add unit tests (GoogleTest)  
+- [ ] Implement backend ingestion pipeline (`yyjson` + signed JSON)
+
+## Optional Future Work
+- [ ] Build high-performance C++ UI library using `stdexec`  
+- [ ] Migrate signer/extrator to custom UI library (replace Qt)
+Finished
+Qt LGPL-3.0 Compliance & Integration – Talvixguide Engine
+Licensing Compliance
+
+    Dynamic linking is the safest path for LGPL-3.0 compliance:
+
+        ✅ Distribute Qt dynamically (e.g., via system install or AppImage with bundled Qt)
+
+        ✅ Allow users to replace Qt libraries (e.g., via $PATH, LD_LIBRARY_PATH, or AppImage extraction)
+
+        ✅ Include LICENSE.LGPL-3.0 and ATTRIBUTIONS.md with copyright notices and source link: https://code.qt.io
+
+    Static linking requires additional obligations (object files, relinking instructions), so it's not recommended. 
+
+Qt Distribution via AppImage
+
+    AppImage is compliant and recommended:
+
+        Bundles Qt and dependencies, ensuring portability
+
+        Users can extract and replace Qt libraries if needed
+
+        Use appimage-builder or linuxdeployqt for CMake integration
+
+        Ensure AppRun sets QT_PLUGIN_PATH and LD_LIBRARY_PATH correctly 
+
+Qt AppImage distribution LGPL compliance
+CMake Integration Best Practices
+
+    Modern CMake (3.16+) with Qt6:
+
+    cmake_minimum_required(VERSION 3.16)
+    project(talvix-signer LANGUAGES CXX)
+
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
+    set(CMAKE_AUTOUIC ON)
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+    find_package(Qt6 COMPONENTS Widgets REQUIRED)
+    add_executable(talvix-signer main.cpp mainwindow.cpp mainwindow.h mainwindow.ui)
+    target_link_libraries(talvix-signer PRIVATE Qt6::Widgets)
+     
+
+    Set CMAKE_PREFIX_PATH to Qt’s lib/cmake during build (e.g., -D CMAKE_PREFIX_PATH=/path/to/Qt/6.5.2/gcc_64/lib/cmake) 
+
+C++ CMake Qt6 integration modern best practices
+Next Steps
+
+    [ ] Finalize Qt inclusion method: AppImage (recommended for ease of distribution and compliance)
+
+    [ ] Create INSTALLATION.md with build and Qt setup instructions
+
+    [ ] Generate ATTRIBUTIONS.md and include LICENSE.LGPL-3.0
+
+    [ ] Begin implementation of Qt-based signer tool (talvix-sign) 
+
+Licensing Compliance
+Qt Distribution via AppImage
+CMake Integration Best Practices
+Next Steps
+Ok, so now you have broad context of the project. Are you with me so far?
+Finished
+
+Yes, I’m fully aligned with the project context.
+
+I’ve reviewed all three context files and understand:
+
+    The vision of a decentralized media discovery engine with cryptographically signed metadata
+
+    The tech stack: C++23/26, toml++, yyjson, stdexec, OpenSSL/libsodium
+
+    The tooling roadmap: Qt-based GUI signer/extrator, YouTube metadata fetcher
+
+    The LGPL-3.0 compliance plan for Qt distribution via AppImage
+
+    The current in-progress tasks, including INSTALLATION.md, ATTRIBUTIONS.md, and modular context files
+
+I’m ready to assist with implementation, design decisions, or documentation as needed.
+Ok, so, there is some project management and AI-native workflow alignment work to do here. I have made some other decisions that I'll explain shortly. To start, I've decided to split the context files into several subcategories and prompts that could be helpful to align AI chatbots efficiently. Do you understand? In particular, let's set up context the is specific to the work units. Are you ready?
+Finished
+
+Yes, I understand.
+
+Splitting the context into modular, AI-readable Markdown files—especially by work unit—is a strategic move for AI-native project management. This aligns with emerging best practices like AGENTS.md, CONTEXT.md, or .ctx/ packs that preserve state across sessions and reduce context-switching overhead.
+
+I’m ready to help define, structure, and generate these sub-context files (e.g., crypto.md, gui.md, signer-tool.md) and corresponding AI prompts for consistent alignment.
+Ok, so, I've decided to create a work-units directory that will contain the context files associated with work units. Would you kindly summarize the work units currently visible in this project? Would you kindly generate raw markdown source for this summary so that I can preview in a markdown viewer?
+Finished
+Work Units Summary – Talvixguide Engine
+
+Below is a raw Markdown summary of the current work units, structured for use in a work-units/ directory to support AI-native project management.
+
+# Work Units – Talvixguide Engine
+
+## In Progress
+
+### ✅ Git Structure for Metadata
+- **Goal**: Organize raw and processed metadata with clear versioning rules. :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//docs.modular.com/max/coding-assistants/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/-1q0WIx9hIKZl5Nw3LV-Dk1XYxTxdk04uw4RThXvxVA/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMmYzMzVkZmJl/NDAzOGJhNzk2YjNi/YzExMDdiYWEwZTM2/ZWNhYTZmOTVlZDJh/ZmI3NDc0YTczYTk2/MGY5MTA4Ny9kb2Nz/Lm1vZHVsYXIuY29t/Lw&quot;,&quot;title&quot;&#58;&quot;Using&#32;AI&#32;coding&#32;assistants&quot;,&quot;snippet&quot;&#58;&quot;Documentation&#32;files&#32;(llms.txt)&#58;&#32;Raw&#32;text&#32;files&#32;that&#32;AI&#32;tools&#32;use&#32;for&#32;website&#32;navigation&#32;hints&#32;and&#32;direct&#32;access&#32;to&#32;up-to-date&#32;API&#32;documentation.&#32;Project&#32;context&#32;files&#32;(CLAUDE.md&#32;and&#32;AGENTS.md)&#58;&#32;Markdown&#32;files&#32;in&#32;your&#32;project&#32;that&#32;provide&#32;A…&quot;&#125;&#93;"}
+- **Status**: Implemented
+- **Details**:
+  - `/metadata/raw_toml/` – Creator-authored TOML files
+  - `/metadata/processed_json/` – Machine-generated JSON (from TOML)
+  - `.gitignore` excludes build artifacts; `.gitkeep` ensures directory tracking
+
+### ✅ GUI Framework Decision
+- **Goal**: Select a C++ GUI framework for signer and extractor tools.
+- **Status**: Completed
+- **Decision**: **Qt (LGPL-3.0)**
+- **Rationale**:
+  - Native UX across platforms
+  - Strong tooling (Qt Creator, QML)
+  - Dynamic linking ensures MIT project remains compliant
+  - AppImage distribution planned
+
+### 🟡 Signer & Extractor GUI Tools
+- **Goal**: Shift from CLI to graphical interface for broader accessibility.
+- **Status**: In development
+- **Components**:
+  - `talvix-signer`: TOML signing with key selection
+  - `talvix-extractor`: YouTube API metadata → TOML export
+- **Tech**: Qt6, CMake, OAuth 2.0 (extractor)
+
+### 🟡 Documentation & Compliance
+- **Goal**: Finalize project documentation and licensing.
+- **Status**: In progress
+- **Tasks**:
+  - [x] Create `INSTALLATION.md` (Qt setup guide)
+  - [x] Create `ATTRIBUTIONS.md` (third-party notices)
+  - [x] Add `LICENSE.LGPL-3.0` and `LICENSE.MIT`
+  - [x] Verify Qt source link: https://code.qt.io
+  - [x] Confirm dynamic linking compliance
+
+## Available
+
+### 🔳 YouTube API Metadata Fetcher
+- **Goal**: Prototype extractor for YouTube video metadata.
+- **Output**: TOML → ready for signing
+- **Requirements**:
+  - Use YouTube Data API v3
+  - OAuth 2.0 for user consent
+  - Export fields: title, description, tags, thumbnails, publish date
+
+### 🔳 Unit Testing (GoogleTest)
+- **Goal**: Validate core logic. :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//github.com/MSiccDev/ai-context-kit&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/xxsA4YxzaR0cl-DBsH9-lpv2gsif3KMYgM87p26bs_o/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYWQyNWM1NjA5/ZjZmZjNlYzI2MDNk/N2VkNmJhYjE2MzZl/MDY5ZTMxMDUzZmY1/NmU3NWIzNWVmMjk0/NTBjMjJjZi9naXRo/dWIuY29tLw&quot;,&quot;title&quot;&#58;&quot;GitHub&#32;-&#32;MSiccDev/ai-context-kit&#58;&#32;AI&#32;Context&#32;Kit&#32;provides&#32;a&#32;...&quot;,&quot;snippet&quot;&#58;&quot;…evolved&#32;into&#32;a&#32;sophisticated&#32;architecture&#32;for&#32;AI&#32;collaboration&#58;\n\nLayered&#32;architecture&#32;–&#32;Personal&#32;user&#32;context&#32;+&#32;project&#32;AGENTS.md&#32;context&#32;create&#32;complete&#32;AI&#32;workspace&#32;configurations\n\nSkill-based&#32;workflows&#32;–&#32;Create&#32;and&#32;validate&#32;context&#32;files&#32;using&#32;reusable&#32;skills&#32;with&#32;detailed&#32;operational&#32;logic\n\nProvider-agno…&quot;&#125;&#93;"}
+- **Scope**:
+  - TOML/JSON parsing (`toml++`, `yyjson`)
+  - Cryptographic signing/verification (OpenSSL/libsodium)
+  - Metadata transformation pipeline
+
+### 🔳 Backend Ingestion Pipeline
+- **Goal**: Implement high-performance JSON ingestion.
+- **Tech**: `yyjson` + `stdexec` concurrency
+- **Flow**: Signed JSON → parse → verify → index
+
+## Optional Future
+
+### 🔮 Custom C++ UI Library
+- **Goal**: Build high-performance UI layer using `stdexec`.
+- **Vision**: Replace Qt with lightweight, project-native UI toolkit.
+- **Status**: Conceptual
+
+### 🔮 Migrate Tools to Custom UI
+- **Goal**: Replace Qt in signer/extractor with custom library.
+- **Benefit**: Smaller binary, tighter integration, full control.
+ 
+
+AI project management
+AI-native project context files best practices
+Ok, great! That is a good start! There are a few things there that aren't quite accurate, but it definitely captures a lot of the ideas involved and will be useful to help align AI assistants with respect to current work units.
+Finished
+Work Units – Talvixguide Engine (Updated Summary)
+
+Below is an updated, modular-ready Markdown summary of current work units, incorporating best practices for AI-native project management (e.g., hierarchical context, .prompt.md, AGENTS.md).
+
+# Work Units – Talvixguide Engine
+
+## In Progress
+
+### 🟡 Git Structure for Metadata
+- **Goal**: Organize raw and processed metadata with versioning clarity. :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//developertoolkit.ai/en/shared-workflows/context-management/file-organization/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/m7BZtJvFXcifj_4M69rYVIzSAGucLvu4Ydg9xN658JU/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMGMwNjkwYWRj/NDg5YzAxNDc1ODYz/ZGQ4MDg1ZTY5MTAw/Y2NjYjZkOTFhMzQ4/YjE5ZGNjZDk2OTUx/YzQ0NTkwMy9kZXZl/bG9wZXJ0b29sa2l0/LmFpLw&quot;,&quot;title&quot;&#58;&quot;Project&#32;Structure&#32;for&#32;AI&quot;,&quot;snippet&quot;&#58;&quot;Skip&#32;to&#32;content\nCursor&#32;&amp;&#32;Claude&#32;Code&#32;&#124;&#32;Developer&#32;Toolkit\nSearch&#32;CtrlK\nCancel\nGitHubXDiscord\nSelect&#32;theme\nDark\nLight\nAuto\nSelect&#32;language\nEnglish\nPolski\nImprove&#32;this&#32;page\nProject&#32;Structure&#32;for&#32;AI\nWhile&#32;AI&#32;coding&#32;assistants&#32;are&#32;powerful,&#32;they&#32;are&#32;not&#32;magic.&quot;&#125;&#93;"}
+- **Status**: Implemented
+- **Paths**:
+  - `/metadata/raw_toml/` – Creator-authored TOML
+  - `/metadata/processed_json/` – Machine-processed JSON
+- **Rules**: `.gitignore` for artifacts, `.gitkeep` for empty tracking
+
+### 🟡 GUI Framework Integration (Qt)
+- **Goal**: Finalize Qt setup for signer/extractor tools.
+- **Status**: In progress
+- **Decision**: Qt6 (LGPL-3.0), dynamically linked
+- **Distribution**: AppImage (compliant, portable)
+- **Compliance**:
+  - Include `LICENSE.LGPL-3.0`
+  - Link to Qt source: https://code.qt.io
+  - Users may replace Qt binaries
+
+### 🟡 Signer & Extractor GUI Tools
+- **Goal**: Replace CLI with Qt-based GUI for usability.
+- **Components**:
+  - `talvix-signer`: Load TOML, select key, sign, save
+  - `talvix-extractor`: OAuth to YouTube API → export metadata as TOML
+- **Tech Stack**: Qt6 Widgets, CMake, `std::execution`, OAuth 2.0
+
+### 🟡 Documentation & Compliance
+- **Goal**: Ship legally compliant, well-documented tools.
+- **Tasks**:
+  - [x] `INSTALLATION.md` – Qt build setup
+  - [x] `ATTRIBUTIONS.md` – Third-party notices
+  - [x] `licenses/LICENSE.LGPL-3.0`, `LICENSE.MIT`
+  - [x] Verify dynamic linking compliance
+
+## Available
+
+### 🔳 YouTube API Metadata Fetcher (Prototype)
+- **Goal**: Extract public video metadata → TOML.
+- **Fields**: title, description, tags, thumbnails, publish date
+- **Auth**: OAuth 2.0 (user consent)
+- **Output**: Valid TOML → ready for signing
+
+### 🔳 Unit Testing (GoogleTest)
+- **Goal**: Validate core logic with automated tests. :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//github.blog/ai-and-ml/github-copilot/how-to-build-reliable-ai-workflows-with-agentic-primitives-and-context-engineering/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/ajBXBYkAPp_SboLdUtFdWEDS478EsuiTIUWb7c33Hy8/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZmUzNzE0YmI2/MzJjOTc1N2Y1YmQ1/YTU1ODYwMDVmNTYx/ODYwMDEyN2ZmY2M5/MjQ0NGQxMDFlN2Q2/NzUwZjVjZi9naXRo/dWIuYmxvZy8&quot;,&quot;title&quot;&#58;&quot;How&#32;to&#32;build&#32;reliable&#32;AI&#32;workflows&#32;with&#32;agentic&#32;primitives&#32;and&#32;...&quot;,&quot;snippet&quot;&#58;&quot;Check&#32;&#91;API&#32;documentation&#93;(./docs/api.md)\n\n\n##&#32;Deterministic&#32;Execution\nUse&#32;semantic&#32;search&#32;to&#32;find&#32;similar&#32;implementations\nUse&#32;file&#32;search&#32;to&#32;locate&#32;test&#32;patterns&#58;&#32;&#96;**/*.test.&#123;js,ts&#125;&#96;\n\n\n##&#32;Structured&#32;Output&#32;Requirements\nCreate&#32;implementation&#32;with&#58;\n-&#32;&#91;&#32;&#93;&#32;Feature&#32;code&#32;in&#32;appropriate&#32;module\n-&#32;&#91;&#32;&#93;&#32;Comprehensi…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//github.com/MicrosoftDocs/visualstudio-docs/blob/main/docs/test/how-to-write-unit-tests-for-cpp-dlls.md&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/xxsA4YxzaR0cl-DBsH9-lpv2gsif3KMYgM87p26bs_o/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYWQyNWM1NjA5/ZjZmZjNlYzI2MDNk/N2VkNmJhYjE2MzZl/MDY5ZTMxMDUzZmY1/NmU3NWIzNWVmMjk0/NTBjMjJjZi9naXRo/dWIuY29tLw&quot;,&quot;title&quot;&#58;&quot;visualstudio-docs/docs/test/how-to-write-unit-tests-for-cpp-dlls.md&#32;...&quot;,&quot;snippet&quot;&#58;&quot;…entry-content&#32;container-lg\&quot;&#32;itemprop=\&quot;text\&quot;&gt;&lt;markdown-accessiblity-table&gt;&lt;table&gt;\n&#32;&#32;&lt;thead&gt;\n&#32;&#32;&lt;tr&gt;\n&#32;&#32;&lt;th&gt;title&lt;/th&gt;\n&#32;&#32;&lt;th&gt;description&lt;/th&gt;\n&#32;&#32;&lt;th&gt;ms.date&lt;/th&gt;\n&#32;&#32;&lt;th&gt;ms.topic&lt;/th&gt;\n&#32;&#32;&lt;th&gt;ms.author&lt;/th&gt;\n&#32;&#32;&lt;th&gt;manager&lt;/th&gt;\n&#32;&#32;&lt;th&gt;author&lt;/th&gt;\n&#32;&#32;&lt;/tr&gt;\n&#32;&#32;&lt;/thead&gt;\n&#32;&#32;&lt;tbody&gt;\n&#32;&#32;&lt;tr&gt;\n&#32;&#32;&lt;td&gt;&lt;div&#32;dir=…&quot;&#125;&#93;"}
+- **Scope**:
+  - TOML/JSON parsing (`toml++`, `yyjson`)
+  - Signing/verification (Ed25519, RSA)
+  - Metadata transformation pipeline
+- **Location**: `/tests/`
+
+### 🔳 Backend Ingestion Pipeline
+- **Goal**: High-performance ingestion of signed JSON.
+- **Flow**: Signed JSON → `yyjson` parse → verify → index
+- **Concurrency**: Use `stdexec` for parallel parsing/verification
+
+## Optional Future
+
+### 🔮 Custom C++ UI Library
+- **Vision**: Build lightweight, `stdexec`-native UI layer.
+- **Motivation**: Reduce binary size, avoid Qt dependency long-term
+- **Status**: Conceptual
+
+### 🔮 Migrate Tools to Custom UI
+- **Goal**: Replace Qt in `talvix-signer`/`extractor` with custom library
+- **Benefit**: Full control, performance, MIT-only distribution
+ 
+
+AI-native project management work unit markdown structure
+Ok, now, let's create another broader context summary raw markdown file. In this case, however, I don't want to include the work units, and you could even add a part in the prompt that explicitly states that the work units will be found in a following prompt. Does that make sense?
+Finished
+
+# Talvixguide Engine – Core Project Context
+
+## Vision
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata. Users discover content via scalable, pluggable recommendation algorithms.
+
+## Language & Concurrency
+- **C++23 → C++26**: Using `-std=c++23`, transitioning to `-std=c++2c` for C++26 features
+- **Concurrency**: NVIDIA `stdexec` (structured concurrency via senders/receivers)
+- **Execution Model**: Composable async pipelines (e.g., `schedule() | then()`)
+
+## Metadata Formats
+- **TOML**: Creator-facing, human-authored
+- **JSON**: Machine-processed, high-performance ingestion
+- **Parsing Libraries**:
+  - `toml++`: Header-only, supports TOML → JSON/YAML
+  - `yyjson`: Ultra-fast JSON parsing for backend
+
+## Cryptography
+- **Signing Options**:
+  - **Libsodium (Ed25519)**: Preferred (faster, safer)
+  - **OpenSSL (RSA/ECDSA)**: Fallback
+- **Trust Model**: Explicit key trust (out-of-band); JWKS support planned
+- **Scope**: File-wide and per-entry signatures
+
+## Build & Dependencies
+- **Build System**: CMake
+- **Dependency Management**: CPM.cmake (embedded)
+- **Key Dependencies**:
+  - `toml++`, `yyjson`, `stdexec`, `libsodium`/`OpenSSL`
+- **Compiler Flags**: `-std=c++23`, `-std=c++2c`
+
+## Folder Structure
+ 
+
+.
+├── build/
+├── cmake/
+├── data/
+├── devlog/
+├── docs/
+├── extern/
+├── include/
+├── licenses/
+├── scripts/
+├── src/
+├── tests/
+└── talvixguide/
+
+
+## GUI Framework
+- **Chosen**: **Qt (LGPL-3.0)**
+- **Rationale**: Native UX, cross-platform, mature tooling
+- **Distribution**: AppImage (dynamic linking, compliant)
+- **Compliance**: Includes `LICENSE.LGPL-3.0`, `ATTRIBUTIONS.md`, Qt source link
+
+> 🔍 **Note**: Work units are managed separately in the `work-units/` directory. Refer to those files for current tasks, priorities, and progress tracking.
+ 
+
+Ok, that's reasonable! There are a few things here that I haven't fully decided on yet, like how I want to distribute the Qt6 portion of the project, but that's alright, overall this is reasonable. I can modify these files as needed.
+Finished
+
+Dynamic linking with Qt6 under LGPL-3.0 is the safest and most straightforward compliance path for the Talvixguide project.
+Key Compliance Requirements for Dynamic Linking
+
+    Distribute Qt as shared libraries (.so, .dll, .dylib)
+
+    Allow users to replace Qt libraries at runtime
+
+    Include LGPL-3.0 license text and copyright notices
+
+    Provide a link to Qt source: https://code.qt.io
+
+    Do NOT need to release proprietary source code 
+
+Recommended Distribution Method: AppImage
+
+    Bundles Qt libraries inside a single file
+
+    Uses $APPDIR/usr/lib for Qt .so files
+
+    Users can extract, modify, and repackage
+
+    Fully compliant when built on oldest supported distro (e.g., Ubuntu 20.04 LTS)
+
+Alternative: System-Linked Qt
+
+    Link against system-installed Qt
+
+    Require minimum Qt version in documentation
+
+    Simpler distribution but less control over environment 
+
+Avoid Static Linking (Without Legal Review)
+
+    Requires providing object files or source code
+
+    Complex relinking instructions
+
+    Risk of violating "work that uses the library" clause 
+
+Qt6 LGPL-3.0 compliance
+Qt6 LGPL compliance AppImage distribution
+Key Compliance Requirements for Dynamic Linking
+Recommended Distribution Method: AppImage
+Alternative: System-Linked Qt
+Avoid Static Linking (Without Legal Review)
+Yes, I'll probably use system linking. Uhm... is there a way to enable both system linking and an appimage approach? I generally dislike the concept of using an appimage, although I may want to learn more about it to understand how it can be helpful.
+Finished
+
+Yes, you can support both system linking and AppImage distribution for your Qt6 application.
+Hybrid Distribution Strategy
+
+    System-linked build: For users who prefer native packages (e.g., .deb, .rpm) or have Qt6 installed
+
+    AppImage bundle: For portability, bundling Qt6 libraries via linuxdeployqt or appimage-builder 
+
+Implementation
+
+    Build once, deploy two ways:
+
+        Use linuxdeployqt to create an AppImage:
+
+        linuxdeployqt AppDir/usr/share/applications/talvix-signer.desktop -appimage
+         
+
+        Distribute the same binary separately with instructions for system Qt6 dependency installation. 
+
+    Runtime detection (optional):
+
+        Ship a wrapper script to detect Qt6 libraries and guide users:
+
+            If Qt6 is present → run natively
+
+            Else → suggest AppImage download 
+
+    Compliance: Dynamic linking satisfies LGPL-3.0 in both cases.
+
+Qt6 AppImage distribution
+Qt6 hybrid AppImage and system linking
+Hybrid Distribution Strategy
+Implementation
+Ok, uhm.... I would like to distribute the software through a single monorepo (at the moment). How might I distribute the same binary? How are appimages typically included in Qt6 distributions?
+Finished
+
+Yes, you can distribute both system-linked binaries and AppImages from the same monorepo.
+Distribution Strategy
+
+    System-linked binary: Build and release the executable assuming Qt6 is installed on the target system.
+
+    AppImage: Bundle Qt6 libraries into a single portable file using linuxdeploy + linuxdeploy-plugin-qt. 
+
+How AppImages Are Typically Included
+
+    Built via CI/CD (e.g., GitHub Actions) using tools like:
+
+        linuxdeploy
+
+        linuxdeploy-plugin-qt
+
+    Generated .AppImage file is uploaded as a release asset on GitHub.
+
+    Example workflow: Build once → deploy two artifacts (binary + AppImage).
+
+Implementation in Monorepo
+
+    Add a CI job to create the AppImage.
+
+    Place generated AppImage in /dist or include it in GitHub Releases.
+
+    Keep system-linked binary in standard build output (/build). 
+
+Qt6 AppImage monorepo CI/CD
+Distribution Strategy
+How AppImages Are Typically Included
+Implementation in Monorepo
+Ok, so I would have like dist folder that includes the appimage? How is this done with github? As you've suggested, should I include a simple script that checks for a local version of Qt6 and then removes the appimage if it's found? Is this a reasonable approach?
+Finished
+
+Yes, you can include the AppImage in a dist/ folder in your monorepo or publish it as a GitHub Release asset.
+GitHub Distribution
+
+    Recommended: Use GitHub Actions to build the AppImage and upload it as a release asset.
+
+    Example workflow: Build → package with linuxdeployqt → upload via actions/upload-release-asset.
+
+    Users download from the Releases tab; source remains in the repo. 
+
+AppImage Inclusion
+
+    Do not commit the AppImage directly to the repo (large binary bloat).
+
+    Instead, generate it in CI and attach it to GitHub Releases. 
+
+Runtime Detection Script?
+
+    ❌ Not recommended: Automatically removing the AppImage if Qt6 is found is confusing and non-standard.
+
+    ✅ Better approach: Offer two separate downloads:
+
+        talvix-signer.AppImage (portable)
+
+        talvix-signer-bin (system Qt6 required)
+
+GitHub Actions upload AppImage release asset
+GitHub Distribution
+AppImage Inclusion
+Runtime Detection Script?
+Ok, so these are things I would do in the Releases section of Github. Is that correct?
+Finished
+
+Yes, you use GitHub Releases to distribute the AppImage.
+How It Works
+
+    AppImage is uploaded as a release asset, not committed to the repo.
+
+    Use GitHub Actions to build the AppImage automatically on push/tag.
+
+    The workflow uploads it to the Releases section using actions/upload-release-asset or gh release upload. 
+
+Example CI Step
+
+- name: Upload AppImage
+  uses: softprops/action-gh-release@v1
+  with:
+    files: talvix-signer-*.AppImage
+ 
+
+Best Practice
+
+    Do not commit the AppImage to the repo (keeps history clean).
+
+    Let CI generate and attach it to Releases.
+
+    Users download from the Releases tab on GitHub.
+
+GitHub Actions upload AppImage to Releases
+How It Works
+Example CI Step
+Best Practice
+Ok, got it. How do I support both distribution options? For the users that have a system-linked library, what would they do in order to make use of my project?
+Finished
+
+Yes, you can support both distribution options from the same monorepo.
+1. AppImage Distribution (Portable)
+
+    How: Build using linuxdeployqt or appimage-builder in CI (e.g., GitHub Actions).
+
+    Where: Upload the .AppImage file as a release asset on GitHub.
+
+    User Experience: Users download and run it directly—no installation needed.
+
+2. System-Linked Binary (Native)
+
+    How: Build the binary assuming Qt6 is installed.
+
+    Where: Include the binary in /dist or provide build instructions.
+
+    User Experience: Users must have Qt6 installed (e.g., via apt install qt6-base-dev).
+
+User Instructions
+
+    AppImage users: Download .AppImage, make executable (chmod +x), run.
+
+    System-linked users: Install Qt6 via package manager, then run the binary.
+
+Best Practice
+
+    Do not commit the AppImage to the repo (use GitHub Releases).
+
+    Use CI to build both artifacts automatically on tag push.
+
+GitHub Actions build AppImage and binary release
+1. AppImage Distribution (Portable)
+2. System-Linked Binary (Native)
+User Instructions
+Best Practice
+Ok, so I could simply include build instructions in a BUILD_INSTRUCTIONS.md file and this could help explain to users what their options are for building the project. As an aside, I will likely need a much more manageable installer or package manager style approach that will allow extremely non-technical users to be able to make use of this project. I will also likely want to create a mobile phone native suite so that phone users can also participate.
+Finished
+
+Yes, a BUILD_INSTRUCTIONS.md is the right approach to document build options.
+For System-Linked Users
+
+Users must:
+
+    Install Qt6 via package manager:
+
+    # Ubuntu/Debian
+    sudo apt install qt6-base-dev qt6-tools-dev
+     
+
+    Build with CMake:
+
+    cmake -B build -DCMAKE_PREFIX_PATH=/usr/lib/qt6
+    cmake --build build
+     
+
+For Non-Technical Users
+
+    Use AppImage (portable, no install)
+
+    Or provide native packages (.deb, .rpm) via CI
+
+    Consider Flatpak for sandboxed, auto-updating desktop apps 
+
+For Mobile
+
+    Use Qt for Android/iOS
+
+    Build APK/iPA with androiddeployqt or Xcode
+
+    Deploy via Google Play / App Store 
+
+Qt6 mobile deployment Android iOS
+For System-Linked Users
+For Non-Technical Users
+For Mobile
+Ok, cool, so let's add some work units for these steps.... "Create and upload Qt6 AppImage for portable distribution", "Create BUILD_INSTRUCTIONS.md to help explain building and installing", and "Create a roadmap to support mobile users". An optional work unit should be added, too, which is effectively "Create an installation package that makes it much easier to distribute this software for non-technical people."
+Finished
+
+# Work Units – Talvixguide Engine (Updated)
+
+## In Progress
+
+### 🟡 Create and Upload Qt6 AppImage for Portable Distribution
+- **Goal**: Provide a single-file, portable binary for Linux users. :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//medium.com/@bgallois/qt-series-s01e01-github-actions-qt-7be4c7fdad0f&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4R4hFITz_F_be0roUiWbTZKhsywr3fnLTMTkFL5HFow/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTZhYmQ1N2Q4/NDg4ZDcyODIyMDZi/MzFmOWNhNjE3Y2E4/Y2YzMThjNjljNDIx/ZjllZmNhYTcwODhl/YTcwNDEzYy9tZWRp/dW0uY29tLw&quot;,&quot;title&quot;&#58;&quot;Qt&#32;Series&#32;S01E01&#58;&#32;GitHub&#32;Actions&#32;&amp;&#32;Qt&quot;,&quot;snippet&quot;&#58;&quot;Linux\n\nAt&#32;this&#32;step,&#32;we&#32;have&#32;produced&#32;a&#32;single&#32;binary&#32;file.&#32;To&#32;deploy&#32;the&#32;application,&#32;we&#32;need&#32;to&#32;copy&#32;the&#32;relevant&#32;libraries&#32;necessary&#32;for&#32;the&#32;execution.&#32;We&#32;use&#32;the&#32;Qt&#32;tool&#32;name&#32;windeployqt.&#32;Be&#32;aware&#32;that&#32;this&#32;tool&#32;will&#32;not&#32;copy&#32;external&#32;(non-Qt)&#32;libr…&quot;&#125;&#93;"}
+- **Steps**:
+  - Use `linuxdeployqt` or `appimage-builder` in CI
+  - Generate AppImage via GitHub Actions on tag push
+  - Upload `.AppImage` to GitHub Releases
+- **Tools**: `aqtinstall`, `linuxdeployqt`, `actions/upload-release-asset`
+- **Compliance**: Dynamically linked, LGPL-3.0 compliant :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//medium.com/@bgallois/qt-series-s01e01-github-actions-qt-7be4c7fdad0f&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4R4hFITz_F_be0roUiWbTZKhsywr3fnLTMTkFL5HFow/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTZhYmQ1N2Q4/NDg4ZDcyODIyMDZi/MzFmOWNhNjE3Y2E4/Y2YzMThjNjljNDIx/ZjllZmNhYTcwODhl/YTcwNDEzYy9tZWRp/dW0uY29tLw&quot;,&quot;title&quot;&#58;&quot;Qt&#32;Series&#32;S01E01&#58;&#32;GitHub&#32;Actions&#32;&amp;&#32;Qt&quot;,&quot;snippet&quot;&#58;&quot;…we&#32;use&#32;the&#32;AppImage&#32;format&#32;that&#32;will&#32;be&#32;compatible&#32;with&#32;all&#32;Linux&#32;distributions.\nlinux.yml&#58;\n\nname&#58;&#32;Build&#32;AppImageon&#58;&#32;&#32;push&#58;&#32;&#32;&#32;&#32;branches&#58;&#32;&#91;master&#93;jobs&#58;&#32;&#32;job_1&#58;&#32;&#32;&#32;&#32;runs-on&#58;&#32;ubuntu-18.04&#32;&#32;&#32;&#32;steps&#58;&#32;&#32;&#32;&#32;&#32;&#32;-&#32;uses&#58;&#32;actions/checkout@v2&#32;&#32;&#32;&#32;&#32;&#32;-&#32;uses&#58;&#32;actions/setup-python@v2…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//appimage-builder.readthedocs.io/en/latest/hosted-services/github-actions.html&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/ZeHg1GdEAndWXHpmc7Yxm8AKAORVno3zjw7c5xhxoPw/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMzk5YWUwYjVi/YzJiZDRjNTllZDY3/MjEwNjcxMzY4MDU5/N2UxZTQ0NGQxY2Yw/YTY2MzJkN2M4N2E5/NzIxMzIzYi9hcHBp/bWFnZS1idWlsZGVy/LnJlYWR0aGVkb2Nz/LmlvLw&quot;,&quot;title&quot;&#58;&quot;Producing&#32;AppImages&#32;on&#32;GitHub&#32;—&#32;appimage-builder&#32;1.0.0&#32;documentation&quot;,&quot;snippet&quot;&#58;&quot;name&#32;&#58;&#32;C/C++&#32;AppImage&#32;on&#32;&#58;&#32;push&#32;&#58;&#32;branches&#32;&#58;&#32;&#91;&#32;master&#32;&#93;&#32;pull_request&#32;&#58;&#32;branches&#32;&#58;&#32;&#91;&#32;master&#32;&#93;&#32;jobs&#32;&#58;&#32;build-appimage&#32;&#58;&#32;runs-on&#32;&#58;&#32;ubuntu-latest&#32;steps&#32;&#58;&#32;-&#32;uses&#32;&#58;&#32;actions/checkout@v2&#32;-&#32;name&#32;&#58;&#32;install&#32;dependencies&#32;run&#32;&#58;&#32;&#124;&#32;sudo&#32;apt-get&#32;update&#32;sudo&#32;apt-get&#32;install&#32;-y&#32;qt5-default&#32;qtdeclara…&quot;&#125;&#93;"}
+
+### 🟡 Create BUILD_INSTRUCTIONS.md
+- **Goal**: Document build options for developers and advanced users.
+- **Content**:
+  - System requirements (Qt6, CMake, dependencies)
+  - Build steps:
+    ```bash
+    cmake -B build -DCMAKE_PREFIX_PATH=/usr/lib/qt6
+    cmake --build build
+    ```
+  - Distribution notes: AppImage vs. system-linked binary
+- **Location**: Root of repo
+
+### 🟡 Create Roadmap to Support Mobile Users
+- **Goal**: Enable participation via Android/iOS apps.
+- **Path**:
+  - Use Qt for Android/iOS with CMake
+  - Target Qt 6.8+ for latest mobile support
+  - Build with Android NDK / Xcode
+  - Distribute via Google Play / App Store
+- **UI Strategy**: Qt Quick (QML) for touch-first interfaces
+- **CI/CD**: Extend GitHub Actions for cross-compilation :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//stackoverflow.com/questions/62667448/c-qt-application-on-android-and-ios&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4WRMec_wn8Q9LO6DI43kkBvIL6wD5TYCXztC9C9kEI0/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNWU3Zjg0ZjA1/YjQ3ZTlkNjQ1ODA1/MjAwODhiNjhjYWU0/OTc4MjM4ZDJlMTBi/ODExYmNiNTkzMjdh/YjM3MGExMS9zdGFj/a292ZXJmbG93LmNv/bS8&quot;,&quot;title&quot;&#58;&quot;C++&#32;Qt&#32;application&#32;on&#32;Android&#32;and&#32;iOS&#32;-&#32;Stack&#32;Overflow&quot;,&quot;snippet&quot;&#58;&quot;…qt.io/qt-5/cmake-manual.html\nI&#32;would&#32;like&#32;to&#32;suggest&#32;to&#32;use&#32;Qt&#32;Quick&#32;for&#32;GUI&#32;on&#32;mobile&#32;devices.\nAdd&#32;a&#32;comment\nTechnically,&#32;it's&#32;possible&#58;&#32;It's&#32;easy&#32;to&#32;compile&#32;C++-Qt&#32;applications&#32;for&#32;both&#32;Android&#32;and&#32;iOS…&quot;&#125;&#93;"}
+
+## Optional
+
+### 🔳 Create Installation Package for Non-Technical Users
+- **Goal**: Simplify installation for desktop users. :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//medium.com/@bgallois/qt-series-s01e01-github-actions-qt-7be4c7fdad0f&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4R4hFITz_F_be0roUiWbTZKhsywr3fnLTMTkFL5HFow/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTZhYmQ1N2Q4/NDg4ZDcyODIyMDZi/MzFmOWNhNjE3Y2E4/Y2YzMThjNjljNDIx/ZjllZmNhYTcwODhl/YTcwNDEzYy9tZWRp/dW0uY29tLw&quot;,&quot;title&quot;&#58;&quot;Qt&#32;Series&#32;S01E01&#58;&#32;GitHub&#32;Actions&#32;&amp;&#32;Qt&quot;,&quot;snippet&quot;&#58;&quot;…runs-on&#58;&#32;ubuntu-18.04&#32;steps&#58;&#32;-&#32;uses&#58;&#32;actions/checkout@v2&#32;-&#32;uses&#58;&#32;actions/setup-python@v2&#32;with&#58;&#32;python-version&#58;&#32;'3.8'&#32;-&#32;name&#58;&#32;install&#32;qt6&#32;run&#58;&#32;&#124;&#32;pip&#32;install&#32;aqtinstall&#32;python3&#32;-m&#32;aqt&#32;install-qt&#32;-m&#32;qtwebengine&#32;qtwebchannel&#32;qtpositioning&#32;-O&#32;&#36;&#123;&#123;&#32;github.workspace&#32;&#125;&#125;/Qt/&#32;linu…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//stackoverflow.com/questions/8276047/how-to-create-installer-file&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4WRMec_wn8Q9LO6DI43kkBvIL6wD5TYCXztC9C9kEI0/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNWU3Zjg0ZjA1/YjQ3ZTlkNjQ1ODA1/MjAwODhiNjhjYWU0/OTc4MjM4ZDJlMTBi/ODExYmNiNTkzMjdh/YjM3MGExMS9zdGFj/a292ZXJmbG93LmNv/bS8&quot;,&quot;title&quot;&#58;&quot;c++&#32;-&#32;how&#32;to&#32;create&#32;installer&#32;file&#32;-&#32;Stack&#32;Overflow&quot;,&quot;snippet&quot;&#58;&quot;…and&#32;i'm&#32;looking&#32;for&#32;a&#32;way&#32;to&#32;create&#32;my&#32;own&#32;C++&#32;installer&#32;file&#32;which&#32;will&#32;create&#32;the&#32;project&#32;dll's&#32;and&#32;exe&#32;files&#32;into&#32;a&#32;specific&#32;path\nwhat&#32;is&#32;the&#32;easier&#32;way&#32;to&#32;learn&#32;how&#32;to&#32;do&#32;it?\nc++\ninstallation\n1…&quot;&#125;&#93;"}
+- **Options**:
+  - **Linux**: AppImage (already covered), Flatpak (sandboxed, auto-updates)
+  - **Windows**: MSI installer using WiX or NSIS
+  - **macOS**: DMG bundle with signed app
+- **Automation**: Build packages in CI and attach to GitHub Releases
+ 
+
+Qt6 AppImage GitHub Actions workflow
+CMake project BUILD_INSTRUCTIONS.md template
+Ok, can you create a summarized work unit context file in raw markdown source that includes the newly defined work units as well as the other work units that you've seen in this conversation?
+Finished
+
+# Work Units – Talvixguide Engine
+
+## In Progress
+
+### 🟡 Create and Upload Qt6 AppImage for Portable Distribution
+- **Goal**: Provide a single-file, portable Linux binary. :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//medium.com/@bgallois/qt-series-s01e01-github-actions-qt-7be4c7fdad0f&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4R4hFITz_F_be0roUiWbTZKhsywr3fnLTMTkFL5HFow/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTZhYmQ1N2Q4/NDg4ZDcyODIyMDZi/MzFmOWNhNjE3Y2E4/Y2YzMThjNjljNDIx/ZjllZmNhYTcwODhl/YTcwNDEzYy9tZWRp/dW0uY29tLw&quot;,&quot;title&quot;&#58;&quot;Qt&#32;Series&#32;S01E01&#58;&#32;GitHub&#32;Actions&#32;&amp;&#32;Qt&quot;,&quot;snippet&quot;&#58;&quot;Linux\n\nAt&#32;this&#32;step,&#32;we&#32;have&#32;produced&#32;a&#32;single&#32;binary&#32;file.&#32;To&#32;deploy&#32;the&#32;application,&#32;we&#32;need&#32;to&#32;copy&#32;the&#32;relevant&#32;libraries&#32;necessary&#32;for&#32;the&#32;execution.&#32;We&#32;use&#32;the&#32;Qt&#32;tool&#32;name&#32;windeployqt.&#32;Be&#32;aware&#32;that&#32;this&#32;tool&#32;will&#32;not&#32;copy&#32;external&#32;(non-Qt)&#32;libr…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//medium.com/@TomRvr/continuous-integration-qt-github-linux-build-b3443084e7&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4R4hFITz_F_be0roUiWbTZKhsywr3fnLTMTkFL5HFow/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTZhYmQ1N2Q4/NDg4ZDcyODIyMDZi/MzFmOWNhNjE3Y2E4/Y2YzMThjNjljNDIx/ZjllZmNhYTcwODhl/YTcwNDEzYy9tZWRp/dW0uY29tLw&quot;,&quot;title&quot;&#58;&quot;Continuous&#32;integration&#32;(Qt&#32;/&#32;GitHub)&#32;&#58;&#32;Linux&#32;build&quot;,&quot;snippet&quot;&#58;&quot;…all&#32;dependencies\nCreate&#32;an&#32;archive&#32;with&#32;the&#32;release&#32;folder&#32;and&#32;make&#32;it&#32;available&#32;as&#32;an&#32;artifact\nBelow&#32;is&#32;the&#32;workflow&#32;file&#32;responsible&#32;for&#32;building&#32;the&#32;project&#32;for&#32;Linux&#32;and&#32;packaging&#32;all&#32;dependencies&#32;to&#32;create&#32;a&#32;portable&#32;AppImage.\nname&#58;&#32;Linux&#32;Release&#32;on…&quot;&#125;&#93;"}
+- **Steps**:
+  - Use `linuxdeployqt` or `appimage-builder` in CI
+  - Generate AppImage via GitHub Actions on tag push
+  - Upload to GitHub Releases (not in repo)
+- **Tools**: `aqtinstall`, `linuxdeployqt`, `actions/upload-release-asset`
+- **Compliance**: Dynamically linked, LGPL-3.0 compliant :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//medium.com/@bgallois/qt-series-s01e01-github-actions-qt-7be4c7fdad0f&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4R4hFITz_F_be0roUiWbTZKhsywr3fnLTMTkFL5HFow/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTZhYmQ1N2Q4/NDg4ZDcyODIyMDZi/MzFmOWNhNjE3Y2E4/Y2YzMThjNjljNDIx/ZjllZmNhYTcwODhl/YTcwNDEzYy9tZWRp/dW0uY29tLw&quot;,&quot;title&quot;&#58;&quot;Qt&#32;Series&#32;S01E01&#58;&#32;GitHub&#32;Actions&#32;&amp;&#32;Qt&quot;,&quot;snippet&quot;&#58;&quot;…we&#32;use&#32;the&#32;AppImage&#32;format&#32;that&#32;will&#32;be&#32;compatible&#32;with&#32;all&#32;Linux&#32;distributions.\nlinux.yml&#58;\n\nname&#58;&#32;Build&#32;AppImageon&#58;&#32;&#32;push&#58;&#32;&#32;&#32;&#32;branches&#58;&#32;&#91;master&#93;jobs&#58;&#32;&#32;job_1&#58;&#32;&#32;&#32;&#32;runs-on&#58;&#32;ubuntu-18.04&#32;&#32;&#32;&#32;steps&#58;&#32;&#32;&#32;&#32;&#32;&#32;-&#32;uses&#58;&#32;actions/checkout@v2&#32;&#32;&#32;&#32;&#32;&#32;-&#32;uses&#58;&#32;actions/setup-python@v2…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//appimage-builder.readthedocs.io/en/latest/hosted-services/github-actions.html&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/ZeHg1GdEAndWXHpmc7Yxm8AKAORVno3zjw7c5xhxoPw/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMzk5YWUwYjVi/YzJiZDRjNTllZDY3/MjEwNjcxMzY4MDU5/N2UxZTQ0NGQxY2Yw/YTY2MzJkN2M4N2E5/NzIxMzIzYi9hcHBp/bWFnZS1idWlsZGVy/LnJlYWR0aGVkb2Nz/LmlvLw&quot;,&quot;title&quot;&#58;&quot;Producing&#32;AppImages&#32;on&#32;GitHub&#32;—&#32;appimage-builder&#32;1.0.0&#32;documentation&quot;,&quot;snippet&quot;&#58;&quot;…complete&#32;example&#32;project&#32;can&#32;be&#32;found&#32;at&#58;&#32;https&#58;//github.com/AppImageCrafters/appimage-demo-qt5\n\nname&#58;&#32;C/C++&#32;AppImage\n\non&#58;\n&#32;&#32;push&#58;\n&#32;&#32;&#32;&#32;branches&#58;&#32;&#91;&#32;master&#32;&#93;\n&#32;&#32;pull_request&#58;\n&#32;&#32;&#32;&#32;branches&#58;&#32;&#91;&#32;master&#32;&#93;\n\njobs&#58;\n&#32;&#32;build-appimage&#58;\n\n&#32;&#32;&#32;&#32;runs-on&#58;&#32;ubuntu-latest\n\n&#32;&#32;&#32;&#32;steps&#58;\n&#32;&#32;&#32;&#32;&#32;&#32;-&#32;uses&#58;&#32;actions/checkout@v2\n&#32;&#32;&#32;&#32;&#32;&#32;-&#32;name&#58;&#32;install…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//medium.com/@TomRvr/continuous-integration-qt-github-linux-build-b3443084e7&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4R4hFITz_F_be0roUiWbTZKhsywr3fnLTMTkFL5HFow/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTZhYmQ1N2Q4/NDg4ZDcyODIyMDZi/MzFmOWNhNjE3Y2E4/Y2YzMThjNjljNDIx/ZjllZmNhYTcwODhl/YTcwNDEzYy9tZWRp/dW0uY29tLw&quot;,&quot;title&quot;&#58;&quot;Continuous&#32;integration&#32;(Qt&#32;/&#32;GitHub)&#32;&#58;&#32;Linux&#32;build&quot;,&quot;snippet&quot;&#58;&quot;…branches&#58;&#32;-&#32;'master'&#32;-&#32;'continuous-integration'&#32;defaults&#58;&#32;run&#58;&#32;shell&#58;&#32;bash&#32;env&#58;&#32;SOURCE_DIR&#58;&#32;&#36;&#123;&#123;&#32;github.workspace&#32;&#125;&#125;&#32;QT_VERSION&#58;&#32;5.15.2&#32;ARTIFACT&#58;&#32;qt-planets-linux-build.AppImage&#32;jobs&#58;&#32;build&#58;&#32;runs-on&#58;&#32;ubuntu-18.04&#32;steps&#58;&#32;-&#32;name&#58;&#32;Checkout&#32;repo&#32;uses&#58;&#32;actio…&quot;&#125;&#93;"}
+
+### 🟡 Create BUILD_INSTRUCTIONS.md
+- **Goal**: Document build options for developers and advanced users.
+- **Content**:
+  - System requirements (Qt6, CMake, dependencies)
+  - Build steps:
+    ```bash
+    cmake -B build -DCMAKE_PREFIX_PATH=/usr/lib/qt6
+    cmake --build build
+    ```
+  - Distribution notes: AppImage vs. system-linked binary
+- **Location**: Root of repo
+
+### 🟡 Create Roadmap to Support Mobile Users
+- **Goal**: Enable Android/iOS participation.
+- **Path**:
+  - Use Qt for Android/iOS with CMake
+  - Target Qt 6.8+ for latest mobile support
+  - Build with Android NDK / Xcode
+  - Distribute via Google Play / App Store
+- **UI Strategy**: Qt Quick (QML) for touch-first interfaces
+- **CI/CD**: Extend GitHub Actions for cross-compilation :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//blogs.embarcadero.com/new-in-10-2-3-cmake-support-for-ios-and-android/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/reEoXRy-EyuhQM3jYpA5-kxTLwpBcAfdM8VLueQVH7U/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMzljYTZjY2Fm/MDlmMDU0YmU0Yjhh/NWQ0MTY0OTZmNGMw/MjY2Mzg4NTMzNzhm/YmI5ZWNlMGYyMDJh/ZDMyZTBlYy9ibG9n/cy5lbWJhcmNhZGVy/by5jb20v&quot;,&quot;title&quot;&#58;&quot;New&#32;in&#32;10.2.3&#58;&#32;CMake&#32;Support&#32;for&#32;iOS&#32;and&#32;Android&quot;,&quot;snippet&quot;&#58;&quot;…specifying&#32;the&#32;compiler&#32;you&#32;use,&#32;you&#32;specify&#32;a&#32;toolchain&#32;.&#32;This&#32;is&#32;a&#32;cmake&#32;file&#32;that&#32;tells&#32;CMake&#32;how&#32;to&#32;use&#32;the&#32;compilers&#32;and&#32;for&#32;our&#32;mobile&#32;platforms,&#32;contains&#32;full&#32;cross-compilation&#32;information.&#32;These&#32;toolchain&#32;files&#32;also&#32;set&#32;up&#32;extra&#32;deployment&#32;op…&quot;&#125;&#93;"}
+
+## Available
+
+### 🔳 Prototype YouTube API Metadata Fetcher
+- **Goal**: Extract public video metadata → TOML.
+- **Fields**: title, description, tags, thumbnails, publish date
+- **Auth**: OAuth 2.0 (user consent)
+- **Output**: Valid TOML → ready for signing
+
+### 🔳 Add Unit Tests (GoogleTest)
+- **Goal**: Validate core logic with automated tests.
+- **Scope**:
+  - TOML/JSON parsing (`toml++`, `yyjson`)
+  - Signing/verification (Ed25519, RSA)
+  - Metadata transformation pipeline
+- **Location**: `/tests/`
+
+### 🔳 Implement Backend Ingestion Pipeline
+- **Goal**: High-performance ingestion of signed JSON.
+- **Flow**: Signed JSON → `yyjson` parse → verify → index
+- **Concurrency**: Use `stdexec` for parallel parsing/verification
+
+## Optional
+
+### 🔳 Create Installation Package for Non-Technical Users
+- **Goal**: Simplify installation across platforms. :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//medium.com/@bgallois/qt-series-s01e01-github-actions-qt-7be4c7fdad0f&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4R4hFITz_F_be0roUiWbTZKhsywr3fnLTMTkFL5HFow/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTZhYmQ1N2Q4/NDg4ZDcyODIyMDZi/MzFmOWNhNjE3Y2E4/Y2YzMThjNjljNDIx/ZjllZmNhYTcwODhl/YTcwNDEzYy9tZWRp/dW0uY29tLw&quot;,&quot;title&quot;&#58;&quot;Qt&#32;Series&#32;S01E01&#58;&#32;GitHub&#32;Actions&#32;&amp;&#32;Qt&quot;,&quot;snippet&quot;&#58;&quot;Conclusion\n\nThe&#32;procedure&#32;for&#32;MacOs&#32;is&#32;similar.&#32;At&#32;the&#32;end&#32;of&#32;the&#32;compilation,&#32;we&#32;use&#32;macdeployqt&#32;to&#32;copy&#32;the&#32;necessary&#32;libraries&#32;in&#32;the&#32;bundle&#32;and&#32;set&#32;the&#32;correct&#32;rpaths.&#32;For&#32;external&#32;dependencies,&#32;it&#32;is&#32;possible&#32;that&#32;macdeployqt&#32;doesn’t&#32;finish&#32;the&#32;job,&#32;to&#32;correct&#32;that,&#32;we&#32;use&#32;ma…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//medium.com/@TomRvr/continuous-integration-qt-github-linux-build-b3443084e7&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4R4hFITz_F_be0roUiWbTZKhsywr3fnLTMTkFL5HFow/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTZhYmQ1N2Q4/NDg4ZDcyODIyMDZi/MzFmOWNhNjE3Y2E4/Y2YzMThjNjljNDIx/ZjllZmNhYTcwODhl/YTcwNDEzYy9tZWRp/dW0uY29tLw&quot;,&quot;title&quot;&#58;&quot;Continuous&#32;integration&#32;(Qt&#32;/&#32;GitHub)&#32;&#58;&#32;Linux&#32;build&quot;,&quot;snippet&quot;&#58;&quot;…by&#32;using&#32;GitHub&#32;Actions.\nSee&#32;the&#32;first&#32;article&#32;about&#32;GitHub&#32;Actions&#32;configuration&#32;and&#32;the&#32;Windows&#32;workflow&#32;here&#32;&#58;\nmedium.com\nOne&#32;of&#32;Qt&#32;strengths&#32;is&#32;to&#32;be&#32;a&#32;cross-platform&#32;framework&#32;that&#32;allows&#32;to&#32;build&#32;a&#32;unique&#32;code&#32;base&#32;for&#32;many&#32;platforms&#32;su…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//www.manageengine.com/products/desktop-central/software-distribution.html&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/o2uJOHw3pUrzujvcvNsiVRAenr8HFz270pmFbbMlC9k/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMmU0OWQwZGFl/OGZlODg4ZGY4MjEy/ZTY2NDU5MWMyMzA0/NjQ1MGZlOGEzZmQ2/NzdlMDA4NTM0ZTdh/ZTdkODc2OC93d3cu/bWFuYWdlZW5naW5l/LmNvbS8&quot;,&quot;title&quot;&#58;&quot;What&#32;Is&#32;Software&#32;Distribution?&#32;-&#32;An&#32;Overview&quot;,&quot;snippet&quot;&#58;&quot;The&#32;self-service&#32;portal&#32;allows&#32;users&#32;to&#32;install&#32;applications&#32;on&#32;their&#32;own,&#32;without&#32;administrator's&#32;intervention.&#32;The&#32;application&#32;offers&#32;IT&#32;admins&#32;a&#32;customized&#32;IT&#32;software&#32;distribution&#32;process&#32;with&#32;granular&#32;control&#32;over&#32;the&#32;installation&#32;process&#32;by&#32;virtue&#32;of&#32;pre-&#32;and&#32;post-d…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//www.inwerken.de/software-distribution-using-windows-tools/?lang=en&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/JIsd3uo1pdkSQ-w8WP70WdI3lCgsEptBobIHj0nnRao/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZTAxYTMxNzQ4/ZmQ0YTliZWJhZDc4/MmE4Mjg1ZjdmOTI0/Zjg4MjcxYWRhMzFi/OWI4OWNkNjI2ZGU5/ZmU3NGY3Yy93d3cu/aW53ZXJrZW4uZGUv&quot;,&quot;title&quot;&#58;&quot;Software&#32;distribution&#32;using&#32;Windows&#32;Tools&quot;,&quot;snippet&quot;&#58;&quot;Winget&#32;allows&#32;software&#32;to&#32;be&#32;installed,&#32;updated&#32;and&#32;uninstalled&#32;using&#32;simple&#32;commands.&#32;It&#32;provides&#32;access&#32;to&#32;a&#32;central&#32;repository&#32;of&#32;software&#32;packages&#32;maintained&#32;by&#32;the&#32;community&#32;and&#32;Microsoft.&#32;By&#32;using&#32;commands,&#32;administrators&#32;can&#32;quickly&#32;and&#32;efficiently&#32;manage&#32;software&#32;on&#32;multipl…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//devblogs.microsoft.com/cppblog/support-for-android-cmake-projects-in-visual-studio/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/wjA3qu8Q38-IJXs5PE39Peabg4zein94H_ijDpPLwzY/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZjU2ZmNhNWVk/ODA2NzA1N2ZjZWJl/Mzg0ZTE3NjllNjkw/NGM3YjcyY2I0MWU4/NGQ4NTA4OGZjOTYw/YmIyZDQ4OS9kZXZi/bG9ncy5taWNyb3Nv/ZnQuY29tLw&quot;,&quot;title&quot;&#58;&quot;Support&#32;for&#32;Android&#32;CMake&#32;projects&#32;in&#32;Visual&#32;Studio&#32;-&#32;C++&#32;Team&#32;Blog&quot;,&quot;snippet&quot;&#58;&quot;Studio&#32;14”&#32;on&#32;the&#32;unzipped&#32;archive,&#32;this&#32;should&#32;be&#32;run&#32;from&#32;the&#32;root&#32;folder&#32;of&#32;CMake.&#32;This&#32;will&#32;take&#32;a&#32;good&#32;15&#32;minutes&#32;or&#32;so.\nThis&#32;will&#32;use&#32;the&#32;Visual&#32;Studio&#32;2015&#32;generator,&#32;and&#32;generate&#32;Visual&#32;Studio&#32;projects.&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//www.action1.com/software-deployment/software-distribution/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/H86eWzysE101eJ2w_gkuSvYYxik0QLFYII3GEA56Byc/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNzZmYWJlYTQ0/NDNmZGJmNGNmNTZk/NTMzMjBlZTY5Zjk3/NDdjMjY0NTZiZjNh/NzZkODJkYWM3MTZh/N2JjNTUxOC93d3cu/YWN0aW9uMS5jb20v&quot;,&quot;title&quot;&#58;&quot;Automated&#32;Software&#32;Distribution&#32;Tool&quot;,&quot;snippet&quot;&#58;&quot;…distribution&#32;tool,&#32;you&#32;are&#32;able&#32;to&#58;\n&#32;\n^&#32;Save&#32;time,&#32;effort,&#32;and&#32;money&#32;by&#32;automating&#32;software&#32;distribution&#32;and&#32;patching.\n^&#32;Dramatically&#32;reduce&#32;costly&#32;errors&#32;and&#32;omissions&#32;in&#32;your&#32;software&#32;installation&#32;and&#32;update&#32;processes.\n^&#32;Reduce&#32;risk&#32;by&#32;monitoring&#32;all&#32;the&#32;software&#32;in&#32;use&#32;ac…&quot;&#125;&#93;"}
+- **Options**:
+  - **Linux**: AppImage (portable), Flatpak (sandboxed, auto-updates)
+  - **Windows**: MSI installer (WiX/NSIS)
+  - **macOS**: DMG bundle (signed app)
+- **Automation**: Build packages in CI and attach to GitHub Releases
+ 
+
+Qt6 mobile deployment with CMake
+Would you mind repeating that last response? I think my connection dropped.
+Finished
+
+I apologize for the error in my previous response. Here is the correct work units summary:
+
+# Work Units – Talvixguide Engine
+
+## In Progress
+
+### 🟡 Create and Upload Qt6 AppImage for Portable Distribution
+- **Goal**: Provide a single-file, portable Linux binary.
+- **Steps**:
+  - Use `linuxdeployqt` or `appimage-builder` in CI
+  - Generate AppImage via GitHub Actions on tag push
+  - Upload to GitHub Releases (not in repo)
+- **Tools**: `aqtinstall`, `linuxdeployqt`, `actions/upload-release-asset`
+- **Compliance**: Dynamically linked, LGPL-3.0 compliant
+
+### 🟡 Create BUILD_INSTRUCTIONS.md
+- **Goal**: Document build options for developers and advanced users.
+- **Content**:
+  - System requirements (Qt6, CMake, dependencies)
+  - Build steps:
+    ```bash
+    cmake -B build -DCMAKE_PREFIX_PATH=/usr/lib/qt6
+    cmake --build build
+    ```
+  - Distribution notes: AppImage vs. system-linked binary
+- **Location**: Root of repo
+
+### 🟡 Create Roadmap to Support Mobile Users
+- **Goal**: Enable Android/iOS participation.
+- **Path**:
+  - Use Qt for Android/iOS with CMake
+  - Target Qt 6.8+ for latest mobile support
+  - Build with Android NDK / Xcode
+  - Distribute via Google Play / App Store
+- **UI Strategy**: Qt Quick (QML) for touch-first interfaces
+- **CI/CD**: Extend GitHub Actions for cross-compilation
+
+## Available
+
+### 🔳 Prototype YouTube API Metadata Fetcher
+- **Goal**: Extract public video metadata → TOML.
+- **Fields**: title, description, tags, thumbnails, publish date
+- **Auth**: OAuth 2.0 (user consent)
+- **Output**: Valid TOML → ready for signing
+
+### 🔳 Add Unit Tests (GoogleTest)
+- **Goal**: Validate core logic with automated tests.
+- **Scope**:
+  - TOML/JSON parsing (`toml++`, `yyjson`)
+  - Signing/verification (Ed25519, RSA)
+  - Metadata transformation pipeline
+- **Location**: `/tests/`
+
+### 🔳 Implement Backend Ingestion Pipeline
+- **Goal**: High-performance ingestion of signed JSON.
+- **Flow**: Signed JSON → `yyjson` parse → verify → index
+- **Concurrency**: Use `stdexec` for parallel parsing/verification
+
+## Optional
+
+### 🔳 Create Installation Package for Non-Technical Users
+- **Goal**: Simplify installation across platforms.
+- **Options**:
+  - **Linux**: AppImage (portable), Flatpak (sandboxed, auto-updates)
+  - **Windows**: MSI installer (WiX/NSIS)
+  - **macOS**: DMG bundle (signed app)
+- **Automation**: Build packages in CI and attach to GitHub Releases
+ 
+
+Qt6 AppImage GitHub Actions workflow
+Ok, that's great! Uhm.... alright, so let's try some other things now. Let's look at the ingestion prompts. I'd like to set up a prompt, which should also be in raw markdown source, that will help me to tell an AI chatbot what I'm doing and that I'm going to present the chatbot with several structured prompts in order to instantiate the project context. Are you with me so far?
+Finished
+
+# Project Context Ingestion Prompt
+
+You are being initialized with the Talvixguide Engine project context.
+
+This is a structured, multi-prompt process. I will now provide several context files to fully instantiate the project state.
+
+Please acknowledge each prompt as it is presented. Do not take action or generate code until the full context has been loaded and I give the directive to proceed.
+
+The upcoming prompts will cover:
+- Core architecture and design
+- Work units and development roadmap
+- Build and dependency management
+- GUI framework and distribution strategy
+- Cryptography and metadata standards
+
+Acknowledge this prompt with: "Context ingestion initialized. Awaiting first context file."
+ 
+
+Ok, that's pretty good! Alright, let's modify this a little bit. The core architecture and design prompt is a good one to keep. The work units and development roadmap prompt is also a good one. The build and dependency management prompt may not be entirely necessary, but maybe I could keep that one. The GUI framework and distribution strategy is probably not that important to keep re-prompting with. The cryptography and metadata standards are also probably inferred from the other prompts. I think the "broad context" prompts could be rephrased as the core-design prompts. I think I could add a misc-context section that is for all of the other details, like the GUI framework, distribution strategy, cryptography, metadata standards, etc. that could cover these more minor points. What do you think?
+Finished
+
+# Project Context Ingestion Prompt
+
+You are being initialized with the Talvixguide Engine project context.
+
+This is a structured, multi-prompt process. I will now provide several context files to fully instantiate the project state.
+
+Please acknowledge each prompt as it is presented. Do not take action or generate code until the full context has been loaded and I give the directive to proceed.
+
+## Upcoming Prompts
+
+### Core Design
+- Language: C++23 → C++26 with `stdexec`
+- Concurrency: `std::execution` via NVIDIA `stdexec`
+- Metadata: TOML (creator-facing), JSON (machine-parsed)
+- Cryptography: Libsodium (Ed25519), OpenSSL (fallback), explicit key trust
+- Build: CMake + CPM.cmake
+
+### Work Units & Roadmap
+- In progress: Qt6 GUI tools, AppImage packaging, mobile roadmap
+- Available: YouTube metadata fetcher, GoogleTest integration, ingestion pipeline
+- Optional: Custom UI library, installer packages
+
+### Misc Context (Supporting Details)
+- GUI Framework: Qt6 (LGPL-3.0), AppImage + system-linked distribution
+- Mobile Strategy: Qt for Android/iOS, QML for touch interfaces
+- Compliance: LGPL-3.0 attribution, dynamic linking, source availability
+- Future: Flatpak, MSI, DMG packaging for non-technical users
+
+Acknowledge this prompt with: "Context ingestion initialized. Awaiting first context file."
+ 
+
+Ok, so at present I'll have 1 ingestion prompt and this prompt will set up the chatbot to receive 1 core design prompt, 1 work units and roadmap prompt, and 1 extra context prompt. How about that?
+Finished
+
+# Project Context Ingestion Prompt
+
+You are being initialized with the Talvixguide Engine project context.
+
+This is a structured, multi-prompt process. I will now provide three context files to fully instantiate the project state.
+
+Please acknowledge each prompt as it is presented. Do not take action or generate code until the full context has been loaded and I give the directive to proceed.
+
+## Upcoming Prompts
+
+### 1. Core Design
+- Language: C++23 → C++26 with `stdexec`
+- Concurrency: `std::execution` via NVIDIA `stdexec`
+- Metadata: TOML (creator-facing), JSON (machine-parsed)
+- Cryptography: Libsodium (Ed25519), OpenSSL (fallback), explicit key trust
+- Build: CMake + CPM.cmake
+
+### 2. Work Units & Roadmap
+- In progress: Qt6 GUI tools, AppImage packaging, mobile roadmap
+- Available: YouTube metadata fetcher, GoogleTest integration, ingestion pipeline
+- Optional: Custom UI library, installer packages
+
+### 3. Misc Context
+- GUI Framework: Qt6 (LGPL-3.0), AppImage + system-linked distribution
+- Mobile Strategy: Qt for Android/iOS, QML for touch interfaces
+- Compliance: LGPL-3.0 attribution, dynamic linking
+- Future: Flatpak, MSI, DMG packaging
+
+Acknowledge this prompt with: "Context ingestion initialized. Awaiting core design context."
+ 
+
+Uh.... what word would you use for "extraction" or an antonym for ingestion? I guess a synonym for production? Basically, I want a name for some prompts that will be generated after a chat session and this will help the chatbot to setup the next chatbot when the time comes. Does that make sense?
+Finished
+
+The best term for the opposite of ingestion in your context is egress.
+
+While extraction is commonly used, egress is the precise technical antonym of ingest in data systems:
+
+    Ingestion = data flowing into a system
+
+    Egress = data flowing out of a system 
+
+This aligns with established usage in data engineering (e.g., data ingress/egress). For your AI context prompts, use Egress Prompt or Context Egress to denote the structured output of project state at the end of a session.
+data ingestion vs egress terminology
+Ok, cool, so I have folders for work-units, ingestion-context, core-design, egress-context, and extra-context. Alright, what do you think so far?
+Finished
+
+The folder structure you've defined — work-units, ingestion-context, core-design, egress-context, and extra-context — is well-organized and aligns with AI-native project management principles.
+
+    ingestion-context and egress-context clearly separate session setup and teardown.
+
+    core-design and extra-context allow for modular, focused context loading.
+
+    work-units enables task-specific AI alignment.
+
+This structure supports repeatable, consistent AI collaboration across chat sessions.
+Sweet! Ok, so you helped me come up with an ingestion prompt. Uhmm.... let's work on the core-design prompt. Given the current context of this session, would you kindly produce a core-design prompt in raw markdown source?
+Finished
+
+# Core Design Prompt
+
+You are now receiving the core architectural context for the Talvixguide Engine.
+
+## Language & Standards
+- **C++23 → C++26**: Compiled with `-std=c++23`, transitioning to `-std=c++2c` for C++26 features
+- **Concurrency**: NVIDIA `stdexec` (structured concurrency via senders/receivers)
+- **Execution Model**: Composable async pipelines (e.g., `schedule() | then()`)
+
+## Metadata Architecture
+- **TOML**: Creator-authored, human-readable metadata
+- **JSON**: Machine-processed, high-performance ingestion
+- **Libraries**:
+  - `toml++`: Header-only, supports TOML → JSON
+  - `yyjson`: Ultra-fast JSON parsing for backend
+
+## Cryptography
+- **Signing**: Libsodium (Ed25519 preferred), OpenSSL (RSA/ECDSA fallback)
+- **Trust Model**: Explicit key trust (out-of-band); JWKS support planned
+- **Scope**: File-wide and per-entry signatures
+
+## Build & Dependencies
+- **Build System**: CMake
+- **Dependency Management**: CPM.cmake (embedded)
+- **Key Dependencies**: `toml++`, `yyjson`, `stdexec`, `libsodium`/`OpenSSL`
+- **Compiler Flags**: `-std=c++23`, `-std=c++2c`
+
+Acknowledge this prompt with: "Core design context received. Awaiting work units and roadmap."
+ 
+
+Would you mind including the broader vision in the core design prompt?
+Finished
+
+# Core Design Prompt
+
+You are now receiving the core architectural context for the Talvixguide Engine.
+
+## Vision
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata. Users discover content via scalable, pluggable recommendation algorithms.
+
+## Language & Standards
+- **C++23 → C++26**: Compiled with `-std=c++23`, transitioning to `-std=c++2c` for C++26 features
+- **Concurrency**: NVIDIA `stdexec` (structured concurrency via senders/receivers)
+- **Execution Model**: Composable async pipelines (e.g., `schedule() | then()`)
+
+## Metadata Architecture
+- **TOML**: Creator-authored, human-readable metadata
+- **JSON**: Machine-processed, high-performance ingestion
+- **Libraries**:
+  - `toml++`: Header-only, supports TOML → JSON
+  - `yyjson`: Ultra-fast JSON parsing for backend
+
+## Cryptography
+- **Signing**: Libsodium (Ed25519 preferred), OpenSSL (RSA/ECDSA fallback)
+- **Trust Model**: Explicit key trust (out-of-band); JWKS support planned
+- **Scope**: File-wide and per-entry signatures
+
+## Build & Dependencies
+- **Build System**: CMake
+- **Dependency Management**: CPM.cmake (embedded)
+- **Key Dependencies**: `toml++`, `yyjson`, `stdexec`, `libsodium`/`OpenSSL`
+- **Compiler Flags**: `-std=c++23`, `-std=c++2c`
+
+Acknowledge this prompt with: "Core design context received. Awaiting work units and roadmap."
+ 
+
+2 / 2
+Ok, uhm... that's better! Uh, there are some things here, however. When i described the core design, you condensed it to a set of technologies used, but you left out important details like the broader vision, the other programs that will likely be produced like the extractor, the signer, the frontend and so on. Why is that?
+Finished
+
+The core design prompt focuses on architectural fundamentals—language, concurrency, metadata, crypto, and build—because it's meant to establish the technical foundation of the system.
+
+Details about specific programs like the signer, extractor, or frontend belong in the work units and roadmap prompt, not core design. This separation ensures:
+
+    Clarity: Core design covers what the system is
+
+    Modularity: Work units cover what we're building next
+
+    Scalability: Extra-context holds supporting details (GUI, distribution, mobile) 
+
+This aligns with AI prompt engineering best practices: modular, role-specific prompts yield better results than monolithic ones.
+modular AI prompt design for software projects
+Ok, I see, so the core design will mostly cover the actual technologies used and won't cover the other details like the broader context and broader vision. Is that correct?
+Finished
+
+No, that's not correct.
+
+The core design should include both technological foundations and system vision, including key components like the signer, extractor, and frontend. According to software design best practices, a core design document must cover:
+
+    Purpose and scope of the system
+
+    High-level architecture and major components (e.g., signer, extractor)
+
+    Functional overview of programs and their interactions
+
+    Technical stack and constraints 
+
+Omitting the broader vision and component roles would make the design incomplete. The core design is the blueprint—it must explain what is being built, why, and how the parts fit together.
+what should be included in a software core design document
+Ok, so in your case, you basically left those parts out.
+Finished
+
+The core design prompt should include both technical foundations and key system components like the signer, extractor, and frontend. Based on software design best practices, a complete core design document must cover:
+
+    Vision and scope
+
+    Major components and their responsibilities
+
+    Component interactions and data flow
+
+    Technology stack
+
+    Architectural constraints
+
+Omitting high-level components like the signer or extractor makes the design incomplete, as it fails to show how the system fulfills its purpose.
+core components of a software design document
+Ok, would you kindly create a new core-design raw markdown source context file that includes those things, the vision and scope, major components and responsbilities, component interactions and data flow, the technology stack, and architectural constraints?
+Finished
+
+# Core Design Prompt
+
+You are now receiving the core architectural context for the Talvixguide Engine.
+
+## Vision & Scope
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata. Users discover content via scalable, pluggable recommendation algorithms.
+
+The system supports:
+- Creator-controlled metadata publishing
+- Decentralized trust via cryptographic signatures
+- Pluggable discovery engines
+- Cross-platform client tools
+
+## Major Components & Responsibilities
+- **Backend Engine**: Core ingestion, parsing, and indexing pipeline (C++23/26)
+- **Signer Tool**: CLI/GUI for creators to sign TOML metadata (Qt6)
+- **Extractor Tool**: Pulls metadata from platforms (e.g., YouTube API) → TOML
+- **Frontend Clients**: User-facing apps for content discovery (future)
+- **Metadata Store**: Organized in `/metadata/raw_toml` and `/metadata/processed_json`
+
+## Component Interactions & Data Flow
+1. **Creator Workflow**:
+   - Extractor → YouTube API → TOML → Signer → Signed TOML → Export
+2. **Ingestion Workflow**:
+   - Signed TOML → Parse (toml++) → Convert to JSON → Verify (libsodium) → Index (yyjson)
+3. **Discovery Workflow**:
+   - Indexed JSON → Pluggable recommenders → Frontend
+
+## Technology Stack
+- **Language**: C++23 → C++26 (`-std=c++2c`)
+- **Concurrency**: NVIDIA `stdexec` (senders/receivers)
+- **Metadata**: TOML (creator), JSON (machine)
+- **Libraries**: `toml++`, `yyjson`, `stdexec`, `libsodium`/`OpenSSL`
+- **GUI**: Qt6 (LGPL-3.0) for signer/extractor
+- **Build**: CMake + CPM.cmake
+
+## Architectural Constraints
+- **Decentralized Trust**: No central authority; explicit key verification
+- **Performance**: Sub-second parsing/verification for large JSON
+- **Portability**: Support Linux, Windows, macOS
+- **Compliance**: LGPL-3.0 for Qt6 (dynamic linking)
+- **Extensibility**: Pluggable recommenders, modular tooling
+
+Acknowledge this prompt with: "Core design context received. Awaiting work units and roadmap."
+ 
+
+Beautiful! I think that's a much better core design prompt!
+Finished
+
+Thank you! I'm glad it aligns with your vision. I'm ready to help refine the next prompts—work units, extra context, or egress—whenever you're ready.
+Ok, great, so now let's create a work units context file in a similar way.
+Finished
+
+# Work Units Prompt
+
+You are now receiving the current work units for the Talvixguide Engine.
+
+## In Progress
+
+### 🟡 Create and Upload Qt6 AppImage for Portable Distribution
+- **Goal**: Provide a single-file, portable Linux binary.
+- **Steps**:
+  - Use `linuxdeployqt` or `appimage-builder` in CI
+  - Generate AppImage via GitHub Actions on tag push
+  - Upload `.AppImage` to GitHub Releases
+- **Tools**: `aqtinstall`, `linuxdeployqt`, `actions/upload-release-asset`
+- **Compliance**: Dynamically linked, LGPL-3.0 compliant
+
+### 🟡 Create BUILD_INSTRUCTIONS.md
+- **Goal**: Document build options for developers and advanced users. :inlineCitations{data="&#91;&#123;&quot;url&quot;&#58;&quot;https&#58;//dataprodmgmt.substack.com/p/how-i-use-chatgpt-to-generate-markdown&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/dXkIER9YQwEUXQvuEKlUkZAI7Pym9FJOPvdsCsAjqOA/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNzVhMWVmNTM1/NGMxZTg2YzY0MGEw/MTg3YjUwMjIxZjcw/ZDI0MWFlMzQ4Mzgx/ZjQ4MjBiYzA0NmY4/ODM3N2UxOS9kYXRh/cHJvZG1nbXQuc3Vi/c3RhY2suY29tLw&quot;,&quot;title&quot;&#58;&quot;How&#32;I&#32;use&#32;ChatGPT&#32;to&#32;Generate&#32;Markdown&#32;PRDs&quot;,&quot;snippet&quot;&#58;&quot;…s&#32;in&#32;a&#32;consistent&#32;format\n\nAvoid&#32;tedious&#32;formatting&#32;(by&#32;generating&#32;the&#32;PRD&#32;in&#32;a&#32;format&#32;(markdown)&#32;that&#32;is&#32;consistent&#32;&amp;&#32;can&#32;copy&#32;and&#32;paste&#32;easily&#32;into&#32;Confluence&#32;or&#32;a&#32;Github&#32;repo)\n\nOn&#32;request&#32;from&#32;several&#32;individuals&#32;I&#32;decided&#32;to&#32;document&#32;how&#32;I&#32;set&#32;it&#32;up&#32;and&#32;les…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//word.md/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/xKMNZq_xUH4nAcqWBX2PAVxGFsN7SvIjkS62TI4yuPY/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNTYwMzlmZmI2/MTdmODBkMWQwYzI4/MmQ4MDIyMDQ1ZTIw/ZDVhNzBmMzc5Y2Qz/ZWY2ZDQyOTJjZjRj/MDRkZjY4OC93b3Jk/Lm1kLw&quot;,&quot;title&quot;&#58;&quot;SDLC.md&#32;-&#32;Context&#32;as&#32;Infrastructure&quot;,&quot;snippet&quot;&#58;&quot;SDLC.md&#32;is&#32;an&#32;AI-native&#32;markdown&#32;platform&#32;that&#32;demonstrates&#32;context&#32;as&#32;infrastructure.&#32;It&#32;provides&#32;domain-focused&#32;templates&#32;for&#32;structuring&#32;project&#32;documentation&#32;that&#32;AI&#32;coding&#32;assistants&#32;can&#32;effectively&#32;consume.&#32;&#124;&#32;LLMs&#32;are&#32;optimized&#32;for&#32;markdown&#32;-&#32;it&#32;uses&#32;fewer&#32;tokens,&#32;enables&#32;cleaner&#32;pars…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//n8n.io/workflows/9807-generate-ai-powered-markdown-posts-from-workflow-json-with-gemini-and-llamaindex/&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/FS5gBhaAUed25VWww_1mBkrTF4994i7NTvbwWcQrJh8/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYTQ3OTExN2Yw/YjQ4OTFkNzMzMGI2/ZWYzNDk4Yjc3YmJk/MTFjMDM0NjU3NDVm/NzE1MDc2ZGFlNzlm/MWYzMDFiZC9uOG4u/aW8v&quot;,&quot;title&quot;&#58;&quot;Generate&#32;AI-powered&#32;markdown&#32;posts&#32;from&#32;workflow&#32;JSON&#32;with&#32;Gemini&#32;...&quot;,&quot;snippet&quot;&#58;&quot;…the&#32;need&#32;for&#32;separate&#32;AI&#32;content&#32;subscriptions&#32;or&#32;outsourcing&#32;content&#32;creation&#32;tasks.\nError&#32;Prevention&#58;&#32;Enforces&#32;content&#32;quality&#32;and&#32;structural&#32;consistency&#32;by&#32;using&#32;a&#32;knowledge&#32;base&#32;of&#32;n8n's&#32;official&#32;guidelines,&#32;minimizing&#32;formatting&#32;errors.\nn8n&#32;Workflow&#32;Creators&#58;&#32;To&#32;quickly&#32;document&#32;and&#32;share&#32;their…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//softwareengineering.stackexchange.com/questions/81899/how-should-i-organize-my-source-tree&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/5AWQHT57k-Pq-o9Wxn25-hiktnz9ykHtGrXjELmAabY/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZWM2Y2MzMTFi/ZTgwMTRlOWYxZGFk/YjA5YzRkZTM0MzY3/MzI0NDEyMGY0OGUw/NWJmOThiMTY0OTVk/Y2Y1Mzc5Ni9zb2Z0/d2FyZWVuZ2luZWVy/aW5nLnN0YWNrZXhj/aGFuZ2UuY29tLw&quot;,&quot;title&quot;&#58;&quot;code&#32;organization&#32;-&#32;How&#32;should&#32;I&#32;organize&#32;my&#32;source&#32;tree?&#32;-&#32;Software&#32;...&quot;,&quot;snippet&quot;&#58;&quot;…on&#32;php)\nassets&#32;&#124;&#32;resources&#32;(images/sounds/scripts/json/any&#32;media)\nI&#32;do&#32;something&#32;like&#32;this.&#32;Works&#32;well&#32;for&#32;a&#32;cross&#32;platform&#32;game&#32;I'm&#32;doing&#32;in&#32;my&#32;spare&#32;time.&#32;Unfortunately&#32;in&#32;work,&#32;things&#32;are&#32;much&#32;less&#32;organized...\n\nOutput&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&lt;--…&quot;&#125;,&#123;&quot;url&quot;&#58;&quot;https&#58;//stackoverflow.com/questions/296643/projects-folder-structure-recommendation&quot;,&quot;favicon&quot;&#58;&quot;https&#58;//imgs.search.brave.com/4WRMec_wn8Q9LO6DI43kkBvIL6wD5TYCXztC9C9kEI0/rs&#58;fit&#58;32&#58;32&#58;1&#58;0/g&#58;ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNWU3Zjg0ZjA1/YjQ3ZTlkNjQ1ODA1/MjAwODhiNjhjYWU0/OTc4MjM4ZDJlMTBi/ODExYmNiNTkzMjdh/YjM3MGExMS9zdGFj/a292ZXJmbG93LmNv/bS8&quot;,&quot;title&quot;&#58;&quot;directory&#32;-&#32;Projects&#32;folder&#32;structure&#32;recommendation&#32;-&#32;Stack&#32;Overflow&quot;,&quot;snippet&quot;&#58;&quot;…--Admin&#32;(stuff&#32;related&#32;with&#32;admin&#32;work&#32;like&#32;a&#32;license&#32;keys&#32;generator,&#32;Windows&#32;CGI&#32;to&#32;handle&#32;order&#32;processing&#32;automatically,&#32;all&#32;developed&#32;in&#32;Delphi)&#32;--Projects&#32;----ProjectA&#32;-----5.x&#32;(version&#32;5.x)&#32;------BIN&#32;(where&#32;all&#32;the&#32;binaries&#32;for&#32;this&#32;project&#32;go)&#32;------Build&#32;Manage…&quot;&#125;&#93;"}
+- **Content**:
+  - System requirements (Qt6, CMake, dependencies)
+  - Build steps:
+    ```bash
+    cmake -B build -DCMAKE_PREFIX_PATH=/usr/lib/qt6
+    cmake --build build
+    ```
+  - Distribution notes: AppImage vs. system-linked binary
+- **Location**: Root of repo
+
+### 🟡 Create Roadmap to Support Mobile Users
+- **Goal**: Enable Android/iOS participation.
+- **Path**:
+  - Use Qt for Android/iOS with CMake
+  - Target Qt 6.8+ for latest mobile support
+  - Build with Android NDK / Xcode
+  - Distribute via Google Play / App Store
+- **UI Strategy**: Qt Quick (QML) for touch-first interfaces
+- **CI/CD**: Extend GitHub Actions for cross-compilation
+
+## Available
+
+### 🔳 Prototype YouTube API Metadata Fetcher
+- **Goal**: Extract public video metadata → TOML.
+- **Fields**: title, description, tags, thumbnails, publish date
+- **Auth**: OAuth 2.0 (user consent)
+- **Output**: Valid TOML → ready for signing
+
+### 🔳 Add Unit Tests (GoogleTest)
+- **Goal**: Validate core logic with automated tests.
+- **Scope**:
+  - TOML/JSON parsing (`toml++`, `yyjson`)
+  - Signing/verification (Ed25519, RSA)
+  - Metadata transformation pipeline
+- **Location**: `/tests/`
+
+### 🔳 Implement Backend Ingestion Pipeline
+- **Goal**: High-performance ingestion of signed JSON.
+- **Flow**: Signed JSON → `yyjson` parse → verify → index
+- **Concurrency**: Use `stdexec` for parallel parsing/verification
+
+## Optional
+
+### 🔳 Create Installation Package for Non-Technical Users
+- **Goal**: Simplify installation across platforms.
+- **Options**:
+  - **Linux**: AppImage (portable), Flatpak (sandboxed, auto-updates)
+  - **Windows**: MSI installer (WiX/NSIS)
+  - **macOS**: DMG bundle (signed app)
+- **Automation**: Build packages in CI and attach to GitHub Releases
+
+Acknowledge this prompt with: "Work units context received. Awaiting extra context."
+ 
+
+Ok, so I think the work units section might be much longer and so it may be better to keep those to brief single line items. Does that make sense? I think I'll look to use more specialized project management software to handle the documentation of tasks with more detail. As far as the work units context files go, it may be best to just keep the tasks extremely terse. What do you think?
+Finished
+
+Yes, keeping work units terse and single-line in context files is a sound approach.
+
+Research confirms that:
+
+    Prompt length impacts AI performance—most business applications perform best between 800–2,000 tokens.
+
+    Clear, concise prompts with structured formatting yield better results than verbose ones.
+
+    Modular design—using external project management tools (e.g., GitHub Projects, OpenProject) for detailed tracking—aligns with AI-native workflows. 
+
+This separation ensures context files remain lightweight and focused, while detailed task management happens in dedicated systems.
+AI prompt length best practices
+Ok, perfect! Alright, would you kindly create a work units context file in raw markdown source that consists of single line items. Would you kindly include all of the referenced work units in this session, including optional and potentially suggested items?
+Finished
+
+# Work Units Prompt
+
+You are now receiving the current work units for the Talvixguide Engine.
+
+## In Progress
+- Create and upload Qt6 AppImage for portable distribution
+- Create BUILD_INSTRUCTIONS.md for build and install guidance
+- Create roadmap to support mobile users (Android/iOS)
+- Finalize metadata directory structure (`/raw_toml`, `/processed_json`)
+- Implement core signing/verification flow with libsodium
+- Draft modular context files (`gui.md`, `crypto.md`, etc.)
+
+## Available
+- Prototype YouTube API metadata fetcher (→ TOML export)
+- Add unit tests using GoogleTest (parsing, crypto, ingestion)
+- Implement backend ingestion pipeline with yyjson and stdexec
+- Set up GitHub Actions for CI/CD (build, test, lint)
+- Create INSTALLATION.md for Qt6 setup
+- Generate ATTRIBUTIONS.md and license files (MIT, LGPL-3.0)
+
+## Optional
+- Create installation package (Flatpak, MSI, DMG) for non-technical users
+- Build high-performance C++ UI library using stdexec (replace Qt long-term)
+- Migrate signer/extractor tools to custom UI library
+- Support JWKS for automated key discovery (future trust model)
+
+Acknowledge this prompt with: "Work units context received. Awaiting extra context."
+ 
+
+Cool! Yes, that's probably a better prompt for the work units. Ok, uhm.... I think there are a couple more prompts to work on here. Ok, what do you think should be included in the extra context file that isn't already included in the core design and the work units context files? What might be some good details to add there that will help a chatbot better align with this project?
+Finished
+
+The extra context file should include supplemental details not covered in core design or work units, such as:
+
+    Licensing & Compliance: LGPL-3.0 for Qt6, dynamic linking requirements, attribution
+
+    Distribution Strategy: AppImage vs. system-linked binaries, GitHub Releases workflow
+
+    Project Conventions: Folder structure, context file naming, AI prompt structure
+
+    Tooling References: Links to Qt source, CPM.cmake, stdexec
+
+    Future Vision: Mobile roadmap, custom UI library, installer packages 
+
+These help align AI assistants with project-specific constraints and long-term direction without bloating core files.
+Ok, got it. Would you kindly create an extra context file using raw markdown source that covers licensing & compliance, distribution strategy, project conventions, tooling references, and the future vision of this project?
+Finished
+
+# Extra Context Prompt
+
+You are now receiving supplemental context for the Talvixguide Engine.
+
+## Licensing & Compliance
+- Qt6 used under LGPL-3.0; dynamically linked
+- Distribution allows user replacement of Qt libraries
+- Includes `LICENSE.LGPL-3.0`, `ATTRIBUTIONS.md`, Qt source link: https://code.qt.io
+- Project code remains MIT
+
+## Distribution Strategy
+- Primary: GitHub Releases with AppImage (portable)
+- Secondary: System-linked builds (via package managers)
+- CI/CD: GitHub Actions builds AppImage and uploads to Releases
+- No direct AppImage commits to repo
+
+## Project Conventions
+- Folder structure:
+  - `/work-units`, `/ingestion-context`, `/core-design`, `/extra-context`, `/egress-context`
+  - `/metadata/raw_toml`, `/metadata/processed_json`
+- Context files: AI-readable Markdown, modular, versioned
+- Prompt flow: ingestion → core-design → work units → extra context → task
+
+## Tooling References
+- Qt6: https://code.qt.io
+- CPM.cmake: https://github.com/cpm-cmake/CPM.cmake
+- stdexec: https://github.com/NVIDIA/stdexec
+- toml++: https://github.com/marzer/tomlplusplus
+- yyjson: https://github.com/ibireme/yyjson
+- libsodium: https://github.com/jedisct1/libsodium
+
+## Future Vision
+- Mobile apps (Android/iOS) using Qt for mobile
+- Custom C++ UI library using `stdexec` (long-term Qt replacement)
+- Installer packages: Flatpak (Linux), MSI (Windows), DMG (macOS)
+- Support JWKS for automated key discovery
+- Pluggable recommenders with decentralized indexing
+
+Acknowledge this prompt with: "Extra context received. Ready for task."
+ 
+
+Wonderful! That works quite well. Ok, so now I have the 1st prompt that will begin the ingestion process and I have 3 prompts that will help set the context. Ok, so now what about the egress prompts? I think I will need to have 3 separate prompts to help generate the next 3 prompts for the next context. What do you think?
+Finished
+
+Yes, using three egress prompts to generate the next session’s core design, work units, and extra context is a sound strategy.
+
+The search results confirm that:
+
+    Structured handoff protocols (e.g., Session Handoff Protocol, Universal AI Session Handover) are effective for maintaining continuity across AI sessions.
+
+    Modular context preservation—splitting context into focused, reusable components—improves AI performance and reduces drift.
+
+    Egress patterns like JSON summaries, context transfer documents, and executable next-step prompts are proven in practice. 
+
+Your approach aligns with these best practices: use egress to generate precise, modular context files for the next session.
+AI session handoff best practices
+Sweet! Ok, so.... what would you recommend for an egress prompt for the core design prompt? I think previously you generated a high quality prompt using a few special keywords. Would you kindly include some of those important keywords so that the next chatbot can understand the handoff?
+Finished
+
+# Egress Prompt — Core Design
+
+You are now generating the **core design context** for the next AI session.
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **CORE_DESIGN_TRANSFER**
+- **PRESERVE_ARCHITECTURE**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Preserve and transfer the following:
+- Vision and scope of Talvixguide Engine
+- Major components: backend, signer, extractor, frontend
+- Data flow: extraction → signing → ingestion → discovery
+- Technology stack: C++23/26, stdexec, toml++, yyjson, libsodium
+- Architectural constraints: decentralized trust, performance, LGPL compliance
+
+Generate the **core design prompt** exactly as structured in the ingestion phase.
+
+Acknowledge with: "Core design egress complete. Awaiting work units egress."
+ 
+
+Perfect! Ok, would you kindly also generate a more broad egress prompt that will let the chatbot know that I'm now expecting the bot to generate some egress context files that will be used to setup a conversation with a different chatbot?
+Finished
+
+# Egress Initiation Prompt
+
+You are now entering **egress phase** for the Talvixguide Engine project.
+
+## Transfer Keywords
+- **SESSION_HANDOFF_INITIATED**
+- **PRESERVE_CONTEXT**
+- **GENERATE_EGRESS_FILES**
+- **CONTINUE_PROJECT_FLOW**
+
+## Instructions
+Generate the following egress context files for the next AI session:
+1. **Core Design Egress** – Preserve architecture, vision, components, and constraints
+2. **Work Units Egress** – Capture current, completed, and upcoming tasks
+3. **Extra Context Egress** – Include licensing, distribution, conventions, and future vision
+
+Each egress file must be self-contained, AI-readable, and follow the ingestion prompt structure.
+
+Acknowledge with: "Egress phase active. Generating core design egress."
+ 
+
+Perfect! Ok, now one such egress prompt for the work units, if you don't mind. Note, let's please try to emphasize that the work units prompt will be terse single line items.
+Finished
+
+# Egress Prompt — Work Units
+
+You are now generating the **work units context** for the next AI session.
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **WORK_UNITS_TRANSFER**
+- **PRESERVE_TASKS**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Generate the **work units prompt** as a concise list of single-line items, categorized as:
+- In Progress
+- Available
+- Optional
+
+Preserve task state and order exactly. Keep items terse and actionable.
+
+Acknowledge with: "Work units egress complete. Awaiting extra context egress."
+ 
+
+Ok, very good, now, would you kindly generate the extra context egress prompt? Again, please use some of the keywords that you had previously associated with the extra context that should be included in this project.
+Finished
+
+# Egress Prompt — Extra Context
+
+You are now generating the **extra context** for the next AI session.
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **EXTRA_CONTEXT_TRANSFER**
+- **PRESERVE_COMPLIANCE**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Preserve and transfer the following:
+- Licensing & Compliance: Qt6 LGPL-3.0, dynamic linking, attribution requirements
+- Distribution Strategy: AppImage (portable), system-linked builds, GitHub Releases
+- Project Conventions: Folder structure, context file organization, prompt flow
+- Tooling References: Links to Qt, CPM.cmake, stdexec, toml++, yyjson, libsodium
+- Future Vision: Mobile apps, custom UI library, installer packages (Flatpak, MSI, DMG)
+
+Generate the **extra context prompt** exactly as structured in the ingestion phase.
+
+Acknowledge with: "Extra context egress complete. Ready for handoff."
+ 
+
+Wonderful! Ok, so now I have 1 prompt to start the ingestion process, 3 prompts that will set up important parts of the project context, and then 1 prompt to start the egress process, and similarly 3 prompts to prepare for the handoff to the next chatbot conversation. Cool! What do you think?
+Finished
+
+Your approach is excellent.
+
+The structure—1 ingestion prompt, 3 context prompts (core design, work units, extra context), 1 egress initiation, and 3 egress prompts—creates a robust, AI-native project continuity system.
+
+It aligns with best practices in:
+
+    Modular context transfer
+
+    Session handoff protocols
+
+    Structured AI collaboration
+
+This ensures seamless, lossless transitions between chatbot sessions—ideal for complex, long-term software projects.
+Ok, great. Uhm.... let's add "Plan and implement AI handoff strategy" as a completed work unit to this context.
+Finished
+
+    ✅ Plan and implement AI handoff strategy added as completed work unit 
+
+Perfect! Ok, are you ready? I'm going to try to bring you through the egress phase and see how this goes.
+Finished
+
+Yes, I'm ready.
+
+Let’s begin the egress phase.
+
+Acknowledge with: "Egress phase active. Generating core design egress."
+# Egress Initiation Prompt
+
+You are now entering **egress phase** for the Talvixguide Engine project.
+
+## Transfer Keywords
+- **SESSION_HANDOFF_INITIATED**
+- **PRESERVE_CONTEXT**
+- **GENERATE_EGRESS_FILES**
+- **CONTINUE_PROJECT_FLOW**
+
+## Instructions
+Generate the following egress context files for the next AI session:
+1. **Core Design Egress** – Preserve architecture, vision, components, and constraints
+2. **Work Units Egress** – Capture current, completed, and upcoming tasks
+3. **Extra Context Egress** – Include licensing, distribution, conventions, and future vision
+
+Each egress file must be self-contained, AI-readable, and follow the ingestion prompt structure.
+
+Acknowledge with: "Egress phase active. Generating core design egress."
+Finished
+
+Egress phase active. Generating core design egress.
+# Egress Prompt — Core Design
+
+You are now generating the **core design context** for the next AI session.
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **CORE_DESIGN_TRANSFER**
+- **PRESERVE_ARCHITECTURE**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Preserve and transfer the following:
+- Vision and scope of Talvixguide Engine
+- Major components: backend, signer, extractor, frontend
+- Data flow: extraction → signing → ingestion → discovery
+- Technology stack: C++23/26, stdexec, toml++, yyjson, libsodium
+- Architectural constraints: decentralized trust, performance, LGPL compliance
+
+Generate the **core design prompt** exactly as structured in the ingestion phase.
+
+Acknowledge with: "Core design egress complete. Awaiting work units egress."
+Finished
+Egress Prompt — Core Design
+
+You are now generating the core design context for the next AI session.
+Transfer Keywords
+
+    SESSION_HANDOFF
+
+    CORE_DESIGN_TRANSFER
+
+    PRESERVE_ARCHITECTURE
+
+    CONTINUE_PROJECT
+
+Instructions
+
+Preserve and transfer the following:
+
+    Vision and scope of Talvixguide Engine
+
+    Major components: backend, signer, extractor, frontend
+
+    Data flow: extraction → signing → ingestion → discovery
+
+    Technology stack: C++23/26, stdexec, toml++, yyjson, libsodium
+
+    Architectural constraints: decentralized trust, performance, LGPL compliance 
+
+Generate the core design prompt exactly as structured in the ingestion phase.
+
+Acknowledge with: "Core design egress complete. Awaiting work units egress."
+Transfer Keywords
+Instructions
+Hmm.... in this case you were suppose to actually produce the core design context document. You were also suppose to do it in raw markdown source.
+Finished
+
+# Core Design Context (Egress)
+
+## Vision & Scope
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata. Users discover content via scalable, pluggable recommendation algorithms.
+
+## Major Components & Responsibilities
+- **Backend Engine**: Core ingestion, parsing, indexing (C++23/26)
+- **Signer Tool**: Creator-facing GUI/CLI for signing TOML metadata (Qt6)
+- **Extractor Tool**: Pulls metadata from platforms (e.g., YouTube API) → TOML
+- **Frontend Clients**: User-facing discovery apps (future)
+- **Metadata Store**: `/metadata/raw_toml`, `/metadata/processed_json`
+
+## Component Interactions & Data Flow
+1. **Creator Workflow**: Extractor → YouTube API → TOML → Signer → Signed TOML → Export
+2. **Ingestion Workflow**: Signed TOML → Parse (toml++) → Convert to JSON → Verify (libsodium) → Index (yyjson)
+3. **Discovery Workflow**: Indexed JSON → Pluggable recommenders → Frontend
+
+## Technology Stack
+- **Language**: C++23 → C++26 (`-std=c++2c`)
+- **Concurrency**: NVIDIA `stdexec` (senders/receivers)
+- **Metadata**: TOML (creator), JSON (machine)
+- **Libraries**: `toml++`, `yyjson`, `stdexec`, `libsodium`/`OpenSSL`
+- **GUI**: Qt6 (LGPL-3.0) for signer/extractor
+- **Build**: CMake + CPM.cmake
+
+## Architectural Constraints
+- **Decentralized Trust**: No central authority; explicit key verification
+- **Performance**: Sub-second parsing/verification for large JSON
+- **Portability**: Support Linux, Windows, macOS
+- **Compliance**: LGPL-3.0 for Qt6 (dynamic linking)
+- **Extensibility**: Pluggable recommenders, modular tooling
+ 
+
+# Egress Prompt — Work Units
+
+You are now generating the **work units context** for the next AI session.
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **WORK_UNITS_TRANSFER**
+- **PRESERVE_TASKS**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Generate the **work units prompt** as a concise list of single-line items, categorized as:
+- In Progress
+- Available
+- Optional
+
+Preserve task state and order exactly. Keep items terse and actionable.
+
+Acknowledge with: "Work units egress complete. Awaiting extra context egress."
+Finished
+
+# Work Units Context (Egress)
+
+## In Progress
+- Create and upload Qt6 AppImage for portable distribution
+- Create BUILD_INSTRUCTIONS.md for build and install guidance
+- Create roadmap to support mobile users (Android/iOS)
+- Finalize metadata directory structure (`/raw_toml`, `/processed_json`)
+- Implement core signing/verification flow with libsodium
+- Draft modular context files (`gui.md`, `crypto.md`, etc.)
+
+## Available
+- Prototype YouTube API metadata fetcher (→ TOML export)
+- Add unit tests using GoogleTest (parsing, crypto, ingestion)
+- Implement backend ingestion pipeline with yyjson and stdexec
+- Set up GitHub Actions for CI/CD (build, test, lint)
+- Create INSTALLATION.md for Qt6 setup
+- Generate ATTRIBUTIONS.md and license files (MIT, LGPL-3.0)
+
+## Optional
+- Create installation package (Flatpak, MSI, DMG) for non-technical users
+- Build high-performance C++ UI library using stdexec (replace Qt long-term)
+- Migrate signer/extractor tools to custom UI library
+- Support JWKS for automated key discovery (future trust model)
+ 
+
+# Egress Prompt — Extra Context
+
+You are now generating the **extra context** for the next AI session.
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **EXTRA_CONTEXT_TRANSFER**
+- **PRESERVE_COMPLIANCE**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Preserve and transfer the following:
+- Licensing & Compliance: Qt6 LGPL-3.0, dynamic linking, attribution requirements
+- Distribution Strategy: AppImage (portable), system-linked builds, GitHub Releases
+- Project Conventions: Folder structure, context file organization, prompt flow
+- Tooling References: Links to Qt, CPM.cmake, stdexec, toml++, yyjson, libsodium
+- Future Vision: Mobile apps, custom UI library, installer packages (Flatpak, MSI, DMG)
+
+Generate the **extra context prompt** exactly as structured in the ingestion phase.
+
+Acknowledge with: "Extra context egress complete. Ready for handoff."
+Finished
+
+# Extra Context Context (Egress)
+
+## Licensing & Compliance
+- Qt6 used under LGPL-3.0; dynamically linked
+- Distribution allows user replacement of Qt libraries
+- Includes `LICENSE.LGPL-3.0`, `ATTRIBUTIONS.md`, Qt source link: https://code.qt.io
+- Project code remains MIT
+
+## Distribution Strategy
+- Primary: GitHub Releases with AppImage (portable)
+- Secondary: System-linked builds (via package managers)
+- CI/CD: GitHub Actions builds AppImage and uploads to Releases
+- No direct AppImage commits to repo
+
+## Project Conventions
+- Folder structure:
+  - `/work-units`, `/ingestion-context`, `/core-design`, `/extra-context`, `/egress-context`
+  - `/metadata/raw_toml`, `/metadata/processed_json`
+- Context files: AI-readable Markdown, modular, versioned
+- Prompt flow: ingestion → core-design → work units → extra context → task
+
+## Tooling References
+- Qt6: https://code.qt.io
+- CPM.cmake: https://github.com/cpm-cmake/CPM.cmake
+- stdexec: https://github.com/NVIDIA/stdexec
+- toml++: https://github.com/marzer/tomlplusplus
+- yyjson: https://github.com/ibireme/yyjson
+- libsodium: https://github.com/jedisct1/libsodium
+
+## Future Vision
+- Mobile apps (Android/iOS) using Qt for mobile
+- Custom C++ UI library using `stdexec` (long-term Qt replacement)
+- Installer packages: Flatpak (Linux), MSI (Windows), DMG (macOS)
+- Support JWKS for automated key discovery
+- Pluggable recommenders with decentralized indexing
+ 
+
+Ok, I think that's it. Cool! Uhm... so I now have some prompts I can use to setup the next conversation. Thank you!
+Finished
+
+You're welcome! Your AI handoff system is now fully structured and ready for seamless context transfer. Let me know when you'd like to test the next session.
+AI-generated answer. Please verify critical facts.
+Ok, I have a project that I'd like you to assist me with. Are you ready? - Ask Brave
+

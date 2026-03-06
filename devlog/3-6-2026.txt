@@ -17,3 +17,52 @@ errors in the markdown context files. I hope that makes sense!
 
 Alright, so I'll look to implement some of that. I think I also want to split 
 the context files at least into work units context and broader project context. 
+
+11:09 AM 
+Ok, so I'm getting a bit more comfortable with AI-native workflows and so I'm splitting up 
+the context into separate prompts. I have a prompt for broader project context and I have 
+a prompt for work units. I will look to create some prompts for prompt ingestion and 
+creation so that I can quickly ask the chatbot to generate the relevant prompts after 
+each session. 
+
+11:14 AM 
+My internet connection is not the best. Ok, so I spent some time working through how Qt6 
+can reasonably be incorporated into this project. I can support two different pathways, one 
+involves the user installing and linking a system binary to the project and the other 
+pathway involves creating an AppImage and uploading that to GitHub projects under 
+the Releases section so that users can obtain the AppImage if they don't want to 
+install Qt6 themselves. 
+
+Ok, that works reasonably well. I will just need to add some build instructions 
+so that users know what to do. 
+
+11:32 AM 
+Ok, so I started more work on how the context prompts could work. I think I'll use 
+1 ingestion prompt, and that will set up the chatbot to receive structured prompts 
+to help set up the project context. At the moment, I think I'll use 1 core design 
+prompt, 1 work units and development prompt, and 1 extra context prompt. The core 
+design prompt will cover the basic outline of the project. The work units will 
+help explain the current progress of the project. The extra context will include 
+other extraneous details that are relevant, but don't quite fit in to the core 
+design section nor the work units and development section. 
+
+I could look to add more or flesh things out more as I go. 
+
+12:08 AM 
+Ok, so I seem to have made some progress with setting up the AI chatbot context 
+handoffs. Neat! Yeah, it's very exciting overall. I should still support this 
+approach with more standard project management software, but this is overall 
+a very nifty way of approaching project development. 
+
+12:26 PM 
+Ok, so I think I have a reasonable and structured handoff process for obtaining 
+context between conversation sessions. Cool! Yeah, that's very interesting. I think 
+that will be very helpful. Sweet. 
+
+12:51 PM 
+Ok, now that I have the handoff process, I shifted my focus to some of the other 
+tasks that I can do. For reference, I've been working on this since around 10:30 AM 
+today, and so I'm at around a bit less than 2.5 hours spent on this project. I think 
+I might want to spend 1 more hour today and then work on some other things. 
+
+I think this is a good point to commit some of my work, too. 
