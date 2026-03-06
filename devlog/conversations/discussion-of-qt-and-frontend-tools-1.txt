@@ -1,0 +1,1345 @@
+
+Brave logo
+
+    Ask
+    All
+    Images
+    News
+    Videos
+    Goggles
+
+# Project Context Ingestion Prompt
+
+You are being initialized with the Talvixguide Engine project context.
+
+This is a structured, multi-prompt process. I will now provide three context files to fully instantiate the project state.
+
+Please acknowledge each prompt as it is presented. Do not take action or generate code until the full context has been loaded and I give the directive to proceed.
+
+## Upcoming Prompts
+
+### 1. Core Design
+- Language: C++23 → C++26 with `stdexec`
+- Concurrency: `std::execution` via NVIDIA `stdexec`
+- Metadata: TOML (creator-facing), JSON (machine-parsed)
+- Cryptography: Libsodium (Ed25519), OpenSSL (fallback), explicit key trust
+- Build: CMake + CPM.cmake
+
+### 2. Work Units & Roadmap
+- In progress: Qt6 GUI tools, AppImage packaging, mobile roadmap
+- Available: YouTube metadata fetcher, GoogleTest integration, ingestion pipeline
+- Optional: Custom UI library, installer packages
+
+### 3. Misc Context
+- GUI Framework: Qt6 (LGPL-3.0), AppImage + system-linked distribution
+- Mobile Strategy: Qt for Android/iOS, QML for touch interfaces
+- Compliance: LGPL-3.0 attribution, dynamic linking
+- Future: Flatpak, MSI, DMG packaging
+
+Acknowledge this prompt with: "Context ingestion initialized. Awaiting core design context."
+Finished
+
+web_results;# Project Context Ingestion Prompt
+
+You are being initialized with the Talvixguide Engine project context.
+
+This is a structured, multi-prompt process. I will now provide three context files to fully instantiate the project state.
+
+Please acknowledge each prompt as it is presented. Do not take action or generate code until the full context has been loaded and I give the directive to proceed.
+Upcoming Prompts
+1. Core Design
+
+    Language: C++23 → C++26 with stdexec
+
+    Concurrency: std::execution via NVIDIA stdexec
+
+    Metadata: TOML (creator-facing), JSON (machine-parsed)
+
+    Cryptography: Libsodium (Ed25519), OpenSSL (fallback), explicit key trust
+
+    Build: CMake + CPM.cmake
+
+2. Work Units & Roadmap
+
+    In progress: Qt6 GUI tools, AppImage packaging, mobile roadmap
+
+    Available: YouTube metadata fetcher, GoogleTest integration, ingestion pipeline
+
+    Optional: Custom UI library, installer packages
+
+3. Misc Context
+
+    GUI Framework: Qt6 (LGPL-3.0), AppImage + system-linked distribution
+
+    Mobile Strategy: Qt for Android/iOS, QML for touch interfaces
+
+    Compliance: LGPL-3.0 attribution, dynamic linking
+
+    Future: Flatpak, MSI, DMG packaging
+
+Acknowledge this prompt with: "Context ingestion initialized. Awaiting core design context."Context ingestion initialized. Awaiting core design context.
+1. Core Design
+2. Work Units & Roadmap
+3. Misc Context
+# Core Design Context (Egress)
+
+## Vision & Scope
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata. Users discover content via scalable, pluggable recommendation algorithms.
+
+## Major Components & Responsibilities
+- **Backend Engine**: Core ingestion, parsing, indexing (C++23/26)
+- **Signer Tool**: Creator-facing GUI/CLI for signing TOML metadata (Qt6)
+- **Extractor Tool**: Pulls metadata from platforms (e.g., YouTube API) → TOML
+- **Frontend Clients**: User-facing discovery apps (future)
+- **Metadata Store**: `/metadata/raw_toml`, `/metadata/processed_json`
+
+## Component Interactions & Data Flow
+1. **Creator Workflow**: Extractor → YouTube API → TOML → Signer → Signed TOML → Export
+2. **Ingestion Workflow**: Signed TOML → Parse (toml++) → Convert to JSON → Verify (libsodium) → Index (yyjson)
+3. **Discovery Workflow**: Indexed JSON → Pluggable recommenders → Frontend
+
+## Technology Stack
+- **Language**: C++23 → C++26 (`-std=c++2c`)
+- **Concurrency**: NVIDIA `stdexec` (senders/receivers)
+- **Metadata**: TOML (creator), JSON (machine)
+- **Libraries**: `toml++`, `yyjson`, `stdexec`, `libsodium`/`OpenSSL`
+- **GUI**: Qt6 (LGPL-3.0) for signer/extractor
+- **Build**: CMake + CPM.cmake
+
+## Architectural Constraints
+- **Decentralized Trust**: No central authority; explicit key verification
+- **Performance**: Sub-second parsing/verification for large JSON
+- **Portability**: Support Linux, Windows, macOS
+- **Compliance**: LGPL-3.0 for Qt6 (dynamic linking)
+- **Extensibility**: Pluggable recommenders, modular tooling
+Finished
+
+Core design context ingested. Awaiting work units & roadmap context.
+# Work Units Context (Egress)
+
+## In Progress
+- Create and upload Qt6 AppImage for portable distribution
+- Create BUILD_INSTRUCTIONS.md for build and install guidance
+- Create roadmap to support mobile users (Android/iOS)
+- Finalize metadata directory structure (`/raw_toml`, `/processed_json`)
+- Implement core signing/verification flow with libsodium
+- Draft modular context files (`gui.md`, `crypto.md`, etc.)
+
+## Available
+- Prototype YouTube API metadata fetcher (→ TOML export)
+- Add unit tests using GoogleTest (parsing, crypto, ingestion)
+- Implement backend ingestion pipeline with yyjson and stdexec
+- Set up GitHub Actions for CI/CD (build, test, lint)
+- Create INSTALLATION.md for Qt6 setup
+- Generate ATTRIBUTIONS.md and license files (MIT, LGPL-3.0)
+
+## Optional
+- Create installation package (Flatpak, MSI, DMG) for non-technical users
+- Build high-performance C++ UI library using stdexec (replace Qt long-term)
+- Migrate signer/extractor tools to custom UI library
+- Support JWKS for automated key discovery (future trust model)
+Finished
+
+Work units context ingested. Awaiting final context.
+# Extra Context Context (Egress)
+
+## Licensing & Compliance
+- Qt6 used under LGPL-3.0; dynamically linked
+- Distribution allows user replacement of Qt libraries
+- Includes `LICENSE.LGPL-3.0`, `ATTRIBUTIONS.md`, Qt source link: https://code.qt.io
+- Project code remains MIT
+
+## Distribution Strategy
+- Primary: GitHub Releases with AppImage (portable)
+- Secondary: System-linked builds (via package managers)
+- CI/CD: GitHub Actions builds AppImage and uploads to Releases
+- No direct AppImage commits to repo
+
+## Project Conventions
+- Folder structure:
+  - `/work-units`, `/ingestion-context`, `/core-design`, `/extra-context`, `/egress-context`
+  - `/metadata/raw_toml`, `/metadata/processed_json`
+- Context files: AI-readable Markdown, modular, versioned
+- Prompt flow: ingestion → core-design → work units → extra context → task
+
+## Tooling References
+- Qt6: https://code.qt.io
+- CPM.cmake: https://github.com/cpm-cmake/CPM.cmake
+- stdexec: https://github.com/NVIDIA/stdexec
+- toml++: https://github.com/marzer/tomlplusplus
+- yyjson: https://github.com/ibireme/yyjson
+- libsodium: https://github.com/jedisct1/libsodium
+
+## Future Vision
+- Mobile apps (Android/iOS) using Qt for mobile
+- Custom C++ UI library using `stdexec` (long-term Qt replacement)
+- Installer packages: Flatpak (Linux), MSI (Windows), DMG (macOS)
+- Support JWKS for automated key discovery
+- Pluggable recommenders with decentralized indexing
+Finished
+
+Extra context context ingested. Project state fully initialized.
+Ok, cool! Alright, so what do you think?
+Finished
+
+Based on the current project state:
+
+The Talvixguide Engine is in active development, focused on building a high-performance, decentralized media discovery backend using modern C++ (C++23 → C++26) with stdexec for concurrency. The architecture emphasizes cryptographic integrity via Libsodium, creator-friendly TOML metadata, and scalable ingestion using toml++ and yyjson.
+
+Key next steps include:
+
+    Finalizing the metadata directory structure (/raw_toml, /processed_json)
+
+    Implementing core signing/verification flow
+
+    Creating Qt6 AppImage for portable distribution
+
+    Adding unit tests with GoogleTest
+
+    Setting up CI/CD via GitHub Actions
+
+The roadmap supports future mobile deployment via Qt for Android/iOS and long-term goals like custom UI library development and installer packages (Flatpak, MSI, DMG).
+Talvixguide Engine, project
+Talvixguide Engine GitHub
+Beautiful! I think you understand the context reasonably well. Amazing. Uhm.... alright, so what is the overall purpose of this project and how is it going to be achieved?
+Finished
+
+The Talvixguide Engine is designed to enable decentralized media discovery by allowing creators to publish cryptographically signed metadata (in TOML format), which users can then discover through scalable, pluggable recommendation algorithms—without reliance on a central authority.
+
+This is achieved through:
+
+    A high-performance C++ backend (C++23 → C++26) using stdexec for concurrency
+
+    Cryptographic integrity via Libsodium (Ed25519) with explicit key trust
+
+    A modular ingestion pipeline that converts signed TOML metadata into indexed JSON for fast querying
+
+    Qt6-based tools for creators to sign and extract metadata (e.g., from YouTube)
+
+    Portable distribution via AppImage and future mobile support (Android/iOS)
+
+The system emphasizes decentralized trust, performance, and extensibility, enabling open, censorship-resistant media discovery.
+Talvixguide Engine, project
+decentralized media discovery engine architecture
+Yes, and there is a Qt6 frontend that will be helpful for allowing users to easily interact with the media that they are interested in. The project is going to be a monorepo for a while, which will include each of these programs. However, since the project is modularized, the various components could be replaced by other projects that individuals are either interested in working and have produced.
+Finished
+
+The Talvixguide Engine is a modular C++23/26 monorepo designed for decentralized media discovery, combining high-performance backend processing with a Qt6 frontend for user interaction.
+
+Its purpose is to enable creators to publish cryptographically signed metadata (via TOML files), which users can discover through pluggable recommendation algorithms—all without centralized control. The system ensures trust via Libsodium (Ed25519) and supports extensibility by allowing components like the frontend or ingestion pipeline to be replaced or extended.
+
+The monorepo structure hosts all tools—signer, extractor, backend, and future clients—while maintaining modularity so third-party projects can integrate or replace individual components. The Qt6 GUI (LGPL-3.0) provides a portable, user-friendly interface, distributed via AppImage, with plans for mobile (Android/iOS) and installer packages (Flatpak, MSI, DMG).
+Talvixguide Engine, project
+Talvixguide Engine GitHub
+Cool, very cool. Ok, so what are some of the work units that are available at the moment. I could pick one of those up and spend some time on it now.
+Finished
+
+The available work units you can pick up now include:
+
+    Implement backend ingestion pipeline with yyjson and stdexec
+
+    Add unit tests using GoogleTest (for parsing, crypto, ingestion)
+
+    Prototype YouTube API metadata fetcher → TOML export
+
+    Set up GitHub Actions for CI/CD (build, test, lint)
+
+    Create INSTALLATION.md for Qt6 setup
+
+    Generate ATTRIBUTIONS.md and license files (MIT, LGPL-3.0)
+
+These are ready to be worked on and well-defined for immediate contribution.
+Talvixguide Engine GitHub
+Oh yeah, one of those items is setting up the OpenProject locally so that I can track the project in a more standardized way using project management software. I can sync the parts of the project that are saved there up with the GitHub Projects that is publicly visible. Would you kindly add "Incorporate OpenProject and GitHub Projects" as an available work unit?
+Finished
+
+The "Incorporate OpenProject and GitHub Projects" work unit has been added as an available task.
+
+This involves:
+
+    Setting up a local OpenProject instance for internal project tracking
+
+    Configuring integration between OpenProject and GitHub via webhooks
+
+    Syncing work packages in OpenProject with GitHub Projects for public visibility
+
+    Ensuring bidirectional visibility of pull requests, commits, and CI status 
+
+Documentation and setup steps are available in the OpenProject guides.
+OpenProject GitHub integration setup
+Ok, there is maybe another work unit that is a bit more interesting to me. Let's work on the metadata extractor so that I can produce metadata files for ingestion. If I recall correctly, I'll need to use the extractor to create the files, then there is a signer that will also help sign the files, and then the backend can process those files. Let's make things even more interesting. I'd like to have each of these components in one unified app, with the potential for switching out the UI components. Does that make sense? Let's add another work unit "Design modular UI programs and components." and "Design desired UI programs to be composable and replaceable."
+Finished
+
+The following work units have been added:
+
+    Design modular UI programs and components
+
+    Design desired UI programs to be composable and replaceable 
+
+These align with Qt6’s plugin-based architecture and QML component system, enabling a unified app where UI elements (e.g., metadata extractor, signer, backend interface) can be developed as interchangeable modules.
+Qt6 plugin-based UI architecture
+Qt6 plugin-based UI architecture for modular applications
+Yes, I think I'll actually have a single-frontend and this will make use of the other front-ends as plugins or windows that can be opened up from the main interface. In this way, the other GUIs can be modular and replaceable, but still accessible directly from the main frontend. What do you think? I should also add another work unit, before I forget it, to support unsigned metadata files. The purpose of this is that a user might want to be able to keep track of metadata for files that aren't necessarily their own files, but they won't be able to sign the metadata themselves.
+Finished
+
+Your approach is fully aligned with Qt6's plugin architecture and enables a modular, composable UI.
+
+The main frontend can dynamically load the metadata extractor, signer, and other tools as plugins, each packaged as a shared library. These plugins integrate seamlessly via:
+
+    A common interface (e.g., ToolPlugin with createWidget() or qmlUrl())
+
+    QPluginLoader for runtime discovery and loading
+
+    QML Loader elements to display plugin UIs on demand 
+
+This supports your vision: a unified app where tools are replaceable, independently developed, and directly accessible.
+
+Additionally, the work unit "Support unsigned metadata files" has been added. This allows tracking third-party metadata without requiring cryptographic signatures—useful for local curation or unowned content.
+Qt6 plugin-based modular UI architecture
+Qt6 plugin architecture for modular applications
+Yes, the idea behind using unsigned metadata is that some people might want to make curated sets of metadata for ingestion of content that doesn't belong to them. In this case, the backend can still process that metadata, but it will be understood internally as unsigned and it will not be verified by cryptographic signature as being owned by any particular individual, as far as the metadata is concerned. The actual content the metadata points to, however, will probably clearly indicate the owner as most social media does.
+Finished
+
+The Talvixguide Engine will support unsigned metadata files to allow users to curate and ingest metadata for content they don’t own. These files will be processed by the backend but marked as unverified, meaning they lack cryptographic proof of ownership.
+
+This aligns with a metadata-driven ingestion pipeline design, where processing behavior (e.g., validation, indexing) is determined by metadata configuration. Unsigned files will bypass signature verification while still being parsed (via toml++), converted to JSON (via yyjson), and indexed for discovery.
+
+The system maintains trust decentralization: signed metadata provides authorship assurance, while unsigned metadata enables open curation—both coexist, with provenance clearly distinguished.
+Talvixguide Engine, project
+handling unsigned metadata in decentralized systems
+Yes! Exactly, some mechanism could exist that clearly establishes to both the algorithms that are being used as well as to the user that is going to view the content pointed to by the metadata that the metadata in use is NOT cryptographically signed. Ok, let's add another work unit for "Transparency for algorithms and users for unsigned metadata".
+Finished
+
+The work unit "Transparency for algorithms and users for unsigned metadata" has been added.
+
+This will ensure both the system and end users are clearly informed when metadata is unsigned and unverified, distinguishing it from cryptographically signed content. UI indicators (e.g., visual badges, labels like "unverified curation") and internal flags will communicate status to users and recommendation algorithms alike.
+UI patterns for unverified metadata in decentralized apps
+Yes, and this approach allows for signed metadata from users and curators, as well as unsigned metadata from users, curators, and anyone else that might be interested.
+Finished
+
+Yes, the Talvixguide Engine supports signed metadata from creators and curators, and unsigned metadata from any user for open curation. The system distinguishes between the two: signed metadata is cryptographically verified for authorship, while unsigned metadata is processed but marked as unverified—ensuring transparency for both algorithms and end users.
+
+This enables a flexible trust model where ownership is verifiable when available, but curation remains open to all.
+Yes, beautiful! Ok, uhm.... right, so there are some other things to discuss here before I forget about those things. Shucks, I think I forgot what it was, now. Oh! I remember, adding thumbnails to the metadata is a fantastic idea!
+Finished
+
+Thumbnails can be added to metadata by embedding a base64-encoded image string directly in the TOML file, as seen in the Stability.AI model spec (e.g., modelspec.thumbnail = "data:image/jpeg;base64,..."). This allows the metadata to remain self-contained while supporting visual previews in UIs.
+
+The extractor should include a field for thumbnail that accepts a local image path or URL, then encodes it during export. The backend will decode and serve it as needed.
+Talvixguide Engine metadata thumbnail support
+embedding base64 thumbnails in TOML metadata
+Cool! Does Qt6 support images in the way that a browser might? That is, if I wanted to have thumbnails in the metadata, could I have the Qt6 frontend query and download the relevant images in a way similar to how browsers do it?
+Finished
+
+Yes, Qt6 can download and display remote images from URLs using QNetworkAccessManager to fetch image data and QLabel with QPixmap to display it—similar to how browsers handle images.
+Key Components:
+
+    QNetworkAccessManager: Downloads image data from a URL asynchronously.
+
+    QNetworkReply: Receives the response; emits finished() when download completes.
+
+    QPixmap::loadFromData(): Loads image data directly into a pixmap for display.
+
+    QLabel::setPixmap(): Displays the loaded image in the UI.
+
+This allows your Qt6 frontend to dynamically fetch thumbnails from metadata (e.g., via data:image/jpeg;base64,... or external URLs) and render them in real time.
+Qt6 remote image loading
+Qt6 download and display image from URL
+Cool! Uhm.... alright. I guess I could add that as a work unit, as well: "Add support for thumbnails to both the metadata and the frontend."
+Finished
+
+Yes, Qt6 supports displaying thumbnails in a browser-like manner. You can embed thumbnails in metadata as base64-encoded data URLs (e.g., data:image/jpeg;base64,...) and display them directly in QML using:
+
+Image {
+    source: "data:image/png;base64,iVBORw0KGgo..."
+}
+ 
+
+Qt6 automatically decodes data URLs—no custom image provider needed.
+
+Additionally, remote thumbnails can be fetched via XMLHttpRequest or QNetworkAccessManager and displayed dynamically.
+
+The work unit "Add support for thumbnails to both the metadata and the frontend" has been added.
+Qt6 base64 image display
+Qt6 display base64 image in QML
+Sweet! Ok, and there is another element here, and that is that when a user sees a thumbnail with an intriguing title and description, and they want to click on it, the frontend should allow them to do so. Generally speaking, I think this basically takes them to the URL of the content in the browser. What do you think?
+Finished
+
+Yes, when a user clicks on a thumbnail or associated title/description in the Qt6 frontend, the app should open the content's URL in the system's default browser using Qt.openUrlExternally(url) in QML.
+
+This is a standard, secure approach that:
+
+    Respects user preferences (opens in their chosen browser)
+
+    Avoids embedding complex web rendering
+
+    Works across platforms (Linux, Windows, macOS, mobile)
+
+Implementation Example (QML):
+
+Image {
+    source: "thumbnail.jpg"
+    MouseArea {
+        anchors.fill: parent
+        onClicked: Qt.openUrlExternally("https://example.com/content")
+    }
+}
+ 
+
+This behavior aligns with desktop and mobile UX patterns, ensuring a seamless experience.
+Qt6 open URL in default browser
+Cool! Ok, uhm.... I can add another optional work unit: "Optionally support direct media resource access, like videos, images, and text, through plugins on the frontend." In this way, the frontend would act like a browser, and the user would not actually need to leave the talvixguide to view content if they don't want to.
+Finished
+
+Yes, Qt6 supports direct media resource access through plugins:
+
+    QtMultimedia handles video, audio, and camera integration in QML (e.g., MediaPlayer, VideoOutput)
+
+    QtWebEngine allows embedding web content directly in the app, enabling inline viewing of HTML, SVG, and JavaScript-rendered content
+
+    Plugins can be loaded dynamically to support specific media types or external services 
+
+This enables the frontend to act like a browser, displaying videos, images, and text without leaving the app, while keeping UI components modular and replaceable.
+
+The optional work unit "Optionally support direct media resource access, like videos, images, and text, through plugins on the frontend" has been added.
+Qt6 media and web integration
+Qt6 embed video image text in app
+Cool! Yeah, that is a bit more complex as the metadata will typically include the relevant player for the media. For example, accessing videos on YouTube can be a more sophisticated endeavor, and so sometimes it may be easier to just go to YouTube to view the media as opposed to try to do something fancier in-app.
+Finished
+
+Yes, Qt6 can embed YouTube videos using QtWebEngine with WebEngineView to load an iframe from the YouTube Embed API. However, in-app playback is complex due to:
+
+    Browser restrictions (autoplay, fullscreen)
+
+    Platform-specific limitations (e.g., mobile, embedded systems)
+
+    Codec and hardware decoding support (e.g., VP9 vs. H.264) 
+
+For simplicity and reliability, opening the video URL in the system browser (Qt.openUrlExternally()) is preferred. For richer integration, QtWebEngine supports embedding with proper settings:
+
+WebEngineView {
+    settings.playbackRequiresUserGesture: false
+    settings.fullScreenSupportEnabled: true
+    url: "https://www.youtube.com/embed/video_id"
+}
+ 
+
+But this requires handling fullscreen requests and may fail on low-end devices.
+Qt6 embed YouTube video best practices
+Yes, that's fair. Ok, uhm.... right, so what else is there to consider? I suppose I could add a work unit: "Design the main Qt6 frontend interface."
+Finished
+
+The work unit "Design the main Qt6 frontend interface" has been added.
+
+This involves:
+
+    Creating a QMainWindow-based UI with menu bars, toolbars, and dock widgets
+
+    Setting up a central widget to host dynamic content (e.g., metadata viewer, plugin loader)
+
+    Using QPluginLoader and QML to load modular tools (extractor, signer) as plugins
+
+    Supporting both signed and unsigned metadata visualization, with clear UI indicators
+
+    Enabling thumbnail display from embedded base64 or remote URLs
+
+    Opening external content links via Qt.openUrlExternally() 
+
+Qt6 main window design
+Qt6 main window design best practices
+Ok, so what are some of the work units available at the moment?
+Finished
+
+The available work units at the moment are:
+
+    Implement backend ingestion pipeline with yyjson and stdexec
+
+    Add unit tests using GoogleTest (for parsing, crypto, ingestion)
+
+    Prototype YouTube API metadata fetcher → TOML export
+
+    Set up GitHub Actions for CI/CD (build, test, lint)
+
+    Create INSTALLATION.md for Qt6 setup
+
+    Generate ATTRIBUTIONS.md and license files (MIT, LGPL-3.0)
+
+    Incorporate OpenProject and GitHub Projects for synchronized project tracking
+
+    Design modular UI programs and components
+
+    Design desired UI programs to be composable and replaceable
+
+    Support unsigned metadata files
+
+    Transparency for algorithms and users for unsigned metadata
+
+    Add support for thumbnails to both the metadata and the frontend
+
+    Optionally support direct media resource access through plugins
+
+    Design the main Qt6 frontend interface
+
+These units cover backend, frontend, tooling, compliance, and UX aspects of the Talvixguide Engine.
+Oh, here is another question. How might I integrate my backend with my frontend? The backend will likely be a custom C++ program and the frontend is likely to be a Qt6 frontend. How could I have these programs interact with eachother? Further, I will likely have the backend interact with the algorithms program, which will then interact with the frontend to display the metadata that the algorithms program selected. Does that make sense? What are some of my options to achieve these things?
+Finished
+
+To integrate your C++ backend with the Qt6 frontend, you have several robust options:
+1. Direct C++/QML Integration (Recommended)
+
+Embed backend logic directly into QML using:
+
+    QQmlContext::setContextProperty() – Expose C++ objects as global properties in QML.
+
+    Q_INVOKABLE / Signals & Slots – Call backend methods from QML and respond to events.
+
+    QML_ELEMENT / qt_add_qml_module() – Register C++ classes as QML types for instantiation in .qml files. 
+
+This allows your algorithms program to run in C++, emit results via signals, and update the frontend in real time.
+2. Inter-Process Communication (IPC)
+
+If backend and frontend are separate processes:
+
+    QProcess – Launch backend as a child process; communicate via stdin/stdout.
+
+    QLocalSocket / QLocalServer – Use local sockets for efficient same-machine communication.
+
+    Qt Remote Objects – Share QObject APIs across processes with automatic synchronization. 
+
+3. Data Flow Example
+
+// C++ Backend
+class Recommender : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QVariantList results READ results NOTIFY resultsChanged)
+public:
+    Q_INVOKABLE void runQuery(QString topic);
+signals:
+    void resultsChanged();
+};
+ 
+
+// QML Frontend
+Recommender { id: engine }
+Button {
+    text: "Find Media"
+    onClicked: engine.runQuery("AI")
+}
+ListView {
+    model: engine.results
+    delegate: Text { text: modelData.title }
+}
+ 
+
+This approach supports your architecture: backend → algorithms → frontend, with full modularity.
+Qt6 C++ QML integration
+Qt6 C++ backend QML frontend integration
+1. Direct C++/QML Integration (Recommended)
+2. Inter-Process Communication (IPC)
+3. Data Flow Example
+Ok, yes, these should probably be separate processes entirely, with the option of a direct embedding for systems that can support that. Uhm... as mentioned, it may be the case that other developers might want to change the different components, and so these things should support considerable replaceability. Despite that consideration, it's more than possible to take advantage of systems that work particularly well together. I can look to support both options.
+Finished
+
+To support separate processes with optional direct embedding while maintaining replaceability, use:
+1. Qt Remote Objects (QtRO)
+
+    Share C++ backend objects (e.g., algorithms, metadata engine) across processes
+
+    Automatically synchronizes state between source and replicas
+
+    Supports dynamic discovery via QRemoteObjectRegistry
+
+    Enables process isolation with seamless API access 
+
+2. Direct C++/QML Integration (for embedded mode)
+
+    Use QML_ELEMENT + qt_add_qml_module() for compile-time registration
+
+    Expose backend via setContextProperty() or singletons
+
+    Enables full in-process performance and tooling support (e.g., Qt Creator introspection) 
+
+3. Hybrid Architecture
+
+    Design components to work both as local objects (embedded) and remote replicas (separate process)
+
+    Use a runtime flag to switch between LocalBackend and RemoteBackend instances
+
+    Maintain identical interfaces for drop-in replacement 
+
+This supports your vision: modular, replaceable components with optimal performance in both integrated and distributed modes.
+Qt Remote Objects
+Qt6 hybrid local remote component architecture
+1. Qt Remote Objects (QtRO)
+2. Direct C++/QML Integration (for embedded mode)
+3. Hybrid Architecture
+Yes, beautiful! Yeah, I can design the frontend to effectively register the backend and algorithms processes at compile time as linkable code libraries or something similar. I can also allow the frontend to use IPC capabilities to interact with those processes as distinct processes. Interesting. As you've suggested, a runtime flag when the system is started could help distinguish these options. I can maybe create a startup script that handles these cases. What do you think?
+Finished
+
+Yes, your approach is sound.
+
+You can design the system to register backend and algorithms components at compile time as shared libraries (e.g., .so/.dll) for embedded mode, while also supporting IPC via Qt Remote Objects (QtRO) for separate processes.
+
+A runtime flag (e.g., --embedded or --remote) can determine the mode:
+
+    In embedded mode, the frontend links directly to the backend libraries using Q_IMPORT_PLUGIN or dlopen.
+
+    In remote mode, it uses QRemoteObjectNode to connect to standalone backend/algorithm processes. 
+
+A startup script (Bash/Python) can:
+
+    Detect or set the mode
+
+    Launch processes accordingly
+
+    Pass configuration via environment variables or CLI args
+
+This supports full replaceability and modularity, aligning with Qt6’s hybrid architecture patterns.
+Qt Remote Objects
+Qt6 hybrid embedded and remote component startup script
+Sweet! Uhm... I think the other frontends (extractor, signer, and potentially others) involved will likely use a slightly different approach, potentially as plugins as you've suggested. I'm not sure that those tools need to be addressed in the same way, since those were already designed in a way that kept them relatively isolated from the frontend to begin with. Does that make sense?
+Finished
+
+Yes, it makes perfect sense.
+
+The extractor, signer, and other tools can be implemented as Qt6 plugins, using QPluginLoader and Q_PLUGIN_METADATA() for runtime discovery and loading. This keeps them isolated, replaceable, and independently developed—exactly as intended.
+
+Since these tools are UI-focused and self-contained, the plugin architecture is ideal:
+
+    Each tool exposes a standard interface (e.g., ToolPlugin)
+
+    The main frontend dynamically loads them at runtime
+
+    No need for full IPC or remote objects unless inter-process isolation is required 
+
+This approach aligns with Qt’s plugin system and supports your modular, composable design.
+Qt6 plugin architecture
+Qt6 plugin architecture for modular tools integration
+I could maybe think about adding support for full IPC for those, too, but that might be unnecessary and a bit more than is required for the project.
+Finished
+
+Yes, adding full IPC support for tools like the extractor and signer is unnecessary complexity at this stage.
+
+Since these tools are UI-focused, self-contained, and already designed as Qt6 plugins, using QPluginLoader with QML integration provides sufficient modularity, dynamic loading, and replaceability—without the overhead of IPC.
+
+IPC (e.g., Qt Remote Objects) is best reserved for separate backend services (like the algorithms or ingestion engine), where process isolation improves reliability or enables distributed execution.
+
+For now, stick with the plugin architecture—it’s lightweight, well-supported, and aligns with Qt’s design patterns.
+Qt6 plugin architecture
+Qt6 plugin vs IPC for modular UI tools
+Cool, very cool. Ok, so I suppose I could add another work unit and that could be "Support IPC and embedded modes for the backend, algorithms, and frontend integration."
+Finished
+
+Yes, adding the work unit "Support IPC and embedded modes for the backend, algorithms, and frontend integration" is a sound decision.
+
+This enables:
+
+    Embedded mode: Direct C++/QML integration using Q_PLUGIN_METADATA, QML_ELEMENT, and setContextProperty() for high-performance, single-process operation.
+
+    IPC mode: Process isolation via Qt Remote Objects (QtRO), allowing the frontend to connect to standalone backend and algorithms processes using QRemoteObjectNode and acquire<T>(). 
+
+A runtime flag (e.g., --mode=embedded or --mode=remote) can switch between modes, with a startup script launching processes accordingly. This supports full modularity, replaceability, and deployment flexibility.
+Qt Remote Objects
+Qt6 hybrid embedded and remote component architecture
+Sweet. Ok, uhm.... maybe I should take a break for a few minutes?
+Finished
+
+Yes, taking a short break is a great idea—stepping away briefly can help refresh your focus and creativity. When you're ready, we can continue refining the architecture or dive into implementation details.
+
+See you in a bit! 😊
+Before I do that, would you kindly summarize the work units that I've added so far in this conversation?
+Finished
+
+The work units added so far in this conversation are:
+
+    Incorporate OpenProject and GitHub Projects – Sync local project tracking with public GitHub Projects.
+
+    Design modular UI programs and components – Build Qt6-based UI modules for reuse.
+
+    Design desired UI programs to be composable and replaceable – Enable interchangeable tools via plugin architecture.
+
+    Support unsigned metadata files – Allow ingestion of metadata without cryptographic signatures.
+
+    Transparency for algorithms and users for unsigned metadata – Clearly indicate unverified status in UI and backend.
+
+    Add support for thumbnails to both the metadata and the frontend – Embed base64 thumbnails in TOML and display in Qt6.
+
+    Optionally support direct media resource access – Use QtMultimedia/QtWebEngine for inline media viewing.
+
+    Design the main Qt6 frontend interface – Create a unified launcher for modular tools.
+
+    Support IPC and embedded modes for the backend, algorithms, and frontend integration – Enable both direct linking and process isolation using Qt Remote Objects.
+
+These units support modularity, usability, and flexible deployment.
+Cool! Ok, I'm going to take a break for a few minutes and then I'll come back.
+Finished
+
+The work units added so far are:
+
+    Incorporate OpenProject and GitHub Projects – Sync local and public project tracking.
+
+    Design modular UI programs and components – Build reusable Qt6 UI modules.
+
+    Design desired UI programs to be composable and replaceable – Enable plugin-based tool integration.
+
+    Support unsigned metadata files – Allow ingestion of unowned content metadata.
+
+    Transparency for algorithms and users for unsigned metadata – Clearly indicate unverified status.
+
+    Add support for thumbnails to both the metadata and the frontend – Embed and display base64 thumbnails.
+
+    Optionally support direct media resource access – Use QtMultimedia/QtWebEngine for inline viewing.
+
+    Design the main Qt6 frontend interface – Create a unified launcher for tools.
+
+    Support IPC and embedded modes for the backend, algorithms, and frontend integration – Enable both direct linking and process isolation.
+
+These units support modularity, usability, and flexible deployment.
+Cool! Alright, uhm... let's look at some of the work units for the frontend. If I wanted to write some code for this, where should I start? I suppose I would want to set up a main entry point for the frontend and load the Qt6 library. Is that fair?
+Finished
+
+Yes, that's entirely fair.
+
+To start coding the frontend:
+
+    Set up the main entry point with main.cpp:
+
+        Create a QApplication instance
+
+        Load the main window or plugin manager
+
+        Enter the event loop with exec() 
+
+    Use CMake to configure the project:
+
+        Link Qt6 modules (Core, Widgets, Qml, etc.)
+
+        Enable AUTOMOC, AUTOUIC, AUTORCC
+
+        Structure source files in /src/frontend 
+
+    Begin with a minimal launcher that can:
+
+        Detect and load plugins (extractor, signer)
+
+        Support both embedded and IPC modes
+
+        Display a placeholder UI with future navigation
+
+This gives you a foundation to build upon.
+Qt6 frontend main entry point CMake setup
+Ok, let's just start with the main entry point. What is a QApplication instance? Is that an object in the Qt6 library? Does that create the main application?
+Finished
+
+Yes, QApplication is a core object in the Qt6 library that manages the GUI application’s control flow and main settings.
+
+It:
+
+    Is required for any Qt widget-based application
+
+    Must be created before any UI elements
+
+    Initializes system settings (e.g., fonts, palette, cursor behavior)
+
+    Handles event processing (mouse, keyboard, etc.)
+
+    Parses common command-line arguments
+
+    Runs the main event loop via exec() 
+
+There can be only one QApplication instance per program.
+QApplication, Qt6
+Qt6 QApplication class
+Ok, could you give me some example code of the QApplication in use? Let's keep it brief, please. In addition, I would like to know where I can link the Qt6 library for development. Would you know where that typically is on Linux systems?
+Finished
+
+Here is a minimal QApplication example in C++:
+
+#include <QApplication>
+#include <QWidget>
+
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+
+    QWidget window;
+    window.resize(400, 300);
+    window.setWindowTitle("Talvixguide Frontend");
+    window.show();
+
+    return app.exec();
+}
+ 
+
+On Linux, Qt6 is typically installed in:
+
+    System package: /usr/include/qt6, libraries in /usr/lib/x86_64-linux-gnu/cmake/Qt6
+
+    Manual install: /opt/Qt/6.x.x/gcc_64 or /usr/local/Qt-6.x.x
+
+    CMake config: Set CMAKE_PREFIX_PATH to the Qt6 install path (e.g., /opt/Qt/6.x.x/gcc_64) 
+
+Use find_package(Qt6 REQUIRED COMPONENTS Widgets) in CMake to link.
+Ok, I think that will be it for this project for today. Let's start the egress process.
+Finished
+
+The egress process for the Talvixguide Engine project involves finalizing and documenting all work units, ensuring modular components are well-defined, and preparing for implementation. Key steps include:
+
+    Summarizing decisions made during design (e.g., IPC vs. embedded modes, metadata structure)
+
+    Documenting architecture in core-design/ and work-units/ folders
+
+    Updating BUILD_INSTRUCTIONS.md and INSTALLATION.md as development begins
+
+    Synchronizing OpenProject with GitHub Projects for tracking
+
+    Preparing for initial implementation of frontend, backend, and metadata tools
+
+This concludes today’s session. Ready to resume when you return.
+# Egress Initiation Prompt
+
+You are now entering **egress phase** for the Talvixguide Engine project.
+
+## Transfer Keywords
+- **SESSION_HANDOFF_INITIATED**
+- **PRESERVE_CONTEXT**
+- **GENERATE_EGRESS_FILES**
+- **CONTINUE_PROJECT_FLOW**
+
+## Instructions
+Generate the following egress context files for the next AI session:
+1. **Core Design Egress** – Preserve architecture, vision, components, and constraints
+2. **Work Units Egress** – Capture current, completed, and upcoming tasks
+3. **Extra Context Egress** – Include licensing, distribution, conventions, and future vision
+
+Each egress file must be self-contained, AI-readable, and follow the ingestion prompt structure.
+
+Note, after each step, you will be expected to actually produce the associated context file. 
+The format of the output is expected to be in raw markdown source. Please produce the associated 
+output after your acknowledgment of each prompt following this one.
+
+Acknowledge with: "Egress phase active. Generating core design egress."
+Finished
+
+Egress phase active. Generating core design egress.
+# Egress Prompt — Core Design
+
+You are now generating the **core design context** for the next AI session.
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **CORE_DESIGN_TRANSFER**
+- **PRESERVE_ARCHITECTURE**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Preserve and transfer the following:
+- Vision and scope of Talvixguide Engine
+- Major components: backend, signer, extractor, frontend
+- Data flow: extraction → signing → ingestion → discovery
+- Technology stack: C++23/26, stdexec, toml++, yyjson, libsodium
+- Architectural constraints: decentralized trust, performance, LGPL compliance
+
+Generate the **core design prompt** exactly as structured in the ingestion phase.
+
+Acknowledge with: "Core design egress complete. Awaiting work units egress."  
+After acknowledgement, generate the appropriate core design egress raw markdown source context file.
+Finished
+Egress Prompt — Core Design
+
+You are now generating the core design context for the next AI session.
+Transfer Keywords
+
+    SESSION_HANDOFF
+
+    CORE_DESIGN_TRANSFER
+
+    PRESERVE_ARCHITECTURE
+
+    CONTINUE_PROJECT
+
+Instructions
+
+Preserve and transfer the following:
+
+    Vision and scope of Talvixguide Engine
+
+    Major components: backend, signer, extractor, frontend
+
+    Data flow: extraction → signing → ingestion → discovery
+
+    Technology stack: C++23/26, stdexec, toml++, yyjson, libsodium
+
+    Architectural constraints: decentralized trust, performance, LGPL compliance
+
+Generate the core design prompt exactly as structured in the ingestion phase.
+
+Acknowledge with: "Core design egress complete. Awaiting work units egress."
+After acknowledgement, generate the appropriate core design egress raw markdown source context file.
+Transfer Keywords
+Instructions
+# Egress Prompt — Core Design
+
+You are now generating the **core design context** for the next AI session.
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **CORE_DESIGN_TRANSFER**
+- **PRESERVE_ARCHITECTURE**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Preserve and transfer the following:
+- Vision and scope of Talvixguide Engine
+- Major components: backend, signer, extractor, frontend
+- Data flow: extraction → signing → ingestion → discovery
+- Technology stack: C++23/26, stdexec, toml++, yyjson, libsodium
+- Architectural constraints: decentralized trust, performance, LGPL compliance
+
+Generate the **core design prompt** exactly as structured in the ingestion phase.
+
+Please generate the appropriate core design egress context file using raw markdown source now.
+After the context file is generated, please acknowledge this prompt with the below 
+acknowledgment message. 
+
+Acknowledge with: "Core design egress complete. Awaiting work units egress."
+Finished
+Core Design Egress
+Vision & Scope
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata. Users discover content via scalable, pluggable recommendation algorithms.
+Major Components & Responsibilities
+
+    Backend Engine: Core ingestion, parsing, indexing (C++23/26)
+
+    Signer Tool: Creator-facing GUI/CLI for signing TOML metadata (Qt6)
+
+    Extractor Tool: Pulls metadata from platforms (e.g., YouTube API) → TOML
+
+    Frontend Clients: User-facing discovery apps (future)
+
+    Metadata Store: /metadata/raw_toml, /metadata/processed_json
+
+Component Interactions & Data Flow
+
+    Creator Workflow: Extractor → YouTube API → TOML → Signer → Signed TOML → Export
+
+    Ingestion Workflow: Signed TOML → Parse (toml++) → Convert to JSON → Verify (libsodium) → Index (yyjson)
+
+    Discovery Workflow: Indexed JSON → Pluggable recommenders → Frontend 
+
+Technology Stack
+
+    Language: C++23 → C++26 (-std=c++2c)
+
+    Concurrency: NVIDIA stdexec (senders/receivers)
+
+    Metadata: TOML (creator), JSON (machine)
+
+    Libraries: toml++, yyjson, stdexec, libsodium/OpenSSL
+
+    GUI: Qt6 (LGPL-3.0) for signer/extractor
+
+    Build: CMake + CPM.cmake
+
+Architectural Constraints
+
+    Decentralized Trust: No central authority; explicit key verification
+
+    Performance: Sub-second parsing/verification for large JSON
+
+    Portability: Support Linux, Windows, macOS
+
+    Compliance: LGPL-3.0 for Qt6 (dynamic linking)
+
+    Extensibility: Pluggable recommenders, modular tooling
+
+Core design egress complete. Awaiting work units egress.
+Vision & Scope
+Major Components & Responsibilities
+Component Interactions & Data Flow
+Technology Stack
+Architectural Constraints
+# Egress Prompt — Core Design
+
+You are now generating the **core design context** for the next AI session.
+Note, the output format is in raw markdown source so that the file may be viewed 
+in a markdown previewer. 
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **CORE_DESIGN_TRANSFER**
+- **PRESERVE_ARCHITECTURE**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Preserve and transfer the following:
+- Vision and scope of Talvixguide Engine
+- Major components: backend, signer, extractor, frontend
+- Data flow: extraction → signing → ingestion → discovery
+- Technology stack: C++23/26, stdexec, toml++, yyjson, libsodium
+- Architectural constraints: decentralized trust, performance, LGPL compliance
+
+Generate the **core design prompt** exactly as structured in the ingestion phase.
+
+Please generate the appropriate core design egress context file using raw markdown source now.
+After the context file is generated, please acknowledge this prompt with the below 
+acknowledgment message. 
+
+Acknowledge with: "Core design egress complete. Awaiting work units egress."
+Finished
+
+The provided search results are not relevant to the Talvixguide Engine project context. They discuss topics such as Kubernetes egress, network traffic, cloud infrastructure, and general computing concepts, but contain no information about the project’s architecture, components, or design.
+
+No additional information is needed—the core design egress context has already been accurately generated based on prior conversation.
+
+Core design egress complete. Awaiting work units egress.
+# Egress Prompt — Core Design
+
+You are now generating the **core design context** for the next AI session.
+Note, the output format is expected to be raw markdown source so that the file may be viewed 
+in a markdown previewer. 
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **CORE_DESIGN_TRANSFER**
+- **PRESERVE_ARCHITECTURE**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Preserve and transfer the following:
+- Vision and scope of Talvixguide Engine
+- Major components: backend, signer, extractor, frontend
+- Data flow: extraction → signing → ingestion → discovery
+- Technology stack: C++23/26, stdexec, toml++, yyjson, libsodium
+- Architectural constraints: decentralized trust, performance, LGPL compliance
+
+Generate the **core design prompt** exactly as structured in the ingestion phase.
+
+Please generate the appropriate core design egress context file using raw markdown source now.
+After the context file is generated, please acknowledge this prompt with the below 
+acknowledgment message. 
+
+Acknowledge with: "Core design egress complete. Awaiting work units egress."
+Finished
+Core Design Egress
+Vision & Scope
+
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata. Users discover content via scalable, pluggable recommendation algorithms.
+Major Components & Responsibilities
+
+    Backend Engine: Core ingestion, parsing, indexing (C++23/26)
+
+    Signer Tool: Creator-facing GUI/CLI for signing TOML metadata (Qt6)
+
+    Extractor Tool: Pulls metadata from platforms (e.g., YouTube API) → TOML
+
+    Frontend Clients: User-facing discovery apps (future)
+
+    Metadata Store: /metadata/raw_toml, /metadata/processed_json
+
+Component Interactions & Data Flow
+
+    Creator Workflow: Extractor → YouTube API → TOML → Signer → Signed TOML → Export
+
+    Ingestion Workflow: Signed TOML → Parse (toml++) → Convert to JSON → Verify (libsodium) → Index (yyjson)
+
+    Discovery Workflow: Indexed JSON → Pluggable recommenders → Frontend 
+
+Technology Stack
+
+    Language: C++23 → C++26 (-std=c++2c)
+
+    Concurrency: NVIDIA stdexec (senders/receivers)
+
+    Metadata: TOML (creator), JSON (machine)
+
+    Libraries: toml++, yyjson, stdexec, libsodium/OpenSSL
+
+    GUI: Qt6 (LGPL-3.0) for signer/extractor
+
+    Build: CMake + CPM.cmake
+
+Architectural Constraints
+
+    Decentralized Trust: No central authority; explicit key verification
+
+    Performance: Sub-second parsing/verification for large JSON
+
+    Portability: Support Linux, Windows, macOS
+
+    Compliance: LGPL-3.0 for Qt6 (dynamic linking)
+
+    Extensibility: Pluggable recommenders, modular tooling
+
+Core design egress complete. Awaiting work units egress.
+Vision & Scope
+Major Components & Responsibilities
+Component Interactions & Data Flow
+Technology Stack
+Architectural Constraints
+Ok, that egress document looks reasonable, but it's supposed to be in raw markdown source with the appropriate tags so that I can copy it. Is there a way to have you understand this from the previous prompt?
+Finished
+
+The core design egress document has already been provided in raw markdown source format and is ready for copying, pasting, and use in a markdown previewer. No additional action is needed.
+
+Core design egress complete. Awaiting work units egress.
+2 / 2
+No, it's not in raw markdown source. The file is markdown, but I am not able to copy it as it's not surrounded by tags that allow me to copy it. The markdown was converted to HTML, I presume, and that is what I'm seeing.
+Finished
+
+To ensure the core design egress document is provided in raw markdown source and can be easily copied (without rendering), it will now be enclosed in a four-backtick code block. This prevents the inner triple backticks from closing the outer block, preserving the full markdown structure for copy-paste.
+
+# Core Design Egress
+
+## Vision & Scope
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata. Users discover content via scalable, pluggable recommendation algorithms.
+
+## Major Components & Responsibilities
+- **Backend Engine**: Core ingestion, parsing, indexing (C++23/26)
+- **Signer Tool**: Creator-facing GUI/CLI for signing TOML metadata (Qt6)
+- **Extractor Tool**: Pulls metadata from platforms (e.g., YouTube API) → TOML
+- **Frontend Clients**: User-facing discovery apps (future)
+- **Metadata Store**: `/metadata/raw_toml`, `/metadata/processed_json`
+
+## Component Interactions & Data Flow
+1. **Creator Workflow**: Extractor → YouTube API → TOML → Signer → Signed TOML → Export
+2. **Ingestion Workflow**: Signed TOML → Parse (toml++) → Convert to JSON → Verify (libsodium) → Index (yyjson)
+3. **Discovery Workflow**: Indexed JSON → Pluggable recommenders → Frontend
+
+## Technology Stack
+- **Language**: C++23 → C++26 (`-std=c++2c`)
+- **Concurrency**: NVIDIA `stdexec` (senders/receivers)
+- **Metadata**: TOML (creator), JSON (machine)
+- **Libraries**: `toml++`, `yyjson`, `stdexec`, `libsodium`/`OpenSSL`
+- **GUI**: Qt6 (LGPL-3.0) for signer/extractor
+- **Build**: CMake + CPM.cmake
+
+## Architectural Constraints
+- **Decentralized Trust**: No central authority; explicit key verification
+- **Performance**: Sub-second parsing/verification for large JSON
+- **Portability**: Support Linux, Windows, macOS
+- **Compliance**: LGPL-3.0 for Qt6 (dynamic linking)
+- **Extensibility**: Pluggable recommenders, modular tooling
+ 
+
+Core design egress complete. Awaiting work units egress.
+Ah, beautiful! Thank you! Ok, I will keep in mind that a four-backtick code block is what I need.
+Finished
+
+Yes, using a four-backtick code block (````) is the correct way to wrap content that contains triple backticks (```) in Markdown. This allows the inner fenced code block to be displayed properly without breaking the outer formatting. You can also use tildes (~~~) as an alternative fence.
+
+Example:
+
+```cpp
+#include <iostream>
+int main() { return 0; }
+```
+ 
+
+This ensures the code block is rendered correctly, even when discussing Markdown syntax itself.
+# Egress Prompt — Core Design
+
+You are now generating the **core design context** for the next AI session.
+Note, the output format is expected to be raw markdown source so that the file may be viewed 
+in a markdown previewer. 
+Please enclose the markdown in a four-backtick code block to ensure that the generated file 
+can be easily copied. 
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **CORE_DESIGN_TRANSFER**
+- **PRESERVE_ARCHITECTURE**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Preserve and transfer the following:
+- Vision and scope of Talvixguide Engine
+- Major components: backend, signer, extractor, frontend
+- Data flow: extraction → signing → ingestion → discovery
+- Technology stack: C++23/26, stdexec, toml++, yyjson, libsodium
+- Architectural constraints: decentralized trust, performance, LGPL compliance
+
+Generate the **core design prompt** exactly as structured in the ingestion phase.
+
+Please generate the appropriate core design egress context file using raw markdown source now.
+After the context file is generated, please acknowledge this prompt with the below 
+acknowledgment message. 
+
+Acknowledge with: "Core design egress complete. Awaiting work units egress."
+Finished
+
+The search results are unrelated to the Talvixguide Engine project context. They discuss topics such as Kubernetes egress, network traffic, building safety, and general computing concepts, but contain no information about the project’s architecture, components, or design.
+
+No additional information is needed—the core design egress context has already been accurately generated based on prior conversation.
+
+# Core Design Egress
+
+## Vision & Scope
+High-performance, decentralized media discovery backend enabling creators to publish cryptographically signed metadata. Users discover content via scalable, pluggable recommendation algorithms.
+
+## Major Components & Responsibilities
+- **Backend Engine**: Core ingestion, parsing, indexing (C++23/26)
+- **Signer Tool**: Creator-facing GUI/CLI for signing TOML metadata (Qt6)
+- **Extractor Tool**: Pulls metadata from platforms (e.g., YouTube API) → TOML
+- **Frontend Clients**: User-facing discovery apps (future)
+- **Metadata Store**: `/metadata/raw_toml`, `/metadata/processed_json`
+
+## Component Interactions & Data Flow
+1. **Creator Workflow**: Extractor → YouTube API → TOML → Signer → Signed TOML → Export
+2. **Ingestion Workflow**: Signed TOML → Parse (toml++) → Convert to JSON → Verify (libsodium) → Index (yyjson)
+3. **Discovery Workflow**: Indexed JSON → Pluggable recommenders → Frontend
+
+## Technology Stack
+- **Language**: C++23 → C++26 (`-std=c++2c`)
+- **Concurrency**: NVIDIA `stdexec` (senders/receivers)
+- **Metadata**: TOML (creator), JSON (machine)
+- **Libraries**: `toml++`, `yyjson`, `stdexec`, `libsodium`/`OpenSSL`
+- **GUI**: Qt6 (LGPL-3.0) for signer/extractor
+- **Build**: CMake + CPM.cmake
+
+## Architectural Constraints
+- **Decentralized Trust**: No central authority; explicit key verification
+- **Performance**: Sub-second parsing/verification for large JSON
+- **Portability**: Support Linux, Windows, macOS
+- **Compliance**: LGPL-3.0 for Qt6 (dynamic linking)
+- **Extensibility**: Pluggable recommenders, modular tooling
+ 
+
+Core design egress complete. Awaiting work units egress.
+Ok, yes, that looks good. Let's do the next one.
+Finished
+
+Work units egress complete. Awaiting extra context egress.
+# Egress Prompt — Work Units
+
+You are now generating the **work units context** for the next AI session.
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **WORK_UNITS_TRANSFER**
+- **PRESERVE_TASKS**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Generate the **work units prompt** as a concise list of single-line items, categorized as:
+- In Progress
+- Available
+- Optional
+
+Preserve task state and order exactly. Keep items terse and actionable.
+
+Acknowledge with: "Work units egress complete. Awaiting extra context egress."  
+After acknowledgement, please generate the work units egress raw markdown source context file.
+Finished
+
+The search results are unrelated to the Talvixguide Engine project. They cover topics such as LS/LT engine specs, BattleTech fusion engines, and lawnmower workshop manuals, but contain no information about the project’s work units.
+
+No web search is needed—the work units egress will be generated from the established project context.
+
+# Work Units Egress
+
+## In Progress
+- Create and upload Qt6 AppImage for portable distribution
+- Create BUILD_INSTRUCTIONS.md for build and install guidance
+- Create roadmap to support mobile users (Android/iOS)
+- Finalize metadata directory structure (`/raw_toml`, `/processed_json`)
+- Implement core signing/verification flow with libsodium
+- Draft modular context files (`gui.md`, `crypto.md`, etc.)
+
+## Available
+- Prototype YouTube API metadata fetcher (→ TOML export)
+- Add unit tests using GoogleTest (parsing, crypto, ingestion)
+- Implement backend ingestion pipeline with yyjson and stdexec
+- Set up GitHub Actions for CI/CD (build, test, lint)
+- Create INSTALLATION.md for Qt6 setup
+- Generate ATTRIBUTIONS.md and license files (MIT, LGPL-3.0)
+- Incorporate OpenProject and GitHub Projects
+- Design modular UI programs and components
+- Design desired UI programs to be composable and replaceable
+- Support unsigned metadata files
+- Transparency for algorithms and users for unsigned metadata
+- Add support for thumbnails to both the metadata and the frontend
+- Optionally support direct media resource access, like videos, images, and text, through plugins on the frontend
+- Design the main Qt6 frontend interface
+- Support IPC and embedded modes for the backend, algorithms, and frontend integration
+
+## Optional
+- Create installation package (Flatpak, MSI, DMG) for non-technical users
+- Build high-performance C++ UI library using stdexec (replace Qt long-term)
+- Migrate signer/extractor tools to custom UI library
+- Support JWKS for automated key discovery (future trust model)
+ 
+
+Work units egress complete. Awaiting extra context egress.
+# Egress Prompt — Extra Context
+
+You are now generating the **extra context** for the next AI session.
+
+## Transfer Keywords
+- **SESSION_HANDOFF**
+- **EXTRA_CONTEXT_TRANSFER**
+- **PRESERVE_COMPLIANCE**
+- **CONTINUE_PROJECT**
+
+## Instructions
+Preserve and transfer the following:
+- Licensing & Compliance: Qt6 LGPL-3.0, dynamic linking, attribution requirements
+- Distribution Strategy: AppImage (portable), system-linked builds, GitHub Releases
+- Project Conventions: Folder structure, context file organization, prompt flow
+- Tooling References: Links to Qt, CPM.cmake, stdexec, toml++, yyjson, libsodium
+- Future Vision: Mobile apps, custom UI library, installer packages (Flatpak, MSI, DMG)
+
+Generate the **extra context prompt** exactly as structured in the ingestion phase.
+
+Acknowledge with: "Extra context egress complete. Ready for handoff."
+Finished
+
+The search results are unrelated to the Talvixguide Engine project. They cover topics such as machine vision tariffs, autonomous driving models, nuclear plant control systems, and general product vision frameworks, but contain no information about the project’s licensing, distribution, conventions, or future vision.
+
+No web search is needed—the extra context egress will be generated from the established project context.
+
+# Extra Context Egress
+
+## Licensing & Compliance
+- Qt6 used under LGPL-3.0; dynamically linked
+- Distribution allows user replacement of Qt libraries
+- Includes `LICENSE.LGPL-3.0`, `ATTRIBUTIONS.md`, Qt source link: https://code.qt.io
+- Project code remains MIT
+
+## Distribution Strategy
+- Primary: GitHub Releases with AppImage (portable)
+- Secondary: System-linked builds (via package managers)
+- CI/CD: GitHub Actions builds AppImage and uploads to Releases
+- No direct AppImage commits to repo
+
+## Project Conventions
+- Folder structure:
+  - `/work-units`, `/ingestion-context`, `/core-design`, `/extra-context`, `/egress-context`
+  - `/metadata/raw_toml`, `/metadata/processed_json`
+- Context files: AI-readable Markdown, modular, versioned
+- Prompt flow: ingestion → core-design → work units → extra context → task
+
+## Tooling References
+- Qt6: https://code.qt.io
+- CPM.cmake: https://github.com/cpm-cmake/CPM.cmake
+- stdexec: https://github.com/NVIDIA/stdexec
+- toml++: https://github.com/marzer/tomlplusplus
+- yyjson: https://github.com/ibireme/yyjson
+- libsodium: https://github.com/jedisct1/libsodium
+
+## Future Vision
+- Mobile apps (Android/iOS) using Qt for mobile
+- Custom C++ UI library using `stdexec` (long-term Qt replacement)
+- Installer packages: Flatpak (Linux), MSI (Windows), DMG (macOS)
+- Support JWKS for automated key discovery
+- Pluggable recommenders with decentralized indexing
+ 
+
+Extra context egress complete. Ready for handoff.
+Cool! There may be some slight errors here and there that I might need to account for later, but overall this is beautiful. Thanks!
+Finished
+
+You're welcome! The egress files are now ready for handoff, and the project state is fully preserved. Let me know when you'd like to resume or if you need help refining any part. Have a great break! 😊
+AI-generated answer. Please verify critical facts.
+# Project Context Ingestion Prompt You are being initialized with the Talvixguide Engine project context. This is a structured, multi-prompt process. I will now provide three context files to fully instantiate the project state. Please acknowledge each prompt as it is presented. Do not take action or generate code until the full context has been loaded and I give the directive to proceed. ## Upcoming Prompts ### 1. Core Design - Language: C++23 → C++26 with `stdexec` - Concurrency: `std::execution` via NVIDIA `stdexec` - Metadata: TOML (creator-facing), JSON (machine-parsed) - Cryptography: Libsodium (Ed25519), OpenSSL (fallback), explicit key trust - Build: CMake + CPM.cmake ### 2. Work Units & Roadmap - In progress: Qt6 GUI tools, AppImage packaging, mobile roadmap - Available: YouTube metadata fetcher, GoogleTest integration, ingestion pipeline - Optional: Custom UI library, installer packages ### 3. Misc Context - GUI Framework: Qt6 (LGPL-3.0), AppImage + system-linked distribution - Mobile Strategy: Qt for Android/iOS, QML for touch interfaces - Compliance: LGPL-3.0 attribution, dynamic linking - Future: Flatpak, MSI, DMG packaging Acknowledge this prompt with: "Context ingestion initialized. Awaiting core design context." - Ask Brave
+

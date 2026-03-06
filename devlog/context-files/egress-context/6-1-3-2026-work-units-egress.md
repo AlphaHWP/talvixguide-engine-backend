@@ -16,4 +16,5 @@ Generate the **work units prompt** as a concise list of single-line items, categ
 
 Preserve task state and order exactly. Keep items terse and actionable.
 
-Acknowledge with: "Work units egress complete. Awaiting extra context egress."   
+Acknowledge with: "Work units egress complete. Awaiting extra context egress."  
+After acknowledgement, please generate the work units egress raw markdown source context file.  

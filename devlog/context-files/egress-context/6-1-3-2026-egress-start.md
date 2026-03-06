@@ -20,4 +20,4 @@ Note, after each step, you will be expected to actually produce the associated c
 The format of the output is expected to be in raw markdown source. Please produce the associated 
 output after your acknowledgment of each prompt following this one.
 
-Acknowledge with: "Egress phase active. Generating core design egress."   
+Acknowledge with: "Egress phase active. Generating core design egress next."   

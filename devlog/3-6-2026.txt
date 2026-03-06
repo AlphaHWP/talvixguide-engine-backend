@@ -66,3 +66,29 @@ today, and so I'm at around a bit less than 2.5 hours spent on this project. I t
 I might want to spend 1 more hour today and then work on some other things. 
 
 I think this is a good point to commit some of my work, too. 
+
+1:58 PM 
+Ok, I took a break for some time. Unfortunately, circumstances may make this project 
+a little too challenging to consistently put time into. I do enjoy this, but it is 
+going to be challenging for me to continue on this. Ok, let me at least get a 
+few lines of code into a repo for the frontend before I generate the egress docs 
+for today. 
+
+2:08 PM 
+Ok, so I created a snippet for the main entry point into a Qt6 application. 
+Great! Uhm... now I would just need to minimally link the runtime binary 
+and execute the program to check that the window pops up. 
+
+2:18 PM 
+Alright, so I asked around a bit and learned how to compile the rudimentary front-end 
+and execute it. Great! Alright, I can rest easy that I got some basic code into 
+the project before moving on to soemthing else. 
+
+2:44 PM 
+Wow, the handoff process is, indeed, really cool! I think there are some minor issues 
+and mistakes that should eventually be addressed, for example the incorrect 
+folder structure that keeps getting handed off, but overall the process is kind 
+of amazing. Great! Wow, that's wondrous. 
+
+Ok, I'm going to test the handoff again to see if it works and then I'm going to 
+take a break from this project for the day. 
